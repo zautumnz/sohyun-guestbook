@@ -36,7 +36,7 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const totalPages = Math.max(1, Math.ceil(entries.length / entriesPerPage) + 1)
 
   // Convert API timestamp string to Date object
-  const transformApiEntry = (apiEntry: GuestbookEntry & { timestamp: string}): GuestbookEntry => ({
+  const transformApiEntry = (apiEntry: GuestbookEntry & { timestamp: string }): GuestbookEntry => ({
     ...apiEntry,
     timestamp: new Date(apiEntry.timestamp)
   })
@@ -68,7 +68,7 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
 
       const createdEntry = await guestbookApi.createEntry(createPayload)
-      const transformedEntry = transformApiEntry(createdEntry)
+      const transformedEntry = transformApiEntry(createdEntry as unknown as GuestbookEntry & { timestamp: string })
 
       setEntries(prev => [...prev, transformedEntry])
       console.log('Added new entry:', transformedEntry)

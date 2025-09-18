@@ -15,12 +15,10 @@ git clone <$GIT_URL>
 cd <YOUR_PROJECT_NAME>
 
 # 3. Install the dependencies.
-npm install
-# You can use `bun install` but need to run `npm install -g bun` to install it first.
+npm i
 
 # 4. Start the development server with auto-reloading and an instant preview.
 npm run dev
-# You can use `bun run dev`
 
 # 5. On your browser navigate to http://localhost:5173/
 ```
