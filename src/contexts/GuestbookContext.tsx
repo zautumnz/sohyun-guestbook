@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { guestbookApi, CreateEntryPayload } from '../services/guestbookApi'
 
 export interface GuestbookEntry {
   id: string;
@@ -14,51 +15,75 @@ interface GuestbookContextType {
   entries: GuestbookEntry[];
   currentPage: number;
   totalPages: number;
-  addEntry: (entry: Omit<GuestbookEntry, 'id' | 'timestamp' | 'pageNumber'>) => void;
+  loading: boolean;
+  error: string | null;
+  addEntry: (entry: Omit<GuestbookEntry, 'id' | 'timestamp' | 'pageNumber'>) => Promise<void>;
   setCurrentPage: (page: number) => void;
   nextPage: () => void;
   prevPage: () => void;
+  refreshEntries: () => Promise<void>;
 }
 
 const GuestbookContext = createContext<GuestbookContextType | null>(null)
 
 export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [entries, setEntries] = useState<GuestbookEntry[]>([
-    {
-      id: '1',
-      type: 'text',
-      content: 'Welcome to our digital guestbook! Please sign in and share your thoughts.',
-      author: 'The Hosts',
-      timestamp: new Date('2024-01-01'),
-      pageNumber: 1,
-      position: { x: 50, y: 30 }
-    },
-    {
-      id: '2',
-      type: 'text',
-      content: 'What a beautiful place! Thank you for having us.',
-      author: 'Sarah & Mike',
-      timestamp: new Date('2024-01-15'),
-      pageNumber: 1,
-      position: { x: 60, y: 60 }
-    }
-  ])
-  
+  const [entries, setEntries] = useState<GuestbookEntry[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   const [currentPage, setCurrentPageState] = useState(0)
   const entriesPerPage = 6
   const totalPages = Math.max(1, Math.ceil(entries.length / entriesPerPage) + 1)
 
-  const addEntry = (newEntry: Omit<GuestbookEntry, 'id' | 'timestamp' | 'pageNumber'>) => {
-    const entry: GuestbookEntry = {
-      ...newEntry,
-      id: Date.now().toString(),
-      timestamp: new Date(),
-      pageNumber: Math.ceil((entries.length + 1) / entriesPerPage)
+  // Convert API timestamp string to Date object
+  const transformApiEntry = (apiEntry: GuestbookEntry & { timestamp: string}): GuestbookEntry => ({
+    ...apiEntry,
+    timestamp: new Date(apiEntry.timestamp)
+  })
+
+  const refreshEntries = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const apiEntries = await guestbookApi.getEntries()
+      const transformedEntries = apiEntries.map(transformApiEntry)
+      setEntries(transformedEntries)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch entries'
+      setError(errorMessage)
+      console.error('Error fetching entries:', err)
+    } finally {
+      setLoading(false)
     }
-    
-    setEntries(prev => [...prev, entry])
-    console.log('Added new entry:', entry)
   }
+
+  const addEntry = async (newEntry: Omit<GuestbookEntry, 'id' | 'timestamp' | 'pageNumber'>) => {
+    try {
+      setError(null)
+      const createPayload: CreateEntryPayload = {
+        type: newEntry.type,
+        content: newEntry.content,
+        author: newEntry.author,
+        position: newEntry.position
+      }
+
+      const createdEntry = await guestbookApi.createEntry(createPayload)
+      const transformedEntry = transformApiEntry(createdEntry)
+
+      setEntries(prev => [...prev, transformedEntry])
+      console.log('Added new entry:', transformedEntry)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create entry'
+      setError(errorMessage)
+      console.error('Error creating entry:', err)
+      throw err // Re-throw to let the UI handle it
+    }
+  }
+
+  // Load entries on mount
+  useEffect(() => {
+    refreshEntries()
+  }, [])
 
   const setCurrentPage = (page: number) => {
     if (page >= 0 && page < totalPages) {
@@ -74,10 +99,13 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       entries,
       currentPage,
       totalPages,
+      loading,
+      error,
       addEntry,
       setCurrentPage,
       nextPage,
-      prevPage
+      prevPage,
+      refreshEntries
     }}>
       {children}
     </GuestbookContext.Provider>

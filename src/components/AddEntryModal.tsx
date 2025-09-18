@@ -17,6 +17,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
   const [author, setAuthor] = useState('')
   const [textContent, setTextContent] = useState('')
   const [imageUrl, setImageUrl] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
@@ -37,9 +38,11 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
     maxFiles: 1
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    if (isSubmitting) return
+
     if (!author.trim()) {
       toast({
         title: "Please enter your name",
@@ -64,24 +67,36 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
       return
     }
 
-    addEntry({
-      type: entryType,
-      content: entryType === 'text' ? textContent : imageUrl,
-      author: author.trim(),
-      position: { x: Math.random() * 80 + 10, y: Math.random() * 60 + 20 }
-    })
+    try {
+      setIsSubmitting(true)
+      
+      await addEntry({
+        type: entryType,
+        content: entryType === 'text' ? textContent : imageUrl,
+        author: author.trim(),
+        position: { x: Math.random() * 80 + 10, y: Math.random() * 60 + 20 }
+      })
 
-    toast({
-      title: "Entry added successfully!",
-      description: "Your message has been added to the guestbook."
-    })
+      toast({
+        title: "Entry added successfully!",
+        description: "Your message has been added to the guestbook."
+      })
 
-    // Reset form
-    setAuthor('')
-    setTextContent('')
-    setImageUrl('')
-    setEntryType('text')
-    onClose()
+      // Reset form
+      setAuthor('')
+      setTextContent('')
+      setImageUrl('')
+      setEntryType('text')
+      onClose()
+    } catch (error) {
+      toast({
+        title: "Failed to add entry",
+        description: error instanceof Error ? error.message : "Something went wrong",
+        variant: "destructive"
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -213,9 +228,10 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Add Entry
+                  {isSubmitting ? 'Adding...' : 'Add Entry'}
                 </button>
               </div>
             </form>

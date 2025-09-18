@@ -1,13 +1,42 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw } from 'lucide-react'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import BookPage from './BookPage'
 import AddEntryModal from './AddEntryModal'
 
 const Book = () => {
-  const { currentPage, totalPages, nextPage, prevPage } = useGuestbook()
+  const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries } = useGuestbook()
   const [showAddModal, setShowAddModal] = useState(false)
+
+  if (loading && totalPages === 1) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-8">
+        <div className="text-center">
+          <RefreshCw className="animate-spin h-12 w-12 text-amber-600 mx-auto mb-4" />
+          <p className="text-amber-800 font-medium">Loading guestbook entries...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-8">
+        <div className="text-center max-w-md">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Failed to load guestbook</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={refreshEntries}
+            className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-8">
@@ -62,6 +91,10 @@ const Book = () => {
                 <span className="text-amber-800 font-medium">
                   Page {currentPage + 1} of {totalPages}
                 </span>
+                
+                {loading && (
+                  <RefreshCw className="animate-spin h-4 w-4 text-amber-600" />
+                )}
                 
                 <motion.button
                   whileHover={{ scale: 1.1 }}
