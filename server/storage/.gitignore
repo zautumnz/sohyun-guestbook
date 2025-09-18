@@ -1,0 +1,11 @@
+# Ignore all contents of the storage directory
+# This prevents user-generated content from being committed to version control
+
+# All entries and images
+*
+
+# But keep the .gitignore file itself
+!.gitignore
+
+# Keep directory structure documentation if added later
+!README.md
