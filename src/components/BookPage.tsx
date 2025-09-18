@@ -11,7 +11,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
   const { entries } = useGuestbook()
 
   // Get entries for this page (6 entries per page)
-  const pageEntries = entries.slice(pageNumber * 6, (pageNumber + 1) * 6)
+  const pageEntries = entries.slice(pageNumber * 3, (pageNumber + 1) * 6)
 
   return (
     <div className="w-full h-full p-8 bg-gradient-to-br from-yellow-50 to-amber-50 relative">

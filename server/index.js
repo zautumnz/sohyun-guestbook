@@ -69,12 +69,12 @@ const saveImage = (base64Data, entryId) => {
     if (!matches) {
       throw new Error('Invalid base64 image format')
     }
-    
+
     const imageType = matches[1]
     const imageData = matches[2]
     const filename = `${entryId}.${imageType}`
     const filePath = path.join(IMAGES_DIR, filename)
-    
+
     // Write image file
     fs.writeFileSync(filePath, Buffer.from(imageData, 'base64'))
     return filename
@@ -127,7 +127,7 @@ app.post('/entry', (req, res) => {
     entries = loadEntries()
 
     // Calculate page number based on current entries count
-    const entriesPerPage = 6
+    const entriesPerPage = 3
     const pageNumber = Math.ceil((entries.length + 1) / entriesPerPage)
 
     // Generate entry ID
@@ -177,11 +177,11 @@ app.get('/images/:filename', (req, res) => {
   try {
     const filename = req.params.filename
     const imagePath = path.join(IMAGES_DIR, filename)
-    
+
     if (!fs.existsSync(imagePath)) {
       return res.status(404).json({ error: 'Image not found' })
     }
-    
+
     // Set appropriate content type based on file extension
     const ext = path.extname(filename).toLowerCase()
     const contentType = {
@@ -191,7 +191,7 @@ app.get('/images/:filename', (req, res) => {
       '.gif': 'image/gif',
       '.webp': 'image/webp'
     }[ext] || 'application/octet-stream'
-    
+
     res.setHeader('Content-Type', contentType)
     res.sendFile(imagePath)
   } catch (error) {
@@ -203,8 +203,8 @@ app.get('/images/:filename', (req, res) => {
 // Health check endpoint
 app.get('/health', (req, res) => {
   const entryCount = entries.length
-  res.json({ 
-    status: 'Server is running', 
+  res.json({
+    status: 'Server is running',
     timestamp: new Date().toISOString(),
     entryCount,
     storageDir: STORAGE_DIR
