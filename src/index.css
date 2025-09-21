@@ -122,14 +122,14 @@
 
 /* Enhanced book binding crease effects */
 .book-binding {
-  background: linear-gradient(90deg, 
-    rgba(179, 136, 255, 0.3) 0%, 
-    rgba(199, 125, 255, 0.5) 30%, 
-    rgba(219, 158, 255, 0.6) 50%, 
-    rgba(199, 125, 255, 0.5) 70%, 
+  background: linear-gradient(90deg,
+    rgba(179, 136, 255, 0.3) 0%,
+    rgba(199, 125, 255, 0.5) 30%,
+    rgba(219, 158, 255, 0.6) 50%,
+    rgba(199, 125, 255, 0.5) 70%,
     rgba(179, 136, 255, 0.3) 100%
   );
-  box-shadow: 
+  box-shadow:
     inset -2px 0 8px rgba(179, 136, 255, 0.4),
     inset 2px 0 8px rgba(179, 136, 255, 0.4),
     inset 0 0 12px rgba(199, 125, 255, 0.3);
@@ -153,7 +153,7 @@
 .book-page-left {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  box-shadow: 
+  box-shadow:
     inset -10px 0 20px -10px rgba(179, 136, 255, 0.2),
     0 4px 20px rgba(179, 136, 255, 0.15);
 }
@@ -161,7 +161,7 @@
 .book-page-right {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  box-shadow: 
+  box-shadow:
     inset 10px 0 20px -10px rgba(179, 136, 255, 0.2),
     0 4px 20px rgba(179, 136, 255, 0.15);
 }
@@ -463,22 +463,6 @@
   .print-entry-meta .print-date svg {
     width: 10pt !important;
     height: 10pt !important;
-  }
-
-  /* Print Footer */
-  .print-footer {
-    position: fixed !important;
-    bottom: 15pt !important;
-    left: 20pt !important;
-    right: 20pt !important;
-    text-align: center !important;
-    border-top: 1pt solid #ccc !important;
-    padding-top: 10pt !important;
-  }
-
-  .print-stats {
-    font-size: 9pt !important;
-    color: #999 !important;
   }
 
   /* Page breaks */
