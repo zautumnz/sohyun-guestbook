@@ -99,3 +99,7 @@ To migrate to a database:
 - `.gitignore` prevents user data from being committed to version control
 - Files are written synchronously for data consistency
 - Error handling ensures partial writes don't corrupt data
+
+## Production
+
+- In prod, we use /var/storage instead
