@@ -40,7 +40,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (isSubmitting) return
 
     if (!author.trim()) {
@@ -69,7 +69,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
 
     try {
       setIsSubmitting(true)
-      
+
       await addEntry({
         type: entryType,
         content: entryType === 'text' ? textContent : imageUrl,
@@ -106,111 +106,120 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-purple-900/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={onClose}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+            className="kawaii-modal rounded-2xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-serif text-gray-800">Add Your Entry</h2>
+            {/* Kawaii decorative stars */}
+            <div className="absolute top-4 left-4 text-purple-300/30 text-sm kawaii-star">✨</div>
+            <div className="absolute top-4 right-16 text-pink-300/30 text-xs kawaii-star">⭐</div>
+            <div className="absolute bottom-4 left-8 text-purple-300/30 text-xs kawaii-star">💫</div>
+
+            <div className="flex items-center justify-between mb-8 relative z-10">
+              <h2 className="text-2xl font-serif text-purple-800 flex items-center gap-2">
+                💝 Add Your Entry ✨
+              </h2>
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
+                className="kawaii-button p-2 rounded-full hover:scale-110 transition-all"
               >
-                <X size={24} />
+                <X size={20} className="text-white" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Your Name
+                <label className="block text-sm font-medium text-purple-700 mb-2 flex items-center gap-2">
+                  ⭐ Your Name
                 </label>
                 <input
                   type="text"
                   value={author}
                   onChange={(e) => setAuthor(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  placeholder="Enter your name"
+                  className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-purple-50/50 text-purple-800 placeholder-purple-400"
+                  placeholder="Enter your name ✨"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Entry Type
+                <label className="block text-sm font-medium text-purple-700 mb-3 flex items-center gap-2">
+                  💭 Entry Type
                 </label>
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <button
                     type="button"
                     onClick={() => setEntryType('text')}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl border-2 transition-all ${
                       entryType === 'text'
-                        ? 'bg-amber-100 border-amber-500 text-amber-700'
-                        : 'bg-gray-50 border-gray-300 text-gray-600 hover:bg-gray-100'
+                        ? 'kawaii-border bg-purple-100 text-purple-700 shadow-md'
+                        : 'border-purple-200 bg-purple-50/30 text-purple-600 hover:bg-purple-50'
                     }`}
                   >
                     <Type size={18} />
-                    Text
+                    📝 Text
                   </button>
                   <button
                     type="button"
                     onClick={() => setEntryType('image')}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl border-2 transition-all ${
                       entryType === 'image'
-                        ? 'bg-amber-100 border-amber-500 text-amber-700'
-                        : 'bg-gray-50 border-gray-300 text-gray-600 hover:bg-gray-100'
+                        ? 'kawaii-border bg-purple-100 text-purple-700 shadow-md'
+                        : 'border-purple-200 bg-purple-50/30 text-purple-600 hover:bg-purple-50'
                     }`}
                   >
                     <Image size={18} />
-                    Image
+                    🖼️ Image
                   </button>
                 </div>
               </div>
 
               {entryType === 'text' ? (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Your Message
+                  <label className="block text-sm font-medium text-purple-700 mb-2 flex items-center gap-2">
+                    💌 Your Message
                   </label>
                   <textarea
                     value={textContent}
                     onChange={(e) => setTextContent(e.target.value)}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    placeholder="Share your thoughts..."
+                    className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-purple-50/50 text-purple-800 placeholder-purple-400 resize-none"
+                    placeholder="Share your thoughts... ✨"
                     required
                   />
                 </div>
               ) : (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Upload Image
+                  <label className="block text-sm font-medium text-purple-700 mb-2 flex items-center gap-2">
+                    🖼️ Upload Image
                   </label>
                   <div
                     {...getRootProps()}
-                    className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+                    className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
                       isDragActive
-                        ? 'border-amber-500 bg-amber-50'
-                        : 'border-gray-300 hover:border-amber-400'
+                        ? 'border-purple-400 bg-purple-100/50 scale-105'
+                        : 'border-purple-200 hover:border-purple-400 hover:bg-purple-50/30'
                     }`}
                   >
                     <input {...getInputProps()} />
                     {imageUrl ? (
                       <div>
-                        <img src={imageUrl} alt="Preview" className="max-w-full h-32 object-cover mx-auto rounded" />
-                        <p className="text-sm text-gray-600 mt-2">Click to change image</p>
+                        <img src={imageUrl} alt="Preview" className="max-w-full h-32 object-cover mx-auto rounded-lg border-2 border-purple-200 shadow-md" />
+                        <p className="text-sm text-purple-600 mt-3 flex items-center justify-center gap-1">
+                          ✨ Click to change image ✨
+                        </p>
                       </div>
                     ) : (
                       <div>
-                        <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-                        <p className="text-gray-600">
-                          {isDragActive ? 'Drop the image here' : 'Drag & drop an image, or click to select'}
+                        <Upload className="mx-auto h-12 w-12 text-purple-400 mb-3" />
+                        <p className="text-purple-600 flex items-center justify-center gap-2">
+                          {isDragActive ? '🌟 Drop the image here! 🌟' : '📸 Drag & drop an image, or click to select ✨'}
                         </p>
                       </div>
                     )}
@@ -218,20 +227,20 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-4 pt-6">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-6 py-3 border-2 border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-all font-medium"
                 >
-                  Cancel
+                  ❌ Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="kawaii-button flex-1 px-6 py-3 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                 >
-                  {isSubmitting ? 'Adding...' : 'Add Entry'}
+                  {isSubmitting ? '✨ Adding... ✨' : '💝 Add Entry 🌟'}
                 </button>
               </div>
             </form>

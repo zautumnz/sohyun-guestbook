@@ -4,89 +4,82 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 320 50% 98%;
+    --foreground: 280 15% 25%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 320 50% 98%;
+    --card-foreground: 280 15% 25%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 320 50% 98%;
+    --popover-foreground: 280 15% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 270 80% 70%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 310 40% 92%;
+    --secondary-foreground: 280 15% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 310 40% 92%;
+    --muted-foreground: 280 10% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 290 60% 85%;
+    --accent-foreground: 280 15% 25%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 310 30% 88%;
+    --input: 310 30% 88%;
+    --ring: 270 80% 70%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 320 50% 98%;
+    --sidebar-foreground: 280 15% 25%;
+    --sidebar-primary: 270 80% 70%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 290 60% 85%;
+    --sidebar-accent-foreground: 280 15% 25%;
+    --sidebar-border: 310 30% 88%;
+    --sidebar-ring: 270 80% 70%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 280 30% 8%;
+    --foreground: 310 40% 92%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 280 30% 8%;
+    --card-foreground: 310 40% 92%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 280 30% 8%;
+    --popover-foreground: 310 40% 92%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 270 80% 70%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 280 25% 15%;
+    --secondary-foreground: 310 40% 92%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 280 25% 15%;
+    --muted-foreground: 280 10% 60%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 280 25% 15%;
+    --accent-foreground: 310 40% 92%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 280 25% 15%;
+    --input: 280 25% 15%;
+    --ring: 270 80% 70%;
+    --sidebar-background: 280 30% 8%;
+    --sidebar-foreground: 310 40% 92%;
+    --sidebar-primary: 270 80% 70%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 280 25% 15%;
+    --sidebar-accent-foreground: 310 40% 92%;
+    --sidebar-border: 280 25% 15%;
+    --sidebar-ring: 270 80% 70%;
   }
 }
 
@@ -98,22 +91,140 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Georgia', 'Times New Roman', serif;
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(179, 136, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(199, 125, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(219, 158, 255, 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
   }
 }
 
-/* Custom book styles */
+/* Custom kawaii purple theme styles */
 .book-page {
-  background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, #f8f4ff 0%, #f1e8ff 50%, #ede0ff 100%);
+  box-shadow: 
+    inset 0 0 30px rgba(179, 136, 255, 0.1),
+    0 4px 20px rgba(179, 136, 255, 0.15);
+  position: relative;
+}
+
+.book-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(179, 136, 255, 0.03) 2px, transparent 2px),
+    radial-gradient(circle at 90% 80%, rgba(199, 125, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(219, 158, 255, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px, 60px 60px, 80px 80px;
+  pointer-events: none;
 }
 
 .book-binding {
-  background: linear-gradient(90deg, rgba(146, 64, 14, 0.3) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(179, 136, 255, 0.2) 0%, transparent 100%);
 }
 
-/* Paper texture */
+/* Kawaii decorative elements */
+.kawaii-star {
+  position: absolute;
+  color: #b388ff;
+  opacity: 0.6;
+  animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+.kawaii-border {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(45deg, #b388ff, #c77dff, #db9eff) border-box;
+  border-radius: 12px;
+}
+
+/* Paper texture with stars */
 .paper-texture {
   background-image: 
-    radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0);
-  background-size: 20px 20px;
+    radial-gradient(circle at 15% 25%, rgba(179, 136, 255, 0.04) 2px, transparent 2px),
+    radial-gradient(circle at 85% 75%, rgba(199, 125, 255, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px, 30px 30px;
+}
+
+/* Cute button styles */
+.kawaii-button {
+  background: linear-gradient(135deg, #b388ff 0%, #c77dff 100%);
+  border: none;
+  border-radius: 20px;
+  box-shadow: 
+    0 4px 15px rgba(179, 136, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.kawaii-button::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  transform: scale(0);
+  transition: transform 0.3s ease;
+}
+
+.kawaii-button:hover::before {
+  transform: scale(1);
+}
+
+.kawaii-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(179, 136, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Modal styles */
+.kawaii-modal {
+  background: linear-gradient(135deg, #faf8ff 0%, #f5f0ff 100%);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.kawaii-modal::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  background: linear-gradient(45deg, #b388ff, #c77dff, #db9eff, #b388ff);
+  border-radius: inherit;
+  z-index: -1;
+}
+
+/* Entry card styles */
+.kawaii-entry {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 244, 255, 0.9) 100%);
+  border: 2px solid rgba(179, 136, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 15px rgba(179, 136, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+/* Lace border effect */
+.lace-border {
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(179, 136, 255, 0.1) 2px,
+      rgba(179, 136, 255, 0.1) 4px
+    );
+  border-radius: 8px;
 }

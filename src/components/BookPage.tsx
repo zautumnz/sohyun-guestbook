@@ -32,26 +32,38 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
   const pageEntries = entries.slice(pageNumber * 3, (pageNumber + 1) * 3)
 
   return (
-    <div className="w-full h-full p-8 bg-gradient-to-br from-yellow-50 to-amber-50 relative">
-      {/* Paper texture overlay */}
-      <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23000000%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%227%22%20cy%3D%227%22%20r%3D%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]" />
+    <div className="w-full h-full p-8 book-page relative overflow-hidden">
+      {/* Kawaii decorative stars */}
+      <div className="absolute top-4 left-8 text-purple-300/40 text-sm kawaii-star">✨</div>
+      <div className="absolute top-12 right-12 text-pink-300/40 text-xs kawaii-star">⭐</div>
+      <div className="absolute bottom-8 left-16 text-purple-300/40 text-xs kawaii-star">💫</div>
+      <div className="absolute bottom-16 right-8 text-pink-300/40 text-sm kawaii-star">🌟</div>
+
+      {/* Paper texture overlay with kawaii pattern */}
+      <div className="absolute inset-0 opacity-15 paper-texture" />
 
       {/* Ruled lines for writing */}
       <div className="absolute inset-8 pointer-events-none">
         {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={i}
-            className="absolute w-full h-px bg-blue-200/30"
+            className="absolute w-full h-px bg-purple-200/20"
             style={{ top: `${i * 5}%` }}
           />
         ))}
       </div>
 
+      {/* Decorative lace border */}
+      <div className="absolute top-0 left-0 right-0 h-4 lace-border opacity-30" />
+      <div className="absolute bottom-0 left-0 right-0 h-4 lace-border opacity-30" />
+
       {/* Page Header */}
       <div className="relative z-10 mb-6">
-        <h2 className="text-2xl font-serif text-amber-800 text-center border-b border-amber-300 pb-2">
-          Guest Book - Page {pageNumber + 1}
-        </h2>
+        <div className="kawaii-border bg-gradient-to-r from-purple-100/80 to-pink-100/80 rounded-full px-6 py-3 mx-auto w-fit">
+          <h2 className="text-2xl font-serif text-purple-800 text-center flex items-center gap-2">
+            ✨ Sohyun's Birthday Book - Page {pageNumber + 1} ✨
+          </h2>
+        </div>
       </div>
 
       {/* Entries */}
@@ -65,53 +77,58 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
             className="relative"
           >
             {entry.type === 'text' ? (
-              <div className="bg-white/50 p-4 rounded-lg border border-amber-200 shadow-sm relative">
+              <div className="kawaii-entry p-5 relative group hover:scale-[1.02] transition-all">
                 {showDeleteButtons && (
                   <button
                     onClick={() => handleDelete(entry.id)}
-                    className="absolute top-2 right-2 p-1 rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
+                    className="absolute top-3 right-3 p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl"
                     title="Delete entry"
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={12} />
                   </button>
                 )}
-                <p className="text-gray-800 font-serif leading-relaxed mb-2">
-                  "{entry.content}"
-                </p>
-                <div className="flex items-center gap-4 text-sm text-amber-700">
-                  <div className="flex items-center gap-1">
-                    <User size={14} />
-                    <span>{entry.author}</span>
+                <div className="mb-3">
+                  <p className="text-purple-800 font-serif leading-relaxed text-base">
+                    "{entry.content}"
+                  </p>
+                </div>
+                <div className="flex items-center gap-4 text-sm text-purple-600 bg-purple-50/50 rounded-full px-4 py-2">
+                  <div className="flex items-center gap-2">
+                    <User size={14} className="text-purple-400" />
+                    <span className="font-medium">{entry.author}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar size={14} />
+                  <div className="flex items-center gap-2">
+                    <Calendar size={14} className="text-purple-400" />
                     <span>{entry.timestamp.toLocaleDateString()}</span>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-white/50 p-4 rounded-lg border border-amber-200 shadow-sm relative">
+              <div className="kawaii-entry p-5 relative group hover:scale-[1.02] transition-all">
                 {showDeleteButtons && (
                   <button
                     onClick={() => handleDelete(entry.id)}
-                    className="absolute top-2 right-2 p-1 rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
+                    className="absolute top-3 right-3 p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl z-10"
                     title="Delete entry"
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={12} />
                   </button>
                 )}
-                <img
-                    src={entry.type === 'image' ? `/images/${entry.content}` : entry.content}
-                  alt="Guest entry"
-                  className="max-w-full h-32 object-cover rounded mb-2"
-                />
-                <div className="flex items-center gap-4 text-sm text-amber-700">
-                  <div className="flex items-center gap-1">
-                    <User size={14} />
-                    <span>{entry.author}</span>
+                <div className="mb-3 relative">
+                  <img
+                      src={entry.type === 'image' ? `/images/${entry.content}` : entry.content}
+                    alt="Guest entry"
+                    className="max-w-full h-32 object-cover rounded-lg shadow-md border-2 border-purple-100"
+                  />
+                  <div className="absolute -top-1 -right-1 text-purple-300 text-xs">✨</div>
+                </div>
+                <div className="flex items-center gap-4 text-sm text-purple-600 bg-purple-50/50 rounded-full px-4 py-2">
+                  <div className="flex items-center gap-2">
+                    <User size={14} className="text-purple-400" />
+                    <span className="font-medium">{entry.author}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar size={14} />
+                  <div className="flex items-center gap-2">
+                    <Calendar size={14} className="text-purple-400" />
                     <span>{entry.timestamp.toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -122,15 +139,25 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
 
         {/* Empty page message */}
         {pageEntries.length === 0 && (
-          <div className="text-center text-amber-600/60 font-serif italic mt-20">
-            This page is waiting for your message...
+          <div className="text-center mt-20">
+            <div className="kawaii-border bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 mx-auto w-fit">
+              <div className="text-6xl mb-4">✨</div>
+              <p className="text-purple-500 font-serif italic text-lg">
+                This page is waiting for your message...
+              </p>
+              <div className="text-2xl mt-2">💝</div>
+            </div>
           </div>
         )}
       </div>
 
       {/* Page number at bottom */}
-      <div className="absolute bottom-4 right-8 text-amber-600 font-serif text-sm">
-        {pageNumber + 1}
+      <div className="absolute bottom-4 right-8">
+        <div className="kawaii-border bg-gradient-to-r from-purple-100 to-pink-100 rounded-full px-3 py-1">
+          <span className="text-purple-600 font-serif text-sm flex items-center gap-1">
+            ⭐ {pageNumber + 1}
+          </span>
+        </div>
       </div>
     </div>
   )
