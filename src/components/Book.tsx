@@ -1,17 +1,48 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer, Hash } from 'lucide-react'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import BookPage from './BookPage'
 import AddEntryModal from './AddEntryModal'
 
 const Book = () => {
-  const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries } = useGuestbook()
+  const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage } = useGuestbook()
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showJumpModal, setShowJumpModal] = useState(false)
+  const [jumpPageInput, setJumpPageInput] = useState('')
   const [isPageTransitioning, setIsPageTransitioning] = useState(false)
 
   const handlePrint = () => {
     window.print()
+  }
+
+  const handleJumpToPage = () => {
+    const inputPageNum = parseInt(jumpPageInput)
+    let targetSpread: number
+    
+    // Check if we're on desktop (window width >= 640px) for two-page spread
+    const isDesktop = window.innerWidth >= 640
+    
+    if (isDesktop) {
+      // Desktop: Convert individual page number to spread number
+      // Page 1-2 -> spread 0, Page 3-4 -> spread 1, etc.
+      targetSpread = Math.floor((inputPageNum - 1) / 2)
+    } else {
+      // Mobile: Direct page to spread mapping
+      targetSpread = inputPageNum - 1
+    }
+    
+    if (targetSpread >= 0 && targetSpread < totalPages) {
+      setIsPageTransitioning(true)
+      goToPage(targetSpread)
+      setShowJumpModal(false)
+      setJumpPageInput('')
+    }
+  }
+
+  const handleJumpModalClose = () => {
+    setShowJumpModal(false)
+    setJumpPageInput('')
   }
 
   if (loading && totalPages === 1) {
@@ -163,10 +194,20 @@ const Book = () => {
                 <span className="hidden xs:inline">←</span> <span className="hidden sm:inline">Previous</span><span className="sm:hidden">Prev</span>
               </motion.button>
 
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2 sm:gap-6">
                 {(loading || isPageTransitioning) && (
                   <RefreshCw className="animate-spin h-5 w-5 text-purple-400" />
                 )}
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowJumpModal(true)}
+                  className="kawaii-button hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-400 to-blue-400 text-white font-medium text-sm rounded-full transition-all"
+                >
+                  <Hash size={14} />
+                  Jump
+                </motion.button>
 
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -203,6 +244,64 @@ const Book = () => {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
       />
+
+      {/* Jump to Page Modal */}
+      <AnimatePresence>
+        {showJumpModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
+            onClick={handleJumpModalClose}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="kawaii-modal bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 shadow-2xl max-w-sm w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-semibold text-purple-800 mb-4 text-center">
+                🔍 Jump to Page
+              </h3>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-purple-700 mb-2">
+                  Page Number (1-{window.innerWidth >= 640 ? totalPages * 2 : totalPages})
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max={window.innerWidth >= 640 ? totalPages * 2 : totalPages}
+                  value={jumpPageInput}
+                  onChange={(e) => setJumpPageInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleJumpToPage()}
+                  className="w-full px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                  placeholder="Enter page number"
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={handleJumpModalClose}
+                  className="px-4 py-2 text-purple-600 hover:text-purple-800 font-medium text-sm rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleJumpToPage}
+                  disabled={!jumpPageInput || parseInt(jumpPageInput) < 1 || parseInt(jumpPageInput) > (window.innerWidth >= 640 ? totalPages * 2 : totalPages)}
+                  className="kawaii-button px-4 py-2 text-white font-medium text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  ✨ Jump ✨
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <footer className="text-center text-purple-600 text-xs sm:text-sm font-medium py-4 mt-auto">
         Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 transition-colors">zautumn</a>

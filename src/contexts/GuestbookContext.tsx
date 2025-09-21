@@ -20,6 +20,7 @@ interface GuestbookContextType {
   addEntry: (entry: Omit<GuestbookEntry, 'id' | 'timestamp' | 'pageNumber'>) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   setCurrentPage: (page: number) => void;
+  goToPage: (page: number) => void;
   nextPage: () => void;
   prevPage: () => void;
   refreshEntries: () => Promise<void>;
@@ -120,6 +121,10 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }
 
+  const goToPage = (page: number) => {
+    setCurrentPage(page)
+  }
+
   return (
     <GuestbookContext.Provider value={{
       entries,
@@ -130,6 +135,7 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       addEntry,
       deleteEntry,
       setCurrentPage,
+      goToPage,
       nextPage,
       prevPage,
       refreshEntries
