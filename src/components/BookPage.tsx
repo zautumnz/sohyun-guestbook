@@ -1,14 +1,32 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useGuestbook } from '@/contexts/GuestbookContext'
-import { Calendar, User } from 'lucide-react'
+import { Calendar, User, Trash2 } from 'lucide-react'
 
 interface BookPageProps {
   pageNumber: number;
 }
 
 const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
-  const { entries } = useGuestbook()
+  const { entries, deleteEntry } = useGuestbook()
+  const [showDeleteButtons, setShowDeleteButtons] = useState(false)
+  
+  // Check for password query parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const password = urlParams.get('pw')
+    setShowDeleteButtons(password === '20250514')
+  }, [])
+
+  const handleDelete = async (entryId: string) => {
+    if (window.confirm('Are you sure you want to delete this entry?')) {
+      try {
+        await deleteEntry(entryId)
+      } catch (error) {
+        alert('Failed to delete entry. Please try again.')
+      }
+    }
+  }
 
   // Get entries for this page (6 entries per page)
   const pageEntries = entries.slice(pageNumber * 3, (pageNumber + 1) * 6)
@@ -47,7 +65,16 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
             className="relative"
           >
             {entry.type === 'text' ? (
-              <div className="bg-white/50 p-4 rounded-lg border border-amber-200 shadow-sm">
+              <div className="bg-white/50 p-4 rounded-lg border border-amber-200 shadow-sm relative">
+                {showDeleteButtons && (
+                  <button
+                    onClick={() => handleDelete(entry.id)}
+                    className="absolute top-2 right-2 p-1 rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
+                    title="Delete entry"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
                 <p className="text-gray-800 font-serif leading-relaxed mb-2">
                   "{entry.content}"
                 </p>
@@ -63,9 +90,18 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
                 </div>
               </div>
             ) : (
-              <div className="bg-white/50 p-4 rounded-lg border border-amber-200 shadow-sm">
+              <div className="bg-white/50 p-4 rounded-lg border border-amber-200 shadow-sm relative">
+                {showDeleteButtons && (
+                  <button
+                    onClick={() => handleDelete(entry.id)}
+                    className="absolute top-2 right-2 p-1 rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
+                    title="Delete entry"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
                 <img
-                    src={entry.type === 'image' ? `/storage/images/${entry.content}` : entry.content}
+                    src={entry.type === 'image' ? `/images/${entry.content}` : entry.content}
                   alt="Guest entry"
                   className="max-w-full h-32 object-cover rounded mb-2"
                 />

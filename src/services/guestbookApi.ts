@@ -113,6 +113,12 @@ class GuestbookAPI {
     })
   }
 
+  async deleteEntry(id: string): Promise<{ success: boolean; message: string }> {
+    return this.request(`/entry/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
   async checkHealth(): Promise<{ status: string; timestamp: string }> {
     return this.request('/health')
   }

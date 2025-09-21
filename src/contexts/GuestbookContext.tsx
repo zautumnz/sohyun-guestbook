@@ -18,6 +18,7 @@ interface GuestbookContextType {
   loading: boolean;
   error: string | null;
   addEntry: (entry: Omit<GuestbookEntry, 'id' | 'timestamp' | 'pageNumber'>) => Promise<void>;
+  deleteEntry: (id: string) => Promise<void>;
   setCurrentPage: (page: number) => void;
   nextPage: () => void;
   prevPage: () => void;
@@ -80,6 +81,20 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }
 
+  const deleteEntry = async (id: string) => {
+    try {
+      setError(null)
+      await guestbookApi.deleteEntry(id)
+      setEntries(prev => prev.filter(entry => entry.id !== id))
+      console.log('Deleted entry:', id)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete entry'
+      setError(errorMessage)
+      console.error('Error deleting entry:', err)
+      throw err // Re-throw to let the UI handle it
+    }
+  }
+
   // Load entries on mount
   useEffect(() => {
     refreshEntries()
@@ -102,6 +117,7 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       loading,
       error,
       addEntry,
+      deleteEntry,
       setCurrentPage,
       nextPage,
       prevPage,

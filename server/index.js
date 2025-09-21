@@ -99,6 +99,67 @@ app.get('/entries', (req, res) => {
   }
 })
 
+// DELETE /entry/:id - Delete an entry and associated files
+app.delete('/entry/:id', (req, res) => {
+  try {
+    const entryId = req.params.id
+
+    // Validation
+    if (!entryId) {
+      return res.status(400).json({ error: 'Entry ID is required' })
+    }
+
+    // Check if entry exists
+    const entryFilePath = path.join(ENTRIES_DIR, `${entryId}.json`)
+    if (!fs.existsSync(entryFilePath)) {
+      return res.status(404).json({ error: 'Entry not found' })
+    }
+
+    // Read entry to check if it has an associated image
+    let entryData
+    try {
+      const entryContent = fs.readFileSync(entryFilePath, 'utf8')
+      entryData = JSON.parse(entryContent)
+    } catch (error) {
+      console.error('Error reading entry file:', error)
+      return res.status(500).json({ error: 'Failed to read entry' })
+    }
+
+    // Delete associated image file if it exists
+    if (entryData.type === 'image' && entryData.content) {
+      const imageFilePath = path.join(IMAGES_DIR, entryData.content)
+      if (fs.existsSync(imageFilePath)) {
+        try {
+          fs.unlinkSync(imageFilePath)
+          console.log('Deleted image file:', entryData.content)
+        } catch (error) {
+          console.error('Error deleting image file:', error)
+          // Continue with entry deletion even if image deletion fails
+        }
+      }
+    }
+
+    // Delete entry file
+    try {
+      fs.unlinkSync(entryFilePath)
+      console.log('Deleted entry file:', entryId)
+    } catch (error) {
+      console.error('Error deleting entry file:', error)
+      return res.status(500).json({ error: 'Failed to delete entry' })
+    }
+
+    // Remove from in-memory cache
+    entries = entries.filter(entry => entry.id !== entryId)
+
+    console.log('Entry deleted:', entryId)
+    res.json({ success: true, message: 'Entry deleted successfully' })
+
+  } catch (error) {
+    console.error('Error deleting entry:', error)
+    res.status(500).json({ error: 'Failed to delete entry' })
+  }
+})
+
 // POST /entry - Create a new entry
 app.post('/entry', (req, res) => {
   try {
@@ -236,10 +297,11 @@ app.listen(PORT, () => {
   console.log(`Storage directory: ${STORAGE_DIR}`)
   console.log(`Loaded ${entries.length} existing entries`)
   console.log(`API endpoints:`)
-  console.log(`  GET  http://localhost:${PORT}/entries`)
-  console.log(`  POST http://localhost:${PORT}/entry`)
-  console.log(`  GET  http://localhost:${PORT}/images/:filename`)
-  console.log(`  GET  http://localhost:${PORT}/health`)
+  console.log(`  GET    http://localhost:${PORT}/entries`)
+  console.log(`  POST   http://localhost:${PORT}/entry`)
+  console.log(`  DELETE http://localhost:${PORT}/entry/:id`)
+  console.log(`  GET    http://localhost:${PORT}/images/:filename`)
+  console.log(`  GET    http://localhost:${PORT}/health`)
 })
 
 export default app
