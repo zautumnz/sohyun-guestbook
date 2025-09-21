@@ -197,7 +197,7 @@ const Book = () => {
       />
 
       <footer className="text-center text-purple-600 text-sm font-medium py-4 mt-auto">
-        Made with 💜 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 transition-colors">zautumn</a>
+        Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 transition-colors">zautumn</a>
       </footer>
     </div>
   )

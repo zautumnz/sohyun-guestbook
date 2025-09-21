@@ -10,5 +10,8 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  define: {
+    'globals.environment': JSON.stringify(process.env.NODE_ENV)
   }
 })

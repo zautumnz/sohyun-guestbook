@@ -12,8 +12,9 @@ app.use(cors())
 app.use(express.json({ limit: '50mb' })) // Increased limit for image uploads
 app.use(express.urlencoded({ extended: true }))
 
+const isProd = process.env.NODE_ENV === 'production'
 // Storage directories
-const STORAGE_DIR = path.join(process.cwd(), 'storage')
+const STORAGE_DIR = path.join(isProd ? '/var/storage' : process.cwd(), 'storage')
 const ENTRIES_DIR = path.join(STORAGE_DIR, 'entries')
 const IMAGES_DIR = path.join(STORAGE_DIR, 'images')
 
@@ -234,7 +235,7 @@ app.post('/entry', (req, res) => {
 })
 
 // Serve images from storage
-app.get('/images/:filename', (req, res) => {
+app.get('/storage/images/:filename', (req, res) => {
   try {
     const filename = req.params.filename
     const imagePath = path.join(IMAGES_DIR, filename)
@@ -278,18 +279,10 @@ app.use((error, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' })
 })
 
-// Serve static files in production or 404 handler
-app.use('*', (req, res) => {
-  if (process.env.NODE_ENV === 'production') {
-    const distPath = path.join(process.cwd(), 'dist')
-    if (fs.existsSync(distPath)) {
-      return express.static(distPath)(req, res, () => {
-        res.status(404).json({ error: 'Endpoint not found' })
-      })
-    }
-  }
-  res.status(404).json({ error: 'Endpoint not found' })
-})
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(process.cwd(), 'dist')))
+}
 
 // Start server
 app.listen(PORT, () => {

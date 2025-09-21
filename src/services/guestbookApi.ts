@@ -15,7 +15,7 @@ export interface CreateEntryPayload {
   position: { x: number; y: number };
 }
 
-const API_BASE_URL = 'http://localhost:3001'
+const API_BASE_URL = globals.environment === 'production' ? '' : 'http://localhost:3001'
 
 class GuestbookAPI {
   private async convertToBase64(file: File | Blob): Promise<string> {
