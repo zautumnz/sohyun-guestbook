@@ -58,12 +58,22 @@ const Book = () => {
       <div className="kawaii-star absolute bottom-40 left-20 text-lg">✨</div>
 
       {/* Chibi image in upper right */}
-      <div className="absolute top-8 right-8 z-10">
+      <div className="absolute top-8 right-8 z-10 flex flex-col items-center gap-3">
         <img
           src="/assets/chibi.jpg"
           alt="Chibi Sohyun"
           className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300"
         />
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handlePrint}
+          className="kawaii-button flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-indigo-400 to-blue-400 text-white text-sm font-medium rounded-full transition-all"
+          title="Print all entries to PDF"
+        >
+          <Printer size={12} />
+          🖨️ PDF
+        </motion.button>
       </div>
 
       <div className="relative flex-1 flex items-center justify-center">
@@ -134,16 +144,7 @@ const Book = () => {
                   💝 Add Entry
                 </motion.button>
 
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handlePrint}
-                  className="kawaii-button flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-400 to-blue-400 text-white font-medium rounded-full transition-all"
-                  title="Print all entries to PDF"
-                >
-                  <Printer size={20} />
-                  🖨️ Print PDF
-                </motion.button>
+
               </div>
 
               <motion.button
