@@ -5,9 +5,10 @@ import { Calendar, User, Trash2 } from 'lucide-react'
 
 interface BookPageProps {
   pageNumber: number;
+  side: 'left' | 'right';
 }
 
-const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
+const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
   const { entries, deleteEntry } = useGuestbook()
   const [showDeleteButtons, setShowDeleteButtons] = useState(false)
   const [isContentReady, setIsContentReady] = useState(false)
@@ -25,7 +26,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
     const timer = setTimeout(() => {
       setIsContentReady(true)
     }, 50) // Small delay to ensure smooth transition
-    
+
     return () => clearTimeout(timer)
   }, [pageNumber])
 
@@ -39,12 +40,14 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
     }
   }
 
-  // Get entries for this page (3 entries per page)
-  const pageEntries = entries.slice(pageNumber * 3, (pageNumber + 1) * 3)
+  // Get entries for this side (2 entries per side, 4 per spread)
+  const spreadStartIndex = pageNumber * 4
+  const sideStartIndex = side === 'left' ? spreadStartIndex : spreadStartIndex + 2
+  const pageEntries = entries.slice(sideStartIndex, sideStartIndex + 2)
 
   return (
-    <div className="w-full h-full p-8 book-page relative overflow-hidden">
-      
+    <div className={`w-full h-full p-6 book-page relative overflow-hidden ${side === 'left' ? 'pr-4' : 'pl-4'}`}>
+
       {/* Content loading overlay */}
       {!isContentReady && (
         <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-20">
@@ -75,14 +78,16 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
       <div className="absolute top-0 left-0 right-0 h-4 lace-border opacity-30" />
       <div className="absolute bottom-0 left-0 right-0 h-4 lace-border opacity-30" />
 
-      {/* Page Header */}
-      <div className="relative z-10 mb-6">
-        <div className="kawaii-border bg-gradient-to-r from-purple-100/80 to-pink-100/80 rounded-full px-6 py-3 mx-auto w-fit">
-          <h2 className="text-2xl font-serif text-purple-800 text-center flex items-center gap-2">
-            ✨ Sohyun's Birthday Book - Page {pageNumber + 1} ✨
-          </h2>
+      {/* Page Header - only show on left side */}
+      {side === 'left' && (
+        <div className="relative z-10 mb-6">
+          <div className="kawaii-border bg-gradient-to-r from-purple-100/80 to-pink-100/80 rounded-full px-4 py-2 mx-auto w-fit">
+            <h2 className="text-lg font-serif text-purple-800 text-center flex items-center gap-2">
+              ✨ Sohyun's Birthday Book ✨
+            </h2>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Entries */}
       <div className="relative z-10 space-y-6">
@@ -155,30 +160,13 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
           </motion.div>
         ))}
 
-        {/* Empty page message */}
-        {pageEntries.length === 0 && isContentReady && (
-          <motion.div 
-            className="text-center mt-20"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-          >
-            <div className="kawaii-border bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 mx-auto w-fit">
-              <div className="text-6xl mb-4">✨</div>
-              <p className="text-purple-500 font-serif italic text-lg">
-                This page is waiting for your message...
-              </p>
-              <div className="text-2xl mt-2">💝</div>
-            </div>
-          </motion.div>
-        )}
       </div>
 
       {/* Page number at bottom */}
-      <div className="absolute bottom-4 right-8">
+      <div className={`absolute bottom-4 ${side === 'left' ? 'left-6' : 'right-6'}`}>
         <div className="kawaii-border bg-gradient-to-r from-purple-100 to-pink-100 rounded-full px-3 py-1">
           <span className="text-purple-600 font-serif text-sm flex items-center gap-1">
-            ⭐ {pageNumber + 1}
+            ⭐ {side === 'left' ? (pageNumber * 2 + 1) : (pageNumber * 2 + 2)}
           </span>
         </div>
       </div>

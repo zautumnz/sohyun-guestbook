@@ -33,8 +33,8 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [error, setError] = useState<string | null>(null)
 
   const [currentPage, setCurrentPageState] = useState(0)
-  const entriesPerPage = 3
-  const totalPages = Math.max(1, Math.ceil(entries.length / entriesPerPage) + 1)
+  const entriesPerSpread = 4 // 2 entries per side, 2 sides per spread
+  const totalPages = Math.max(1, Math.ceil(entries.length / entriesPerSpread) + 1)
 
   // Convert API timestamp string to Date object
   const transformApiEntry = (apiEntry: GuestbookEntry & { timestamp: string }): GuestbookEntry => ({
@@ -101,19 +101,19 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [])
 
   const setCurrentPage = (page: number) => {
-    const maxPages = Math.max(1, Math.ceil(entries.length / entriesPerPage) + 1)
+    const maxPages = Math.max(1, Math.ceil(entries.length / entriesPerSpread) + 1)
     if (page >= 0 && page < maxPages) {
       setCurrentPageState(page)
     }
   }
 
   const nextPage = () => {
-    const maxPages = Math.max(1, Math.ceil(entries.length / entriesPerPage) + 1)
+    const maxPages = Math.max(1, Math.ceil(entries.length / entriesPerSpread) + 1)
     if (currentPage < maxPages - 1) {
       setCurrentPage(currentPage + 1)
     }
   }
-  
+
   const prevPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1)

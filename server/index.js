@@ -188,7 +188,7 @@ app.post('/entry', (req, res) => {
     entries = loadEntries()
 
     // Calculate page number based on current entries count
-    const entriesPerPage = 3
+    const entriesPerPage = 2
     const pageNumber = Math.ceil((entries.length + 1) / entriesPerPage)
 
     // Generate entry ID

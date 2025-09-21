@@ -85,8 +85,8 @@ const Book = () => {
         <div className="relative kawaii-border bg-gradient-to-br from-purple-200 to-pink-200 p-8 rounded-2xl shadow-2xl">
           <div className="kawaii-border bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl shadow-inner lace-border">
 
-            {/* Book Pages */}
-            <div className="relative w-[800px] h-[600px] overflow-hidden rounded-xl">
+            {/* Book Pages - Two Page Spread */}
+            <div className="relative w-[1000px] h-[600px] overflow-hidden rounded-xl flex">
               <AnimatePresence mode="wait" onExitComplete={() => setIsPageTransitioning(false)}>
                 <motion.div
                   key={currentPage}
@@ -94,15 +94,34 @@ const Book = () => {
                   animate={{ rotateY: 0, opacity: 1 }}
                   exit={{ rotateY: currentPage > 0 ? 90 : -90, opacity: 0 }}
                   transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="absolute inset-0 rounded-xl"
+                  className="absolute inset-0 rounded-xl flex"
                   style={{ transformStyle: 'preserve-3d' }}
                   onAnimationStart={() => setIsPageTransitioning(true)}
                   onAnimationComplete={() => setIsPageTransitioning(false)}
                 >
-                  <BookPage pageNumber={currentPage} />
+                  {/* Left Page */}
+                  <div className="w-1/2 h-full relative">
+                    <BookPage pageNumber={currentPage} side="left" />
+                  </div>
+
+                  {/* Book Binding/Crease */}
+                  <div className="w-6 h-full relative bg-gradient-to-r from-purple-300/30 via-purple-400/50 to-purple-300/30 shadow-inner">
+                    <div className="absolute inset-y-0 left-1/2 w-px bg-purple-500/30 transform -translate-x-1/2" />
+                    <div className="absolute inset-y-0 left-1 w-px bg-purple-200/40" />
+                    <div className="absolute inset-y-0 right-1 w-px bg-purple-200/40" />
+                    {/* Binding holes/stitching */}
+                    <div className="absolute top-12 left-1/2 w-1 h-1 bg-purple-400/40 rounded-full transform -translate-x-1/2" />
+                    <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-purple-400/40 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+                    <div className="absolute bottom-12 left-1/2 w-1 h-1 bg-purple-400/40 rounded-full transform -translate-x-1/2" />
+                  </div>
+
+                  {/* Right Page */}
+                  <div className="w-1/2 h-full relative">
+                    <BookPage pageNumber={currentPage} side="right" />
+                  </div>
                 </motion.div>
               </AnimatePresence>
-              
+
               {/* Page transition loading overlay */}
               {isPageTransitioning && (
                 <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-xl z-10">
@@ -112,9 +131,6 @@ const Book = () => {
                   </div>
                 </div>
               )}
-
-              {/* Page binding effect */}
-              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-purple-400/20 to-transparent pointer-events-none rounded-l-xl" />
 
               {/* Decorative corners with stars */}
               <div className="absolute top-4 left-4 text-purple-400/50 text-lg">✨</div>
@@ -140,12 +156,6 @@ const Book = () => {
               </motion.button>
 
               <div className="flex items-center gap-6">
-                <div className="kawaii-border bg-white/80 px-4 py-2 rounded-full">
-                  <span className="text-purple-800 font-medium">
-                    ✨ Page {currentPage + 1} of {totalPages} ✨
-                  </span>
-                </div>
-
                 {(loading || isPageTransitioning) && (
                   <RefreshCw className="animate-spin h-5 w-5 text-purple-400" />
                 )}

@@ -120,8 +120,91 @@
   pointer-events: none;
 }
 
+/* Enhanced book binding crease effects */
 .book-binding {
-  background: linear-gradient(90deg, rgba(179, 136, 255, 0.2) 0%, transparent 100%);
+  background: linear-gradient(90deg, 
+    rgba(179, 136, 255, 0.3) 0%, 
+    rgba(199, 125, 255, 0.5) 30%, 
+    rgba(219, 158, 255, 0.6) 50%, 
+    rgba(199, 125, 255, 0.5) 70%, 
+    rgba(179, 136, 255, 0.3) 100%
+  );
+  box-shadow: 
+    inset -2px 0 8px rgba(179, 136, 255, 0.4),
+    inset 2px 0 8px rgba(179, 136, 255, 0.4),
+    inset 0 0 12px rgba(199, 125, 255, 0.3);
+  border-left: 1px solid rgba(179, 136, 255, 0.2);
+  border-right: 1px solid rgba(179, 136, 255, 0.2);
+}
+
+/* Book spread container for two-page layout */
+.book-spread {
+  display: flex;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.book-page-left,
+.book-page-right {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.book-page-left {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: 
+    inset -10px 0 20px -10px rgba(179, 136, 255, 0.2),
+    0 4px 20px rgba(179, 136, 255, 0.15);
+}
+
+.book-page-right {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  box-shadow: 
+    inset 10px 0 20px -10px rgba(179, 136, 255, 0.2),
+    0 4px 20px rgba(179, 136, 255, 0.15);
+}
+
+/* Page turning animation enhancements */
+.page-flip-exit {
+  transform-origin: left center;
+  animation: pageFlipOut 0.6s ease-in-out forwards;
+}
+
+.page-flip-enter {
+  transform-origin: left center;
+  animation: pageFlipIn 0.6s ease-in-out forwards;
+}
+
+@keyframes pageFlipOut {
+  0% {
+    transform: rotateY(0deg);
+    z-index: 2;
+  }
+  50% {
+    transform: rotateY(-90deg);
+    z-index: 2;
+  }
+  100% {
+    transform: rotateY(-180deg);
+    z-index: 1;
+  }
+}
+
+@keyframes pageFlipIn {
+  0% {
+    transform: rotateY(90deg);
+    z-index: 1;
+  }
+  50% {
+    transform: rotateY(45deg);
+    z-index: 2;
+  }
+  100% {
+    transform: rotateY(0deg);
+    z-index: 2;
+  }
 }
 
 /* Kawaii decorative elements */
