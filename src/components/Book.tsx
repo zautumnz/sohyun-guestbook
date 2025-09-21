@@ -52,6 +52,15 @@ const Book = () => {
       <div className="kawaii-star absolute top-40 left-1/4 text-lg">💫</div>
       <div className="kawaii-star absolute bottom-20 right-10 text-2xl">🌟</div>
       <div className="kawaii-star absolute bottom-40 left-20 text-lg">✨</div>
+      
+      {/* Chibi image in upper right */}
+      <div className="absolute top-8 right-8 z-10">
+        <img 
+          src="/themes/chibi.jpg" 
+          alt="Chibi character" 
+          className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300"
+        />
+      </div>
 
       <div className="relative">
         {/* Book Shadow */}

@@ -116,7 +116,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
                 )}
                 <div className="mb-3 relative">
                   <img
-                      src={entry.type === 'image' ? `/images/${entry.content}` : entry.content}
+                      src={entry.type === 'image' ? `/storage/images/${entry.content}` : entry.content}
                     alt="Guest entry"
                     className="max-w-full h-32 object-cover rounded-lg shadow-md border-2 border-purple-100"
                   />
