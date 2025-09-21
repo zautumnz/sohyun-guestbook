@@ -111,9 +111,14 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   </button>
                 )}
                 <div className="mb-3">
-                  <p className="text-purple-800 font-serif leading-relaxed text-base">
-                    "{entry.content}"
-                  </p>
+                  <div className="text-purple-800 font-serif leading-relaxed text-base">
+                    "{entry.content.split('\n').map((line, index) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        {index < entry.content.split('\n').length - 1 && <br />}
+                      </React.Fragment>
+                    ))}"
+                  </div>
                 </div>
                 <div className="flex items-center gap-4 text-sm text-purple-600 bg-purple-50/50 rounded-full px-4 py-2">
                   <div className="flex items-center gap-2">
