@@ -8,6 +8,7 @@ import AddEntryModal from './AddEntryModal'
 const Book = () => {
   const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries } = useGuestbook()
   const [showAddModal, setShowAddModal] = useState(false)
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false)
 
   const handlePrint = () => {
     window.print()
@@ -86,19 +87,31 @@ const Book = () => {
 
             {/* Book Pages */}
             <div className="relative w-[800px] h-[600px] overflow-hidden rounded-xl">
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="wait" onExitComplete={() => setIsPageTransitioning(false)}>
                 <motion.div
                   key={currentPage}
                   initial={{ rotateY: currentPage > 0 ? -90 : 90, opacity: 0 }}
                   animate={{ rotateY: 0, opacity: 1 }}
                   exit={{ rotateY: currentPage > 0 ? 90 : -90, opacity: 0 }}
-                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
                   className="absolute inset-0 rounded-xl"
                   style={{ transformStyle: 'preserve-3d' }}
+                  onAnimationStart={() => setIsPageTransitioning(true)}
+                  onAnimationComplete={() => setIsPageTransitioning(false)}
                 >
                   <BookPage pageNumber={currentPage} />
                 </motion.div>
               </AnimatePresence>
+              
+              {/* Page transition loading overlay */}
+              {isPageTransitioning && (
+                <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-xl z-10">
+                  <div className="text-center">
+                    <RefreshCw className="animate-spin h-8 w-8 text-purple-400 mx-auto mb-2" />
+                    <p className="text-purple-600 text-sm">Turning page...</p>
+                  </div>
+                </div>
+              )}
 
               {/* Page binding effect */}
               <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-purple-400/20 to-transparent pointer-events-none rounded-l-xl" />
@@ -115,8 +128,11 @@ const Book = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={prevPage}
-                disabled={currentPage === 0}
+                onClick={() => {
+                  setIsPageTransitioning(true)
+                  prevPage()
+                }}
+                disabled={currentPage === 0 || isPageTransitioning}
                 className="kawaii-button flex items-center gap-2 px-6 py-3 text-white font-medium rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 <ChevronLeft size={20} />
@@ -130,7 +146,7 @@ const Book = () => {
                   </span>
                 </div>
 
-                {loading && (
+                {(loading || isPageTransitioning) && (
                   <RefreshCw className="animate-spin h-5 w-5 text-purple-400" />
                 )}
 
@@ -150,8 +166,11 @@ const Book = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={nextPage}
-                disabled={currentPage >= totalPages - 1}
+                onClick={() => {
+                  setIsPageTransitioning(true)
+                  nextPage()
+                }}
+                disabled={currentPage >= totalPages - 1 || isPageTransitioning}
                 className="kawaii-button flex items-center gap-2 px-6 py-3 text-white font-medium rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Next →

@@ -10,6 +10,7 @@ interface BookPageProps {
 const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
   const { entries, deleteEntry } = useGuestbook()
   const [showDeleteButtons, setShowDeleteButtons] = useState(false)
+  const [isContentReady, setIsContentReady] = useState(false)
 
   // Check for password query parameter
   useEffect(() => {
@@ -17,6 +18,16 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
     const password = urlParams.get('pw')
     setShowDeleteButtons(password === '20250514')
   }, [])
+
+  // Handle content readiness when page changes
+  useEffect(() => {
+    setIsContentReady(false)
+    const timer = setTimeout(() => {
+      setIsContentReady(true)
+    }, 50) // Small delay to ensure smooth transition
+    
+    return () => clearTimeout(timer)
+  }, [pageNumber])
 
   const handleDelete = async (entryId: string) => {
     if (window.confirm('Are you sure you want to delete this entry?')) {
@@ -33,6 +44,13 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
 
   return (
     <div className="w-full h-full p-8 book-page relative overflow-hidden">
+      
+      {/* Content loading overlay */}
+      {!isContentReady && (
+        <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-20">
+          <div className="text-purple-400 text-2xl">✨</div>
+        </div>
+      )}
       {/* Kawaii decorative stars */}
       <div className="absolute top-4 left-8 text-purple-300/40 text-sm kawaii-star">✨</div>
       <div className="absolute top-12 right-12 text-pink-300/40 text-xs kawaii-star">⭐</div>
@@ -72,8 +90,8 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
           <motion.div
             key={entry.id}
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            animate={{ opacity: isContentReady ? 1 : 0, y: isContentReady ? 0 : 20 }}
+            transition={{ delay: isContentReady ? index * 0.1 : 0, duration: 0.3 }}
             className="relative"
           >
             {entry.type === 'text' ? (
@@ -138,8 +156,13 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
         ))}
 
         {/* Empty page message */}
-        {pageEntries.length === 0 && (
-          <div className="text-center mt-20">
+        {pageEntries.length === 0 && isContentReady && (
+          <motion.div 
+            className="text-center mt-20"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+          >
             <div className="kawaii-border bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 mx-auto w-fit">
               <div className="text-6xl mb-4">✨</div>
               <p className="text-purple-500 font-serif italic text-lg">
@@ -147,7 +170,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
               </p>
               <div className="text-2xl mt-2">💝</div>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 

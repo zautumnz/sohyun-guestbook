@@ -101,13 +101,24 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [])
 
   const setCurrentPage = (page: number) => {
-    if (page >= 0 && page < totalPages) {
+    const maxPages = Math.max(1, Math.ceil(entries.length / entriesPerPage) + 1)
+    if (page >= 0 && page < maxPages) {
       setCurrentPageState(page)
     }
   }
 
-  const nextPage = () => setCurrentPage(currentPage + 1)
-  const prevPage = () => setCurrentPage(currentPage - 1)
+  const nextPage = () => {
+    const maxPages = Math.max(1, Math.ceil(entries.length / entriesPerPage) + 1)
+    if (currentPage < maxPages - 1) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+  
+  const prevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
 
   return (
     <GuestbookContext.Provider value={{
