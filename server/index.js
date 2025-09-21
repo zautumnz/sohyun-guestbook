@@ -217,8 +217,16 @@ app.use((error, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' })
 })
 
-// 404 handler
+// Serve static files in production or 404 handler
 app.use('*', (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    const distPath = path.join(process.cwd(), 'dist')
+    if (fs.existsSync(distPath)) {
+      return express.static(distPath)(req, res, () => {
+        res.status(404).json({ error: 'Endpoint not found' })
+      })
+    }
+  }
   res.status(404).json({ error: 'Endpoint not found' })
 })
 
