@@ -33,7 +33,7 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [error, setError] = useState<string | null>(null)
 
   const [currentPage, setCurrentPageState] = useState(0)
-  const entriesPerPage = 6
+  const entriesPerPage = 3
   const totalPages = Math.max(1, Math.ceil(entries.length / entriesPerPage) + 1)
 
   // Convert API timestamp string to Date object

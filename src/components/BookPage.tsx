@@ -10,7 +10,7 @@ interface BookPageProps {
 const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
   const { entries, deleteEntry } = useGuestbook()
   const [showDeleteButtons, setShowDeleteButtons] = useState(false)
-  
+
   // Check for password query parameter
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -28,8 +28,8 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber }) => {
     }
   }
 
-  // Get entries for this page (6 entries per page)
-  const pageEntries = entries.slice(pageNumber * 3, (pageNumber + 1) * 6)
+  // Get entries for this page (3 entries per page)
+  const pageEntries = entries.slice(pageNumber * 3, (pageNumber + 1) * 3)
 
   return (
     <div className="w-full h-full p-8 bg-gradient-to-br from-yellow-50 to-amber-50 relative">
