@@ -5,7 +5,7 @@ import { Calendar, User, Trash2 } from 'lucide-react'
 
 interface BookPageProps {
   pageNumber: number;
-  side: 'left' | 'right';
+  side: 'left' | 'right' | 'single';
 }
 
 const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
@@ -40,13 +40,25 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
     }
   }
 
-  // Get entries for this side (2 entries per side, 4 per spread)
-  const spreadStartIndex = pageNumber * 4
-  const sideStartIndex = side === 'left' ? spreadStartIndex : spreadStartIndex + 2
-  const pageEntries = entries.slice(sideStartIndex, sideStartIndex + 2)
+  // Get entries for this side
+  let pageEntries;
+  if (side === 'single') {
+    // Mobile: 2 entries per page
+    const startIndex = pageNumber * 2
+    pageEntries = entries.slice(startIndex, startIndex + 2)
+  } else {
+    // Desktop: 2 entries per side, 4 per spread
+    const spreadStartIndex = pageNumber * 4
+    const sideStartIndex = side === 'left' ? spreadStartIndex : spreadStartIndex + 2
+    pageEntries = entries.slice(sideStartIndex, sideStartIndex + 2)
+  }
 
   return (
-    <div className={`w-full h-full p-6 book-page relative overflow-hidden ${side === 'left' ? 'pr-4' : 'pl-4'}`}>
+    <div className={`w-full h-full p-6 book-page relative overflow-hidden ${
+      side === 'left' ? 'pr-4' : 
+      side === 'right' ? 'pl-4' : 
+      'px-2' // single page mode
+    }`}>
 
       {/* Content loading overlay */}
       {!isContentReady && (
@@ -78,11 +90,11 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
       <div className="absolute top-0 left-0 right-0 h-4 lace-border opacity-30" />
       <div className="absolute bottom-0 left-0 right-0 h-4 lace-border opacity-30" />
 
-      {/* Page Header - only show on left side */}
-      {side === 'left' && (
+      {/* Page Header - show on left side or single page mode */}
+      {(side === 'left' || side === 'single') && (
         <div className="relative z-10 mb-6">
           <div className="kawaii-border bg-gradient-to-r from-purple-100/80 to-pink-100/80 rounded-full px-4 py-2 mx-auto w-fit">
-            <h2 className="text-lg font-serif text-purple-800 text-center flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-serif text-purple-800 text-center flex items-center gap-2">
               ✨ Sohyun's Birthday Book ✨
             </h2>
           </div>
@@ -111,7 +123,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   </button>
                 )}
                 <div className="mb-3">
-                  <div className="text-purple-800 font-serif leading-relaxed text-base">
+                  <div className="text-purple-800 font-serif leading-relaxed text-sm sm:text-base">
                     "{entry.content.split('\n').map((line, index) => (
                       <React.Fragment key={index}>
                         {line}
@@ -120,13 +132,13 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                     ))}"
                   </div>
                 </div>
-                <div className="flex items-center gap-4 text-sm text-purple-600 bg-purple-50/50 rounded-full px-4 py-2">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-purple-600 bg-purple-50/50 rounded-lg sm:rounded-full px-3 sm:px-4 py-2">
                   <div className="flex items-center gap-2">
-                    <User size={14} className="text-purple-400" />
+                    <User size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
                     <span className="font-medium">{entry.author}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Calendar size={14} className="text-purple-400" />
+                    <Calendar size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
                     <span>{entry.timestamp.toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -150,13 +162,13 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   />
                   <div className="absolute -top-1 -right-1 text-purple-300 text-xs">✨</div>
                 </div>
-                <div className="flex items-center gap-4 text-sm text-purple-600 bg-purple-50/50 rounded-full px-4 py-2">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-purple-600 bg-purple-50/50 rounded-lg sm:rounded-full px-3 sm:px-4 py-2">
                   <div className="flex items-center gap-2">
-                    <User size={14} className="text-purple-400" />
+                    <User size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
                     <span className="font-medium">{entry.author}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Calendar size={14} className="text-purple-400" />
+                    <Calendar size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
                     <span>{entry.timestamp.toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -168,10 +180,15 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
       </div>
 
       {/* Page number at bottom */}
-      <div className={`absolute bottom-4 ${side === 'left' ? 'left-6' : 'right-6'}`}>
+      <div className={`absolute bottom-4 ${
+        side === 'left' ? 'left-6' : 
+        side === 'right' ? 'right-6' : 
+        'left-1/2 transform -translate-x-1/2' // center for single page
+      }`}>
         <div className="kawaii-border bg-gradient-to-r from-purple-100 to-pink-100 rounded-full px-3 py-1">
-          <span className="text-purple-600 font-serif text-sm flex items-center gap-1">
-            ⭐ {side === 'left' ? (pageNumber * 2 + 1) : (pageNumber * 2 + 2)}
+          <span className="text-purple-600 font-serif text-xs sm:text-sm flex items-center gap-1">
+            ⭐ {side === 'single' ? (pageNumber + 1) : 
+                side === 'left' ? (pageNumber * 2 + 1) : (pageNumber * 2 + 2)}
           </span>
         </div>
       </div>
