@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer } from 'lucide-react'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import BookPage from './BookPage'
 import AddEntryModal from './AddEntryModal'
@@ -8,6 +8,10 @@ import AddEntryModal from './AddEntryModal'
 const Book = () => {
   const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries } = useGuestbook()
   const [showAddModal, setShowAddModal] = useState(false)
+
+  const handlePrint = () => {
+    window.print()
+  }
 
   if (loading && totalPages === 1) {
     return (
@@ -45,24 +49,24 @@ const Book = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 flex items-center justify-center p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 flex flex-col items-center justify-center p-8 relative overflow-hidden no-print">
       {/* Floating stars */}
       <div className="kawaii-star absolute top-10 left-10 text-2xl">✨</div>
       <div className="kawaii-star absolute top-20 right-20 text-xl">⭐</div>
       <div className="kawaii-star absolute top-40 left-1/4 text-lg">💫</div>
       <div className="kawaii-star absolute bottom-20 right-10 text-2xl">🌟</div>
       <div className="kawaii-star absolute bottom-40 left-20 text-lg">✨</div>
-      
+
       {/* Chibi image in upper right */}
       <div className="absolute top-8 right-8 z-10">
-        <img 
-          src="/themes/chibi.jpg" 
-          alt="Chibi character" 
+        <img
+          src="/assets/chibi.jpg"
+          alt="Chibi Sohyun"
           className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300"
         />
       </div>
 
-      <div className="relative">
+      <div className="relative flex-1 flex items-center justify-center">
         {/* Book Shadow */}
         <div className="absolute inset-0 bg-purple-300/30 blur-2xl transform translate-y-8 scale-95 rounded-3xl" />
 
@@ -129,6 +133,17 @@ const Book = () => {
                   <Plus size={20} />
                   💝 Add Entry
                 </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handlePrint}
+                  className="kawaii-button flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-400 to-blue-400 text-white font-medium rounded-full transition-all"
+                  title="Print all entries to PDF"
+                >
+                  <Printer size={20} />
+                  🖨️ Print PDF
+                </motion.button>
               </div>
 
               <motion.button
@@ -150,6 +165,10 @@ const Book = () => {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
       />
+
+      <footer className="text-center text-purple-600 text-sm font-medium py-4 mt-auto">
+        Made with 💜 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 transition-colors">zautumn</a>
+      </footer>
     </div>
   )
 }

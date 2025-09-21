@@ -91,7 +91,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Georgia', 'Times New Roman', serif;
-    background-image: 
+    background-image:
       radial-gradient(circle at 20% 80%, rgba(179, 136, 255, 0.1) 0%, transparent 50%),
       radial-gradient(circle at 80% 20%, rgba(199, 125, 255, 0.1) 0%, transparent 50%),
       radial-gradient(circle at 40% 40%, rgba(219, 158, 255, 0.05) 0%, transparent 50%);
@@ -102,7 +102,7 @@
 /* Custom kawaii purple theme styles */
 .book-page {
   background: linear-gradient(135deg, #f8f4ff 0%, #f1e8ff 50%, #ede0ff 100%);
-  box-shadow: 
+  box-shadow:
     inset 0 0 30px rgba(179, 136, 255, 0.1),
     0 4px 20px rgba(179, 136, 255, 0.15);
   position: relative;
@@ -112,7 +112,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     radial-gradient(circle at 10% 20%, rgba(179, 136, 255, 0.03) 2px, transparent 2px),
     radial-gradient(circle at 90% 80%, rgba(199, 125, 255, 0.03) 1px, transparent 1px),
     radial-gradient(circle at 50% 50%, rgba(219, 158, 255, 0.02) 1px, transparent 1px);
@@ -146,7 +146,7 @@
 
 /* Paper texture with stars */
 .paper-texture {
-  background-image: 
+  background-image:
     radial-gradient(circle at 15% 25%, rgba(179, 136, 255, 0.04) 2px, transparent 2px),
     radial-gradient(circle at 85% 75%, rgba(199, 125, 255, 0.04) 1px, transparent 1px);
   background-size: 50px 50px, 30px 30px;
@@ -157,7 +157,7 @@
   background: linear-gradient(135deg, #b388ff 0%, #c77dff 100%);
   border: none;
   border-radius: 20px;
-  box-shadow: 
+  box-shadow:
     0 4px 15px rgba(179, 136, 255, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
@@ -183,7 +183,7 @@
 
 .kawaii-button:hover {
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 6px 20px rgba(179, 136, 255, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
@@ -210,7 +210,7 @@
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 244, 255, 0.9) 100%);
   border: 2px solid rgba(179, 136, 255, 0.2);
   border-radius: 16px;
-  box-shadow: 
+  box-shadow:
     0 4px 15px rgba(179, 136, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
@@ -218,7 +218,7 @@
 
 /* Lace border effect */
 .lace-border {
-  background-image: 
+  background-image:
     repeating-linear-gradient(
       0deg,
       transparent,
@@ -227,4 +227,212 @@
       rgba(179, 136, 255, 0.1) 4px
     );
   border-radius: 8px;
+}
+
+/* Print Styles */
+@media print {
+  /* Hide everything by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only print-specific content */
+  .print-only,
+  .print-only * {
+    visibility: visible;
+  }
+
+  /* Basic print layout */
+  .print-only {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    height: auto !important;
+    background: white !important;
+    color: black !important;
+    font-family: 'Georgia', 'Times New Roman', serif !important;
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 20pt !important;
+    box-shadow: none !important;
+    border: none !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Print Header */
+  .print-header {
+    text-align: center;
+    margin-bottom: 30pt;
+    border-bottom: 2pt solid #666;
+    padding-bottom: 15pt;
+  }
+
+  .print-header h1 {
+    font-size: 24pt !important;
+    font-weight: bold !important;
+    margin: 0 0 10pt 0 !important;
+    color: #333 !important;
+  }
+
+  .print-header p {
+    font-size: 14pt !important;
+    font-style: italic !important;
+    margin: 0 0 10pt 0 !important;
+    color: #666 !important;
+  }
+
+  .print-header .print-date {
+    font-size: 10pt !important;
+    color: #999 !important;
+  }
+
+  /* Entries Grid */
+  .print-entries-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 15pt !important;
+    margin-bottom: 30pt !important;
+  }
+
+  /* Individual Entry Styles */
+  .print-entry {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    border: 1pt solid #ccc !important;
+    border-radius: 8pt !important;
+    padding: 12pt !important;
+    background: #fafafa !important;
+    margin-bottom: 10pt !important;
+    position: relative !important;
+    min-height: 80pt !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .print-entry-number {
+    position: absolute !important;
+    top: 8pt !important;
+    right: 8pt !important;
+    font-size: 8pt !important;
+    color: #999 !important;
+    font-weight: bold !important;
+    background: white !important;
+    padding: 2pt 6pt !important;
+    border-radius: 10pt !important;
+    border: 1pt solid #ddd !important;
+  }
+
+  /* Text Entry Styles */
+  .print-text-entry .print-entry-content {
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+    margin-bottom: 10pt !important;
+    color: #333 !important;
+    font-style: italic !important;
+    padding-right: 40pt !important; /* Space for entry number */
+  }
+
+  /* Image Entry Styles */
+  .print-image-entry .print-entry-content {
+    margin-bottom: 10pt !important;
+    text-align: center !important;
+    padding-right: 40pt !important; /* Space for entry number */
+  }
+
+  .print-image {
+    max-width: 100% !important;
+    max-height: 120pt !important;
+    width: auto !important;
+    height: auto !important;
+    border: 1pt solid #ddd !important;
+    border-radius: 4pt !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Entry Metadata */
+  .print-entry-meta {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    font-size: 9pt !important;
+    color: #666 !important;
+    border-top: 1pt solid #eee !important;
+    padding-top: 8pt !important;
+  }
+
+  .print-author,
+  .print-entry-meta .print-date {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4pt !important;
+  }
+
+  .print-author svg,
+  .print-entry-meta .print-date svg {
+    width: 10pt !important;
+    height: 10pt !important;
+  }
+
+  /* Print Footer */
+  .print-footer {
+    position: fixed !important;
+    bottom: 15pt !important;
+    left: 20pt !important;
+    right: 20pt !important;
+    text-align: center !important;
+    border-top: 1pt solid #ccc !important;
+    padding-top: 10pt !important;
+  }
+
+  .print-stats {
+    font-size: 9pt !important;
+    color: #999 !important;
+  }
+
+  /* Page breaks */
+  @page {
+    margin: 0.5in;
+    size: A4;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+
+  /* Prevent orphaned entries */
+  .print-entry {
+    orphans: 3 !important;
+    widows: 3 !important;
+  }
+
+  /* Ensure proper spacing for large content */
+  .print-entry:nth-child(odd) {
+    page-break-after: auto !important;
+  }
+
+  /* Handle single column layout for narrow pages */
+  @media print and (max-width: 600pt) {
+    .print-entries-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Hide screen-only elements completely */
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Screen-only styles (hide print content on screen) */
+@media screen {
+  .print-only {
+    display: none;
+  }
 }
