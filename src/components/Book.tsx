@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer, Hash } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer, Hash, Moon, Sun } from 'lucide-react'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import { LightboxProvider, useLightbox } from '@/contexts/LightboxContext'
+import { useTheme } from '@/contexts/ThemeContext'
 import BookPage from './BookPage'
 import AddEntryModal from './AddEntryModal'
 import ImageLightbox from './ImageLightbox'
@@ -10,6 +11,7 @@ import ImageLightbox from './ImageLightbox'
 const BookContent = () => {
   const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage, contentItems } = useGuestbook()
   const { isOpen, imageSrc, imageAlt, openLightbox, closeLightbox } = useLightbox()
+  const { isDark, toggleTheme } = useTheme()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showJumpModal, setShowJumpModal] = useState(false)
   const [jumpPageInput, setJumpPageInput] = useState('')
@@ -22,10 +24,10 @@ const BookContent = () => {
   const handleJumpToPage = () => {
     const inputPageNum = parseInt(jumpPageInput)
     let targetSpread: number
-    
+
     // Check if we're on desktop (window width >= 640px) for two-page spread
     const isDesktop = window.innerWidth >= 640
-    
+
     if (isDesktop) {
       // Desktop: Convert individual page number to spread number
       // Page 1-2 -> spread 0, Page 3-4 -> spread 1, etc.
@@ -34,7 +36,7 @@ const BookContent = () => {
       // Mobile: Direct page to spread mapping
       targetSpread = inputPageNum - 1
   }
-    
+
     if (targetSpread >= 0 && targetSpread < totalPages) {
       setIsPageTransitioning(true)
       goToPage(targetSpread)
@@ -50,13 +52,13 @@ const BookContent = () => {
 
   if (loading && totalPages === 1) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 flex items-center justify-center px-10 py-10 relative">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex items-center justify-center px-10 py-10 relative">
         <div className="kawaii-star absolute top-20 left-20">✨</div>
         <div className="kawaii-star absolute top-32 right-32">⭐</div>
         <div className="kawaii-star absolute bottom-40 left-40">💫</div>
         <div className="text-center kawaii-modal rounded-xl p-8 shadow-2xl">
           <RefreshCw className="animate-spin h-12 w-12 text-purple-400 mx-auto mb-4" />
-          <p className="text-purple-700 font-medium text-sm sm:text-base">Loading guestbook entries...</p>
+          <p className="text-purple-700 dark:text-purple-300 font-medium text-sm sm:text-base">Loading guestbook entries...</p>
         </div>
       </div>
     )
@@ -64,14 +66,14 @@ const BookContent = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 flex items-center justify-center px-10 py-10 relative">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex items-center justify-center px-10 py-10 relative">
         <div className="kawaii-star absolute top-20 left-20">✨</div>
         <div className="kawaii-star absolute top-32 right-32">⭐</div>
         <div className="kawaii-star absolute bottom-40 left-40">💫</div>
         <div className="text-center max-w-md kawaii-modal rounded-xl p-8 shadow-2xl">
           <AlertCircle className="h-12 w-12 text-purple-400 mx-auto mb-4" />
-          <h2 className="text-lg sm:text-xl font-semibold text-purple-800 mb-2">Failed to load guestbook</h2>
-          <p className="text-purple-600 mb-4 text-sm sm:text-base">{error}</p>
+          <h2 className="text-lg sm:text-xl font-semibold text-purple-800 dark:text-purple-200 mb-2">Failed to load guestbook</h2>
+          <p className="text-purple-600 dark:text-purple-300 mb-4 text-sm sm:text-base">{error}</p>
           <button
             onClick={refreshEntries}
             className="kawaii-button px-4 py-2 sm:px-6 sm:py-3 text-white font-medium text-sm sm:text-base rounded-full hover:scale-105 transition-all"
@@ -84,13 +86,27 @@ const BookContent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 flex flex-col items-center justify-center px-10 py-10 relative overflow-hidden no-print">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex flex-col items-center justify-center px-10 py-10 relative overflow-hidden no-print">
       {/* Floating stars */}
       <div className="kawaii-star absolute top-10 left-10 text-2xl">✨</div>
       <div className="kawaii-star absolute top-20 right-20 text-xl">⭐</div>
       <div className="kawaii-star absolute top-40 left-1/4 text-lg">💫</div>
       <div className="kawaii-star absolute bottom-20 right-10 text-2xl">🌟</div>
       <div className="kawaii-star absolute bottom-40 left-20 text-lg">✨</div>
+
+      {/* Theme toggle in upper left */}
+      <div className="absolute top-8 left-8 z-10 flex flex-col items-center gap-3">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={toggleTheme}
+          className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
+          title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+        >
+          {isDark ? <Sun size={16} /> : <Moon size={16} />}
+          <span className="hidden sm:inline">{isDark ? '☀️' : '🌙'}</span>
+        </motion.button>
+      </div>
 
       {/* Chibi image in upper right */}
       <div className="absolute top-8 right-8 z-10 flex flex-col items-center gap-3 hidden sm:flex">
@@ -115,11 +131,11 @@ const BookContent = () => {
 
       <div className="relative flex-1 flex items-center justify-center">
         {/* Book Shadow */}
-        <div className="absolute inset-0 bg-purple-300/30 blur-2xl transform translate-y-8 scale-95 rounded-3xl" />
+        <div className="absolute inset-0 bg-purple-300/30 dark:bg-purple-600/40 blur-2xl transform translate-y-8 scale-95 rounded-3xl" />
 
         {/* Book Container */}
-        <div className="relative kawaii-border bg-gradient-to-br from-purple-200 to-pink-200 p-6 lg:p-8 rounded-2xl shadow-2xl w-full max-w-none min-w-0 xl:min-w-[800px]">
-          <div className="kawaii-border bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl shadow-inner lace-border">
+        <div className="relative kawaii-border bg-gradient-to-br from-purple-200 to-pink-200 dark:from-purple-800 dark:to-indigo-800 p-6 lg:p-8 rounded-2xl shadow-2xl w-full max-w-none min-w-0 xl:min-w-[800px]">
+          <div className="kawaii-border bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-purple-900 rounded-xl shadow-inner lace-border">
 
             {/* Book Pages - Responsive Layout */}
             <div className="relative w-full h-[60vh] min-h-[500px] max-h-[700px] overflow-hidden rounded-xl flex">
@@ -148,14 +164,14 @@ const BookContent = () => {
                     </div>
 
                     {/* Book Binding/Crease */}
-                    <div className="w-6 h-full relative bg-gradient-to-r from-purple-300/30 via-purple-400/50 to-purple-300/30 shadow-inner">
-                      <div className="absolute inset-y-0 left-1/2 w-px bg-purple-500/30 transform -translate-x-1/2" />
-                      <div className="absolute inset-y-0 left-1 w-px bg-purple-200/40" />
-                      <div className="absolute inset-y-0 right-1 w-px bg-purple-200/40" />
+                    <div className="w-6 h-full relative bg-gradient-to-r from-purple-300/30 via-purple-400/50 to-purple-300/30 dark:from-purple-600/50 dark:via-purple-500/70 dark:to-purple-600/50 shadow-inner">
+                      <div className="absolute inset-y-0 left-1/2 w-px bg-purple-500/30 dark:bg-purple-400/50 transform -translate-x-1/2" />
+                      <div className="absolute inset-y-0 left-1 w-px bg-purple-200/40 dark:bg-purple-300/50" />
+                      <div className="absolute inset-y-0 right-1 w-px bg-purple-200/40 dark:bg-purple-300/50" />
                       {/* Binding holes/stitching */}
-                      <div className="absolute top-12 left-1/2 w-1 h-1 bg-purple-400/40 rounded-full transform -translate-x-1/2" />
-                      <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-purple-400/40 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
-                      <div className="absolute bottom-12 left-1/2 w-1 h-1 bg-purple-400/40 rounded-full transform -translate-x-1/2" />
+                      <div className="absolute top-12 left-1/2 w-1 h-1 bg-purple-400/40 dark:bg-purple-300/60 rounded-full transform -translate-x-1/2" />
+                      <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-purple-400/40 dark:bg-purple-300/60 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+                      <div className="absolute bottom-12 left-1/2 w-1 h-1 bg-purple-400/40 dark:bg-purple-300/60 rounded-full transform -translate-x-1/2" />
                     </div>
 
                     {/* Right Page */}
@@ -168,19 +184,19 @@ const BookContent = () => {
 
               {/* Page transition loading overlay */}
               {isPageTransitioning && (
-                <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-xl z-10">
+                <div className="absolute inset-0 bg-background/80 dark:bg-background/90 flex items-center justify-center rounded-xl z-10">
                   <div className="text-center">
                     <RefreshCw className="animate-spin h-8 w-8 text-purple-400 mx-auto mb-2" />
-                    <p className="text-purple-600 text-sm">Turning page...</p>
+                    <p className="text-purple-600 dark:text-purple-300 text-sm">Turning page...</p>
                   </div>
                 </div>
               )}
 
               {/* Decorative corners with stars */}
-              <div className="absolute top-4 left-4 text-purple-400/50 text-lg">✨</div>
-              <div className="absolute top-4 right-4 text-purple-400/50 text-lg">⭐</div>
-              <div className="absolute bottom-4 left-4 text-purple-400/50 text-lg">💫</div>
-              <div className="absolute bottom-4 right-4 text-purple-400/50 text-lg">🌟</div>
+              <div className="absolute top-4 left-4 text-purple-400/50 dark:text-purple-300/70 text-lg">✨</div>
+              <div className="absolute top-4 right-4 text-purple-400/50 dark:text-purple-300/70 text-lg">⭐</div>
+              <div className="absolute bottom-4 left-4 text-purple-400/50 dark:text-purple-300/70 text-lg">💫</div>
+              <div className="absolute bottom-4 right-4 text-purple-400/50 dark:text-purple-300/70 text-lg">🌟</div>
             </div>
 
             {/* Navigation Controls */}
@@ -264,15 +280,15 @@ const BookContent = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="kawaii-modal bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 shadow-2xl max-w-sm w-full"
+              className="kawaii-modal bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-800 dark:to-purple-900 rounded-xl p-6 shadow-2xl max-w-sm w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-lg font-semibold text-purple-800 mb-4 text-center">
+              <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-200 mb-4 text-center">
                 🔍 Jump to Page
               </h3>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-purple-700 mb-2">
+                <label className="block text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">
                   Page Number (1-{window.innerWidth >= 640 ? totalPages * 2 : totalPages})
                 </label>
                 <input
@@ -282,7 +298,7 @@ const BookContent = () => {
                   value={jumpPageInput}
                   onChange={(e) => setJumpPageInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleJumpToPage()}
-                  className="w-full px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-purple-200 dark:border-purple-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-background text-foreground transition-colors"
                   placeholder="Enter page number"
                   autoFocus
                 />
@@ -291,7 +307,7 @@ const BookContent = () => {
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={handleJumpModalClose}
-                  className="px-4 py-2 text-purple-600 hover:text-purple-800 font-medium text-sm rounded-lg transition-colors"
+                  className="px-4 py-2 text-purple-600 dark:text-purple-300 hover:text-purple-800 dark:hover:text-purple-200 font-medium text-sm rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
@@ -315,8 +331,8 @@ const BookContent = () => {
         onClose={closeLightbox}
       />
 
-      <footer className="text-center text-purple-600 text-xs sm:text-sm font-medium py-4 mt-auto">
-        Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 transition-colors">zautumn</a>
+      <footer className="text-center text-purple-600 dark:text-purple-300 text-xs sm:text-sm font-medium py-4 mt-auto">
+        Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">zautumn</a>
       </footer>
     </div>
   )

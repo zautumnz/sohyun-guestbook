@@ -96,6 +96,14 @@
       radial-gradient(circle at 80% 20%, rgba(199, 125, 255, 0.1) 0%, transparent 50%),
       radial-gradient(circle at 40% 40%, rgba(219, 158, 255, 0.05) 0%, transparent 50%);
     background-attachment: fixed;
+    transition: background-color 0.5s ease, color 0.5s ease, background-image 0.5s ease;
+  }
+
+  .dark body {
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(179, 136, 255, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(199, 125, 255, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(219, 158, 255, 0.1) 0%, transparent 50%);
   }
 }
 
@@ -106,6 +114,14 @@
     inset 0 0 30px rgba(179, 136, 255, 0.1),
     0 4px 20px rgba(179, 136, 255, 0.15);
   position: relative;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark .book-page {
+  background: linear-gradient(135deg, #1a1625 0%, #221a2e 50%, #2a1f38 100%);
+  box-shadow:
+    inset 0 0 30px rgba(179, 136, 255, 0.2),
+    0 4px 20px rgba(179, 136, 255, 0.25);
 }
 
 .book-page::before {
@@ -118,6 +134,14 @@
     radial-gradient(circle at 50% 50%, rgba(219, 158, 255, 0.02) 1px, transparent 1px);
   background-size: 40px 40px, 60px 60px, 80px 80px;
   pointer-events: none;
+  transition: background-image 0.3s ease;
+}
+
+.dark .book-page::before {
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(179, 136, 255, 0.08) 2px, transparent 2px),
+    radial-gradient(circle at 90% 80%, rgba(199, 125, 255, 0.06) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(219, 158, 255, 0.04) 1px, transparent 1px);
 }
 
 /* Enhanced book binding crease effects */
@@ -135,6 +159,23 @@
     inset 0 0 12px rgba(199, 125, 255, 0.3);
   border-left: 1px solid rgba(179, 136, 255, 0.2);
   border-right: 1px solid rgba(179, 136, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.dark .book-binding {
+  background: linear-gradient(90deg,
+    rgba(179, 136, 255, 0.5) 0%,
+    rgba(199, 125, 255, 0.7) 30%,
+    rgba(219, 158, 255, 0.8) 50%,
+    rgba(199, 125, 255, 0.7) 70%,
+    rgba(179, 136, 255, 0.5) 100%
+  );
+  box-shadow:
+    inset -2px 0 8px rgba(179, 136, 255, 0.6),
+    inset 2px 0 8px rgba(179, 136, 255, 0.6),
+    inset 0 0 12px rgba(199, 125, 255, 0.5);
+  border-left: 1px solid rgba(179, 136, 255, 0.4);
+  border-right: 1px solid rgba(179, 136, 255, 0.4);
 }
 
 /* Book spread container for two-page layout */
@@ -156,6 +197,13 @@
   box-shadow:
     inset -10px 0 20px -10px rgba(179, 136, 255, 0.2),
     0 4px 20px rgba(179, 136, 255, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.dark .book-page-left {
+  box-shadow:
+    inset -10px 0 20px -10px rgba(179, 136, 255, 0.3),
+    0 4px 20px rgba(179, 136, 255, 0.25);
 }
 
 .book-page-right {
@@ -164,6 +212,13 @@
   box-shadow:
     inset 10px 0 20px -10px rgba(179, 136, 255, 0.2),
     0 4px 20px rgba(179, 136, 255, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.dark .book-page-right {
+  box-shadow:
+    inset 10px 0 20px -10px rgba(179, 136, 255, 0.3),
+    0 4px 20px rgba(179, 136, 255, 0.25);
 }
 
 /* Page turning animation enhancements */
@@ -213,6 +268,12 @@
   color: #b388ff;
   opacity: 0.6;
   animation: twinkle 3s infinite;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.dark .kawaii-star {
+  color: #db9eff;
+  opacity: 0.8;
 }
 
 @keyframes twinkle {
@@ -220,11 +281,26 @@
   50% { opacity: 0.8; transform: scale(1.1); }
 }
 
+.dark .kawaii-star {
+  animation: twinkle-dark 3s infinite;
+}
+
+@keyframes twinkle-dark {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
 .kawaii-border {
   border: 2px solid transparent;
   background: linear-gradient(white, white) padding-box,
               linear-gradient(45deg, #b388ff, #c77dff, #db9eff) border-box;
   border-radius: 12px;
+  transition: background 0.3s ease;
+}
+
+.dark .kawaii-border {
+  background: linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
+              linear-gradient(45deg, #b388ff, #c77dff, #db9eff) border-box;
 }
 
 /* Paper texture with stars */
@@ -277,6 +353,11 @@
   border: 3px solid transparent;
   background-clip: padding-box;
   position: relative;
+  transition: background 0.3s ease;
+}
+
+.dark .kawaii-modal {
+  background: linear-gradient(135deg, #1a1625 0%, #221a2e 100%);
 }
 
 .kawaii-modal::before {
@@ -286,6 +367,11 @@
   background: linear-gradient(45deg, #b388ff, #c77dff, #db9eff, #b388ff);
   border-radius: inherit;
   z-index: -1;
+  transition: background 0.3s ease;
+}
+
+.dark .kawaii-modal::before {
+  background: linear-gradient(45deg, #db9eff, #c77dff, #b388ff, #db9eff);
 }
 
 /* Entry card styles */
@@ -297,6 +383,15 @@
     0 4px 15px rgba(179, 136, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.dark .kawaii-entry {
+  background: linear-gradient(135deg, rgba(26, 22, 37, 0.9) 0%, rgba(34, 26, 46, 0.9) 100%);
+  border: 2px solid rgba(179, 136, 255, 0.4);
+  box-shadow:
+    0 4px 15px rgba(179, 136, 255, 0.2),
+    inset 0 1px 0 rgba(219, 158, 255, 0.3);
 }
 
 /* Lace border effect */

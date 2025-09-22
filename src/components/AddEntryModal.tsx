@@ -113,7 +113,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-purple-900/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-purple-900/30 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={onClose}
         >
           <motion.div
@@ -149,7 +149,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
                   type="text"
                   value={author}
                   onChange={(e) => setAuthor(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-purple-50/50 text-purple-800 placeholder-purple-400"
+                  className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-purple-50/50 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 placeholder-purple-400 dark:placeholder-purple-300 transition-colors"
                   placeholder="Enter your name ✨"
                   required
                 />
@@ -198,7 +198,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-6 py-3 border-2 border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-all font-medium"
+                  className="flex-1 px-6 py-3 border-2 border-purple-200 dark:border-purple-600 text-purple-600 dark:text-purple-300 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-800/50 transition-all font-medium"
                 >
                   ❌ Cancel
                 </button>
@@ -226,12 +226,12 @@ interface ContentItemInputProps {
   canRemove: boolean;
 }
 
-const ContentItemInput: React.FC<ContentItemInputProps> = ({ 
-  item, 
-  index, 
-  onUpdate, 
-  onRemove, 
-  canRemove 
+const ContentItemInput: React.FC<ContentItemInputProps> = ({
+  item,
+  index,
+  onUpdate,
+  onRemove,
+  canRemove
 }) => {
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
@@ -249,7 +249,7 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
   })
 
   return (
-    <div className="kawaii-border bg-purple-50/30 rounded-xl p-4 relative">
+    <div className="kawaii-border bg-purple-50/30 dark:bg-purple-900/30 rounded-xl p-4 relative transition-colors">
       {canRemove && (
         <button
           type="button"
@@ -260,9 +260,9 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
           <Trash2 size={12} />
         </button>
       )}
-      
+
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-xs font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
+        <span className="text-xs font-medium text-purple-600 dark:text-purple-300 bg-purple-100 dark:bg-purple-800 px-2 py-1 rounded-full transition-colors">
           {index + 1}. {item.type === 'text' ? '📝 Text' : '🖼️ Image'}
         </span>
       </div>
@@ -272,7 +272,7 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
           value={item.content as string}
           onChange={(e) => onUpdate(e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-white text-purple-800 placeholder-purple-400 resize-none text-sm"
+          className="w-full px-3 py-2 border-2 border-purple-200 dark:border-purple-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-background text-foreground placeholder-purple-400 dark:placeholder-purple-300 resize-none text-sm transition-colors"
           placeholder="Enter your text... ✨"
         />
       ) : (
@@ -280,26 +280,26 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all ${
             isDragActive
-              ? 'border-purple-400 bg-purple-100/50 scale-105'
-              : 'border-purple-200 hover:border-purple-400 hover:bg-purple-50/30'
+              ? 'border-purple-400 bg-purple-100/50 dark:bg-purple-800/50 scale-105'
+              : 'border-purple-200 dark:border-purple-600 hover:border-purple-400 hover:bg-purple-50/30 dark:hover:bg-purple-800/30'
           }`}
         >
           <input {...getInputProps()} />
           {item.content ? (
             <div>
-              <img 
-                src={item.content instanceof File ? URL.createObjectURL(item.content) : item.content as string} 
-                alt="Preview" 
-                className="max-w-full h-20 object-cover mx-auto rounded-lg border-2 border-purple-200 shadow-sm" 
+              <img
+                src={item.content instanceof File ? URL.createObjectURL(item.content) : item.content as string}
+                alt="Preview"
+                className="max-w-full h-20 object-cover mx-auto rounded-lg border-2 border-purple-200 shadow-sm"
               />
-              <p className="text-xs text-purple-600 mt-2">
+              <p className="text-xs text-purple-600 dark:text-purple-300 mt-2 transition-colors">
                 ✨ Click to change ✨
               </p>
             </div>
           ) : (
             <div>
-              <Upload className="mx-auto h-8 w-8 text-purple-400 mb-2" />
-              <p className="text-purple-600 text-xs">
+              <Upload className="mx-auto h-8 w-8 text-purple-400 dark:text-purple-300 mb-2 transition-colors" />
+              <p className="text-purple-600 dark:text-purple-300 text-xs transition-colors">
                 {isDragActive ? '🌟 Drop here! 🌟' : '📸 Click or drop image ✨'}
               </p>
             </div>

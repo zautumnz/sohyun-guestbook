@@ -65,8 +65,8 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
 
       {/* Content loading overlay */}
       {!isContentReady && (
-        <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-20">
-          <div className="text-purple-400 text-2xl">✨</div>
+        <div className="absolute inset-0 bg-background/50 dark:bg-background/70 flex items-center justify-center z-20">
+          <div className="text-purple-400 dark:text-purple-300 text-2xl">✨</div>
         </div>
       )}
       {/* Kawaii decorative stars */}
@@ -161,12 +161,12 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   <img
                     src={`/storage/images/${item.content}`}
                     alt="Guest entry"
-                    className="max-w-full h-32 object-cover rounded-lg shadow-md border-2 border-purple-100 cursor-pointer hover:border-purple-300 hover:shadow-lg transition-all"
+                    className="max-w-full h-32 object-cover rounded-lg shadow-md border-2 border-purple-100 dark:border-purple-600 cursor-pointer hover:border-purple-300 dark:hover:border-purple-400 hover:shadow-lg transition-all"
                     onClick={() => openLightbox(`/storage/images/${item.content}`, `Guest entry by ${item.author}`)}
                     title="Click to view larger"
                   />
                   <div className="absolute -top-1 -right-1 text-purple-300 text-xs">✨</div>
-                  <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity text-purple-600 text-xs">
+                  <div className="absolute top-2 right-2 bg-white/80 dark:bg-background/80 backdrop-blur-sm rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity text-purple-600 dark:text-purple-300 text-xs">
                     🔍
                   </div>
                 </div>
