@@ -2,11 +2,14 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer, Hash } from 'lucide-react'
 import { useGuestbook } from '@/contexts/GuestbookContext'
+import { LightboxProvider, useLightbox } from '@/contexts/LightboxContext'
 import BookPage from './BookPage'
 import AddEntryModal from './AddEntryModal'
+import ImageLightbox from './ImageLightbox'
 
-const Book = () => {
+const BookContent = () => {
   const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage, contentItems } = useGuestbook()
+  const { isOpen, imageSrc, imageAlt, openLightbox, closeLightbox } = useLightbox()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showJumpModal, setShowJumpModal] = useState(false)
   const [jumpPageInput, setJumpPageInput] = useState('')
@@ -94,7 +97,9 @@ const Book = () => {
         <img
           src="/assets/chibi.jpg"
           alt="Chibi Sohyun"
-          className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300"
+          className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300 cursor-pointer"
+          onClick={() => openLightbox("/assets/chibi.jpg", "Chibi Sohyun")}
+          title="Click to view larger"
         />
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -303,10 +308,25 @@ const Book = () => {
         )}
       </AnimatePresence>
 
+      <ImageLightbox
+        src={imageSrc}
+        alt={imageAlt}
+        isOpen={isOpen}
+        onClose={closeLightbox}
+      />
+
       <footer className="text-center text-purple-600 text-xs sm:text-sm font-medium py-4 mt-auto">
         Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 transition-colors">zautumn</a>
       </footer>
     </div>
+  )
+}
+
+const Book = () => {
+  return (
+    <LightboxProvider>
+      <BookContent />
+    </LightboxProvider>
   )
 }
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useGuestbook } from '@/contexts/GuestbookContext'
+import { useLightbox } from '@/contexts/LightboxContext'
 import { Calendar, User, Trash2 } from 'lucide-react'
 import type { ContentItemWithMeta } from '@/contexts/GuestbookContext'
 
@@ -11,6 +12,7 @@ interface BookPageProps {
 
 const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
   const { contentItems, deleteEntry } = useGuestbook()
+  const { openLightbox } = useLightbox()
   const [showDeleteButtons, setShowDeleteButtons] = useState(false)
   const [isContentReady, setIsContentReady] = useState(false)
 
@@ -159,9 +161,14 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   <img
                     src={`/storage/images/${item.content}`}
                     alt="Guest entry"
-                    className="max-w-full h-32 object-cover rounded-lg shadow-md border-2 border-purple-100"
+                    className="max-w-full h-32 object-cover rounded-lg shadow-md border-2 border-purple-100 cursor-pointer hover:border-purple-300 hover:shadow-lg transition-all"
+                    onClick={() => openLightbox(`/storage/images/${item.content}`, `Guest entry by ${item.author}`)}
+                    title="Click to view larger"
                   />
                   <div className="absolute -top-1 -right-1 text-purple-300 text-xs">✨</div>
+                  <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity text-purple-600 text-xs">
+                    🔍
+                  </div>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-purple-600 bg-purple-50/50 rounded-lg sm:rounded-full px-3 sm:px-4 py-2">
                   <div className="flex items-center gap-2">
