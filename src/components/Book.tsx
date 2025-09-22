@@ -95,13 +95,12 @@ const BookContent = () => {
       <div className="kawaii-star absolute bottom-40 left-20 text-lg">✨</div>
 
       {/* Chibi image in upper right */}
-      <div className="absolute top-8 right-8 z-10 hidden sm:flex flex-col items-center gap-3">
+      <div className="absolute top-8 right-4 z-10 hidden sm:flex flex-col items-center gap-3">
         <img
+          style={{ width: '100%' }}
           src="/assets/chibi.jpg"
           alt="Chibi Sohyun"
-          className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300 cursor-pointer"
-          onClick={() => openLightbox("/assets/chibi.jpg", "Chibi Sohyun")}
-          title="Click to view larger"
+          className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300"
         />
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -111,12 +110,12 @@ const BookContent = () => {
           title="Print all entries to PDF"
         >
           <Printer size={12} />
-          🖨️ PDF
+          PDF
         </motion.button>
       </div>
 
       {/* Theme toggle in upper right - always visible */}
-      <div className="absolute top-8 right-8 z-10 flex sm:hidden flex-col items-center gap-3">
+      <div className="absolute top-8 right-4 z-10 flex sm:hidden flex-col items-center gap-3">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -124,13 +123,13 @@ const BookContent = () => {
           className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
           title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
         >
-          {isDark ? <Sun size={14} /> : <Moon size={14} />}
+          {isDark ? <Sun size={12} /> : <Moon size={12} />}
           <span className="hidden sm:inline">{isDark ? '#lightmode' : '#darkmode'}</span>
         </motion.button>
       </div>
 
       {/* Theme toggle for desktop - positioned under PDF */}
-      <div className="absolute top-44 right-8 z-10 hidden sm:flex flex-col items-center gap-3">
+      <div className="absolute top-44 right-4 z-10 hidden sm:flex flex-col items-center gap-3">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -346,7 +345,8 @@ const BookContent = () => {
       />
 
       <footer className="text-center text-purple-600 dark:text-purple-300 text-xs sm:text-sm font-medium py-4 mt-auto">
-        Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">zautumn</a>
+        Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">zautumn</a>{' '}
+        and <a target="_blank" href="https://apollo.cafe/@joeywerepyre" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">joeywerepyre</a>
       </footer>
     </div>
   )

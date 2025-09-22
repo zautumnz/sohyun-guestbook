@@ -152,7 +152,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                     </TooltipTrigger>
                     <TooltipContent side="left" className="max-w-48">
                       <p className="text-xs">
-                        This is part {groupInfo.itemIndex + 1} of {groupInfo.totalItems} in a multi-item entry by <span className="font-semibold">{item.author}</span>
+                        Part {groupInfo.itemIndex + 1} of {groupInfo.totalItems} of <span className="font-semibold">{item.author}</span>'s entry
                       </p>
                     </TooltipContent>
                   </Tooltip>
