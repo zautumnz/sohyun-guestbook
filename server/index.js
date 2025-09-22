@@ -73,6 +73,15 @@ const saveImage = (base64Data, entryId) => {
 
     const imageType = matches[1]
     const imageData = matches[2]
+    
+    // Check file size (base64 is ~33% larger than original, so we check the base64 size)
+    const sizeInBytes = (imageData.length * 3) / 4
+    const maxSizeInBytes = 50 * 1024 * 1024 // 50MB
+    
+    if (sizeInBytes > maxSizeInBytes) {
+      throw new Error('Image size exceeds 50MB limit')
+    }
+    
     const filename = `${entryId}.${imageType}`
     const filePath = path.join(IMAGES_DIR, filename)
 
@@ -218,14 +227,21 @@ app.post('/entry', (req, res) => {
     for (let i = 0; i < content.length; i++) {
       const item = content[i]
       if (item.type === 'image') {
-        const imageFilename = saveImage(item.content, `${entryId}_${i}`)
-        if (!imageFilename) {
-          return res.status(500).json({ error: 'Failed to save image' })
+        try {
+          const imageFilename = saveImage(item.content, `${entryId}_${i}`)
+          if (!imageFilename) {
+            return res.status(500).json({ error: 'Failed to save image' })
+          }
+          processedContent.push({
+            type: 'image',
+            content: imageFilename
+          })
+        } catch (error) {
+          if (error.message === 'Image size exceeds 50MB limit') {
+            return res.status(400).json({ error: 'Image size exceeds 50MB limit. Please choose a smaller image.' })
+          }
+          return res.status(500).json({ error: 'Failed to process image: ' + error.message })
         }
-        processedContent.push({
-          type: 'image',
-          content: imageFilename
-        })
       } else {
         processedContent.push({
           type: 'text',

@@ -17,6 +17,14 @@ interface ContentItemInput {
   id: string;
 }
 
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
 const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
   const { addEntry } = useGuestbook()
   const { toast } = useToast()
@@ -96,9 +104,19 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
       setContentItems([{ type: 'text', content: '', id: 'item-0' }])
       onClose()
     } catch (error) {
+      let errorMessage = "Something went wrong"
+      
+      if (error instanceof Error) {
+        errorMessage = error.message
+        // Check if it's a server response error about file size
+        if (errorMessage.includes('Image size exceeds 50MB limit')) {
+          errorMessage = "One or more images exceed the 50MB size limit. Please choose smaller images."
+        }
+      }
+      
       toast({
         title: "Failed to add entry",
-        description: error instanceof Error ? error.message : "Something went wrong",
+        description: errorMessage,
         variant: "destructive"
       })
     } finally {
@@ -233,9 +251,41 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
   onRemove,
   canRemove
 }) => {
-  const onDrop = (acceptedFiles: File[]) => {
+  const { toast } = useToast()
+
+  const onDrop = (acceptedFiles: File[], rejectedFiles: {file: File, errors: {code: string, message: string}[]}[]) => {
+    // Check for rejected files first
+    if (rejectedFiles.length > 0) {
+      const rejection = rejectedFiles[0]
+      if (rejection.errors.some((error) => error.code === 'file-too-large')) {
+        toast({
+          title: "File too large",
+          description: `Image must be smaller than 50MB. Your file is ${formatFileSize(rejection.file.size)}.`,
+          variant: "destructive"
+        })
+        return
+      }
+      
+      // Handle other rejection reasons
+      toast({
+        title: "File not accepted",
+        description: "Please select a valid image file (JPEG, PNG, GIF).",
+        variant: "destructive"
+      })
+      return
+    }
+    
     const file = acceptedFiles[0]
     if (file) {
+      // Additional client-side size check as backup
+      if (file.size > 50 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: `Image must be smaller than 50MB. Your file is ${formatFileSize(file.size)}.`,
+          variant: "destructive"
+        })
+        return
+      }
       onUpdate(file)
     }
   }
@@ -245,7 +295,8 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.gif']
     },
-    maxFiles: 1
+    maxFiles: 1,
+    maxSize: 50 * 1024 * 1024 // 50MB in bytes
   })
 
   return (
@@ -292,6 +343,14 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
                 alt="Preview"
                 className="max-w-full h-20 object-cover mx-auto rounded-lg border-2 border-purple-200 shadow-sm"
               />
+              {item.content instanceof File && (
+                <p className="text-xs text-purple-500 dark:text-purple-400 mt-1 transition-colors">
+                  📏 {formatFileSize(item.content.size)}
+                  {item.content.size > 50 * 1024 * 1024 && (
+                    <span className="text-red-500 ml-1">⚠️ Too large!</span>
+                  )}
+                </p>
+              )}
               <p className="text-xs text-purple-600 dark:text-purple-300 mt-2 transition-colors">
                 ✨ Click to change ✨
               </p>
