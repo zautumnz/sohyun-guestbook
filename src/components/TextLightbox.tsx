@@ -76,9 +76,6 @@ const TextLightbox: React.FC<TextLightboxProps> = ({ content, author, isOpen, on
                   <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-200">
                     {author}'s Message
                   </h3>
-                  <p className="text-sm text-purple-600 dark:text-purple-400">
-                    Full entry content
-                  </p>
                 </div>
               </div>
             </div>
