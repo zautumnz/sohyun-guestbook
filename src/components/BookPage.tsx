@@ -252,7 +252,10 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   )}
                   {showDeleteButtons && (
                     <button
-                      onClick={() => handleDelete(item.entryId)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDelete(item.entryId)
+                      }}
                       className="absolute top-3 right-3 p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl z-10"
                       title="Delete entry"
                     >
