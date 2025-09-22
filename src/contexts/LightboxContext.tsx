@@ -4,11 +4,14 @@ interface LightboxContextType {
   isOpen: boolean
   imageSrc: string
   imageAlt: string
+  imageAuthor: string
+  imageAvatarImage: string
   textContent: string
   textAuthor: string
+  textAvatarImage: string
   contentType: 'image' | 'text'
-  openLightbox: (src: string, alt: string) => void
-  openTextLightbox: (content: string, author: string) => void
+  openLightbox: (src: string, alt: string, author: string, avatarImage: string) => void
+  openTextLightbox: (content: string, author: string, avatarImage: string) => void
   closeLightbox: () => void
 }
 
@@ -22,20 +25,26 @@ export const LightboxProvider: React.FC<LightboxProviderProps> = ({ children }) 
   const [isOpen, setIsOpen] = useState(false)
   const [imageSrc, setImageSrc] = useState('')
   const [imageAlt, setImageAlt] = useState('')
+  const [imageAuthor, setImageAuthor] = useState('')
+  const [imageAvatarImage, setImageAvatarImage] = useState('')
   const [textContent, setTextContent] = useState('')
   const [textAuthor, setTextAuthor] = useState('')
+  const [textAvatarImage, setTextAvatarImage] = useState('')
   const [contentType, setContentType] = useState<'image' | 'text'>('image')
 
-  const openLightbox = (src: string, alt: string) => {
+  const openLightbox = (src: string, alt: string, author: string, avatarImage: string) => {
     setImageSrc(src)
     setImageAlt(alt)
+    setImageAuthor(author)
+    setImageAvatarImage(avatarImage)
     setContentType('image')
     setIsOpen(true)
   }
 
-  const openTextLightbox = (content: string, author: string) => {
+  const openTextLightbox = (content: string, author: string, avatarImage: string) => {
     setTextContent(content)
     setTextAuthor(author)
+    setTextAvatarImage(avatarImage)
     setContentType('text')
     setIsOpen(true)
   }
@@ -46,8 +55,11 @@ export const LightboxProvider: React.FC<LightboxProviderProps> = ({ children }) 
     setTimeout(() => {
       setImageSrc('')
       setImageAlt('')
+      setImageAuthor('')
+      setImageAvatarImage('')
       setTextContent('')
       setTextAuthor('')
+      setTextAvatarImage('')
     }, 300)
   }
 
@@ -55,8 +67,11 @@ export const LightboxProvider: React.FC<LightboxProviderProps> = ({ children }) 
     isOpen,
     imageSrc,
     imageAlt,
+    imageAuthor,
+    imageAvatarImage,
     textContent,
     textAuthor,
+    textAvatarImage,
     contentType,
     openLightbox,
     openTextLightbox,

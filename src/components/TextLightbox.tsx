@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, User } from 'lucide-react'
+import { X } from 'lucide-react'
 
 interface TextLightboxProps {
   content: string
   author: string
+  avatarImage: string
   isOpen: boolean
   onClose: () => void
 }
 
-const TextLightbox: React.FC<TextLightboxProps> = ({ content, author, isOpen, onClose }) => {
+const TextLightbox: React.FC<TextLightboxProps> = ({ content, author, avatarImage, isOpen, onClose }) => {
   // Handle escape key to close
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -69,8 +70,12 @@ const TextLightbox: React.FC<TextLightboxProps> = ({ content, author, isOpen, on
             {/* Header */}
             <div className="p-6 border-b border-purple-200 dark:border-purple-600">
               <div className="flex items-center gap-3">
-                <div className="kawaii-border bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-700 dark:to-indigo-700 rounded-full p-2">
-                  <User size={20} className="text-purple-600 dark:text-purple-300" />
+                <div style={{ borderRadius: '9999px' }} className="rounded-full kawaii-border bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-700 dark:to-indigo-700 p-2">
+                  <img
+                    src={`/assets/drawings/${avatarImage}`}
+                    alt="Author avatar"
+                    className="w-14 h-14 rounded-full object-cover border border-purple-300/50"
+                  />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-200">

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import { useLightbox } from '@/contexts/LightboxContext'
-import { Calendar, User, Trash2, Eye } from 'lucide-react'
+import { Calendar, Trash2, Eye } from 'lucide-react'
 import type { ContentItemWithMeta } from '@/contexts/GuestbookContext'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
@@ -48,6 +48,12 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
   const getEntryColorIndex = (entryId: string) => {
     const uniqueEntryIds = [...new Set(contentItems.map(item => item.entryId))].sort()
     return uniqueEntryIds.indexOf(entryId) % 3 // Cycle through 3 color variants
+  }
+
+  // Get drawing image index for consistent avatar across entries
+  const getDrawingIndex = (entryId: string) => {
+    const uniqueEntryIds = [...new Set(contentItems.map(item => item.entryId))].sort()
+    return (uniqueEntryIds.indexOf(entryId) % 8) + 1 // Cycle through 1-8
   }
 
   // Get content items for this side
@@ -175,7 +181,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                 <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 relative group transition-all flex-1 cursor-pointer ${
                   groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
                 } hover:shadow-lg`}
-                onClick={() => openTextLightbox(item.content, item.author)}>
+                onClick={() => openTextLightbox(item.content, item.author, `${getDrawingIndex(item.entryId)}.png`)}>
                   {/* Group border highlight */}
                   {groupInfo.isGrouped && (
                     <div className={`group-border group-border-${colorIndex} ${
@@ -218,7 +224,11 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   </div>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-lg sm:rounded-full px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <User size={10} className="text-purple-400" />
+                      <img
+                        src={`/assets/drawings/${getDrawingIndex(item.entryId)}.png`}
+                        alt="Author avatar"
+                        className="w-8 h-8 rounded-full object-cover border border-purple-300/50"
+                      />
                       <span className="font-medium truncate">{item.author}</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -228,9 +238,10 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   </div>
                 </div>
               ) : (
-                <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 relative group transition-all flex-1 ${
+                <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 relative group transition-all flex-1 cursor-pointer ${
                   groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
-                }`}>
+                } hover:shadow-lg`}
+                onClick={() => openLightbox(`/storage/images/${item.content}`, `Guest entry by ${item.author}`, item.author, `${getDrawingIndex(item.entryId)}.png`)}>
                   {/* Group border highlight */}
                   {groupInfo.isGrouped && (
                     <div className={`group-border group-border-${colorIndex} ${
@@ -252,8 +263,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                     <img
                       src={`/storage/images/${item.content}`}
                       alt="Guest entry"
-                      className="max-w-full h-24 object-cover rounded-lg shadow-md border-2 border-purple-100 dark:border-purple-600 cursor-pointer hover:border-purple-300 dark:hover:border-purple-400 hover:shadow-lg transition-all"
-                      onClick={() => openLightbox(`/storage/images/${item.content}`, `Guest entry by ${item.author}`)}
+                      className="max-w-full h-24 object-cover rounded-lg shadow-md border-2 border-purple-100 dark:border-purple-600 hover:border-purple-300 dark:hover:border-purple-400 hover:shadow-lg transition-all"
                       title="Click to view larger"
                     />
                     <div className="absolute -top-1 -right-1 text-purple-300 text-xs">✨</div>
@@ -263,7 +273,11 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   </div>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-lg sm:rounded-full px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <User size={10} className="text-purple-400" />
+                      <img
+                        src={`/assets/drawings/${getDrawingIndex(item.entryId)}.png`}
+                        alt="Author avatar"
+                        className="w-8 h-8 rounded-full object-cover border border-purple-300/50"
+                      />
                       <span className="font-medium truncate">{item.author}</span>
                     </div>
                     <div className="flex items-center gap-2">

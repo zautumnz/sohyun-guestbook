@@ -11,7 +11,7 @@ import TextLightbox from './TextLightbox'
 
 const BookContent = () => {
   const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage, contentItems } = useGuestbook()
-  const { isOpen, imageSrc, imageAlt, textContent, textAuthor, contentType, openLightbox, closeLightbox } = useLightbox()
+  const { isOpen, imageSrc, imageAlt, imageAuthor, imageAvatarImage, textContent, textAuthor, textAvatarImage, contentType, openLightbox, closeLightbox } = useLightbox()
   const { isDark, toggleTheme } = useTheme()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showJumpModal, setShowJumpModal] = useState(false)
@@ -342,6 +342,8 @@ const BookContent = () => {
         <ImageLightbox
           src={imageSrc}
           alt={imageAlt}
+          author={imageAuthor}
+          avatarImage={imageAvatarImage}
           isOpen={isOpen}
           onClose={closeLightbox}
         />
@@ -349,6 +351,7 @@ const BookContent = () => {
         <TextLightbox
           content={textContent}
           author={textAuthor}
+          avatarImage={textAvatarImage}
           isOpen={isOpen}
           onClose={closeLightbox}
         />
