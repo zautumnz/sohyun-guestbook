@@ -139,7 +139,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
       )}
 
       {/* Content Items */}
-      <div className="relative z-10 space-y-4 lg:space-y-6 xl:space-y-8">
+      <div className="relative z-10 space-y-2 lg:space-y-3 xl:space-y-6 2xl:space-y-10">
         {pageItems.map((item, index) => {
           const groupInfo = getGroupInfo(item)
           const colorIndex = getEntryColorIndex(item.entryId)

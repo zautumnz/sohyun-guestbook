@@ -808,7 +808,7 @@
     border: 1pt solid #ccc !important;
     border-radius: 8pt !important;
     padding: 12pt !important;
-    background: #fafafa !important;
+    background: white !important;
     margin-bottom: 10pt !important;
     position: relative !important;
     min-height: 80pt !important;
@@ -847,7 +847,7 @@
     border: 1pt solid #ccc !important;
     border-radius: 8pt !important;
     padding: 12pt !important;
-    background: #fafafa !important;
+    background: white !important;
     margin-bottom: 15pt !important;
     position: relative !important;
     min-height: 80pt !important;
@@ -927,6 +927,7 @@
 
   .print-image-container {
     width: 100% !important;
+    margin-top: 40pt !important;
     height: 75vh !important;
     display: flex !important;
     justify-content: center !important;
