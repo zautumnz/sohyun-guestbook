@@ -44,6 +44,12 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
     }
   }
 
+  // Get unique entry IDs in current page for color alternation
+  const getEntryColorIndex = (entryId: string) => {
+    const uniqueEntryIds = [...new Set(pageItems.map(item => item.entryId))].sort()
+    return uniqueEntryIds.indexOf(entryId) % 3 // Cycle through 3 color variants
+  }
+
   // Get content items for this side
   let pageItems: ContentItemWithMeta[]
   if (side === 'single') {
@@ -130,6 +136,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
       <div className="relative z-10 space-y-4">
         {pageItems.map((item, index) => {
           const groupInfo = getGroupInfo(item)
+          const colorIndex = getEntryColorIndex(item.entryId)
 
           return (
             <motion.div
@@ -145,7 +152,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   {/* Group badge */}
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className="group-badge cursor-help">
+                      <div className={`group-badge cursor-help group-badge-${colorIndex}`}>
                         <span className="text-xs">{groupInfo.groupIcon}</span>
                         <span>{groupInfo.itemIndex + 1}/{groupInfo.totalItems}</span>
                       </div>
@@ -159,19 +166,19 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
 
                   {/* Connecting line to next item in group */}
                   {!groupInfo.isLast && (
-                    <div className="group-connecting-line" />
+                    <div className={`group-connecting-line group-connecting-line-${colorIndex}`} />
                   )}
                 </div>
               )}
 
               {item.type === 'text' ? (
-                <div className={`kawaii-entry p-4 relative group transition-all flex-1 cursor-pointer ${
+                <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 relative group transition-all flex-1 cursor-pointer ${
                   groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
                 } hover:shadow-lg`}
                 onClick={() => openTextLightbox(item.content, item.author)}>
                   {/* Group border highlight */}
                   {groupInfo.isGrouped && (
-                    <div className={`group-border ${
+                    <div className={`group-border group-border-${colorIndex} ${
                       groupInfo.isFirst ? 'group-border-first' :
                       groupInfo.isLast ? 'group-border-last' :
                       'group-border-middle'
@@ -221,12 +228,12 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   </div>
                 </div>
               ) : (
-                <div className={`kawaii-entry p-4 relative group transition-all flex-1 ${
+                <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 relative group transition-all flex-1 ${
                   groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
                 }`}>
                   {/* Group border highlight */}
                   {groupInfo.isGrouped && (
-                    <div className={`group-border ${
+                    <div className={`group-border group-border-${colorIndex} ${
                       groupInfo.isFirst ? 'group-border-first' :
                       groupInfo.isLast ? 'group-border-last' :
                       'group-border-middle'

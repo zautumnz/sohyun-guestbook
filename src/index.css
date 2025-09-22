@@ -605,6 +605,122 @@
   background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
 }
 
+/* Alternating colors for entry groups */
+.kawaii-entry-0 {
+  /* Default purple theme - already defined above */
+}
+
+.kawaii-entry-1 {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(244, 248, 255, 0.9) 100%);
+  border: 2px solid rgba(96, 165, 250, 0.2);
+  box-shadow:
+    0 4px 15px rgba(96, 165, 250, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.kawaii-entry-2 {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 244, 248, 0.9) 100%);
+  border: 2px solid rgba(244, 114, 182, 0.2);
+  box-shadow:
+    0 4px 15px rgba(244, 114, 182, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Dark mode alternating colors */
+.dark .kawaii-entry-1 {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+  border: 2px solid rgba(96, 165, 250, 0.4);
+  box-shadow:
+    0 4px 15px rgba(96, 165, 250, 0.2),
+    inset 0 1px 0 rgba(147, 197, 253, 0.3);
+}
+
+.dark .kawaii-entry-2 {
+  background: linear-gradient(135deg, rgba(24, 24, 27, 0.9) 0%, rgba(39, 39, 42, 0.9) 100%);
+  border: 2px solid rgba(244, 114, 182, 0.4);
+  box-shadow:
+    0 4px 15px rgba(244, 114, 182, 0.2),
+    inset 0 1px 0 rgba(251, 207, 232, 0.3);
+}
+
+/* Alternating colors for group badges */
+.group-badge-0 {
+  /* Default purple-pink gradient - already defined above */
+}
+
+.group-badge-1 {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.group-badge-2 {
+  background: linear-gradient(135deg, #f472b6 0%, #be185d 100%);
+  box-shadow: 0 2px 8px rgba(244, 114, 182, 0.3);
+}
+
+/* Alternating colors for group borders */
+.group-border-1.group-border-first {
+  border-color: rgb(147 197 253) rgb(147 197 253) rgb(191 219 254) rgb(147 197 253);
+}
+
+.group-border-1.group-border-middle {
+  border-color: rgb(191 219 254) rgb(147 197 253) rgb(191 219 254) rgb(147 197 253);
+}
+
+.group-border-1.group-border-last {
+  border-color: rgb(191 219 254) rgb(147 197 253) rgb(147 197 253) rgb(147 197 253);
+}
+
+.group-border-2.group-border-first {
+  border-color: rgb(251 207 232) rgb(251 207 232) rgb(252 231 243) rgb(251 207 232);
+}
+
+.group-border-2.group-border-middle {
+  border-color: rgb(252 231 243) rgb(251 207 232) rgb(252 231 243) rgb(251 207 232);
+}
+
+.group-border-2.group-border-last {
+  border-color: rgb(252 231 243) rgb(251 207 232) rgb(251 207 232) rgb(251 207 232);
+}
+
+/* Dark mode alternating group borders */
+.dark .group-border-1.group-border-first {
+  border-color: rgb(59 130 246) rgb(59 130 246) rgb(37 99 235) rgb(59 130 246);
+}
+
+.dark .group-border-1.group-border-middle {
+  border-color: rgb(37 99 235) rgb(59 130 246) rgb(37 99 235) rgb(59 130 246);
+}
+
+.dark .group-border-1.group-border-last {
+  border-color: rgb(37 99 235) rgb(59 130 246) rgb(59 130 246) rgb(59 130 246);
+}
+
+.dark .group-border-2.group-border-first {
+  border-color: rgb(244 114 182) rgb(244 114 182) rgb(190 24 93) rgb(244 114 182);
+}
+
+.dark .group-border-2.group-border-middle {
+  border-color: rgb(190 24 93) rgb(244 114 182) rgb(190 24 93) rgb(244 114 182);
+}
+
+.dark .group-border-2.group-border-last {
+  border-color: rgb(190 24 93) rgb(244 114 182) rgb(244 114 182) rgb(244 114 182);
+}
+
+/* Alternating group connecting lines */
+.group-connecting-line-0 {
+  background: linear-gradient(to bottom, rgba(168, 85, 247, 0.6) 0%, rgba(236, 72, 153, 0.6) 100%);
+}
+
+.group-connecting-line-1 {
+  background: linear-gradient(to bottom, rgba(59, 130, 246, 0.6) 0%, rgba(29, 78, 216, 0.6) 100%);
+}
+
+.group-connecting-line-2 {
+  background: linear-gradient(to bottom, rgba(244, 114, 182, 0.6) 0%, rgba(190, 24, 93, 0.6) 100%);
+}
+
 /* Lace border effect */
 .lace-border {
   background-image:
