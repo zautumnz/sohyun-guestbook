@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import { useLightbox } from '@/contexts/LightboxContext'
-import { Calendar, User, Trash2 } from 'lucide-react'
+import { Calendar, User, Trash2, Eye } from 'lucide-react'
 import type { ContentItemWithMeta } from '@/contexts/GuestbookContext'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
@@ -13,7 +13,7 @@ interface BookPageProps {
 
 const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
   const { contentItems, deleteEntry } = useGuestbook()
-  const { openLightbox } = useLightbox()
+  const { openLightbox, openTextLightbox } = useLightbox()
   const [showDeleteButtons, setShowDeleteButtons] = useState(false)
   const [isContentReady, setIsContentReady] = useState(false)
 
@@ -47,14 +47,14 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
   // Get content items for this side
   let pageItems: ContentItemWithMeta[]
   if (side === 'single') {
-    // Mobile: 2 items per page
-    const startIndex = pageNumber * 2
-    pageItems = contentItems.slice(startIndex, startIndex + 2)
+    // Mobile: 3 items per page
+    const startIndex = pageNumber * 3
+    pageItems = contentItems.slice(startIndex, startIndex + 3)
   } else {
-    // Desktop: 2 items per side, 4 per spread
-    const spreadStartIndex = pageNumber * 4
-    const sideStartIndex = side === 'left' ? spreadStartIndex : spreadStartIndex + 2
-    pageItems = contentItems.slice(sideStartIndex, sideStartIndex + 2)
+    // Desktop: 3 items per side, 6 per spread
+    const spreadStartIndex = pageNumber * 6
+    const sideStartIndex = side === 'left' ? spreadStartIndex : spreadStartIndex + 3
+    pageItems = contentItems.slice(sideStartIndex, sideStartIndex + 3)
   }
 
   // Helper function to check if items are part of the same entry group
@@ -102,11 +102,11 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
 
       {/* Ruled lines for writing */}
       <div className="absolute inset-8 pointer-events-none">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {Array.from({ length: 25 }).map((_, i) => (
           <div
             key={i}
             className="absolute w-full h-px bg-purple-200/20"
-            style={{ top: `${i * 5}%` }}
+            style={{ top: `${i * 4}%` }}
           />
         ))}
       </div>
@@ -127,7 +127,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
       )}
 
       {/* Content Items */}
-      <div className="relative z-10 space-y-6">
+      <div className="relative z-10 space-y-4">
         {pageItems.map((item, index) => {
           const groupInfo = getGroupInfo(item)
 
@@ -165,9 +165,10 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
               )}
 
               {item.type === 'text' ? (
-                <div className={`kawaii-entry p-5 relative group transition-all flex-1 ${
+                <div className={`kawaii-entry p-4 relative group transition-all flex-1 cursor-pointer ${
                   groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
-                }`}>
+                } hover:shadow-lg`}
+                onClick={() => openTextLightbox(item.content, item.author)}>
                   {/* Group border highlight */}
                   {groupInfo.isGrouped && (
                     <div className={`group-border ${
@@ -178,36 +179,49 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   )}
                   {showDeleteButtons && (
                     <button
-                      onClick={() => handleDelete(item.entryId)}
-                      className="absolute top-3 right-3 p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDelete(item.entryId)
+                      }}
+                      className="absolute top-3 right-3 p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl z-10"
                       title="Delete entry"
                     >
                       <Trash2 size={12} />
                     </button>
                   )}
+                  
+                  {/* Text length indicator */}
+                  {item.content.length > 120 && (
+                    <div className="absolute top-3 left-3 bg-purple-100/80 dark:bg-purple-700/80 backdrop-blur-sm rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Eye size={12} className="text-purple-600 dark:text-purple-300" />
+                    </div>
+                  )}
+                  
                   <div className="mb-3">
                     <div className="text-purple-800 dark:text-purple-200 font-serif leading-relaxed text-sm sm:text-base">
-                      "{item.content.split('\n').map((line, index) => (
-                        <React.Fragment key={index}>
-                          {line}
-                          {index < item.content.split('\n').length - 1 && <br />}
-                        </React.Fragment>
-                      ))}"
+                      <div className="max-h-[60px] overflow-hidden relative">
+                        "{item.content.substring(0, 120)}{item.content.length > 120 ? '...' : ''}"
+                        {item.content.length > 120 && (
+                          <div className="absolute bottom-0 right-0 bg-gradient-to-l from-purple-50 dark:from-slate-800 to-transparent px-2 text-purple-500 dark:text-purple-400 text-xs">
+                            click to read more
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-lg sm:rounded-full px-3 sm:px-4 py-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-lg sm:rounded-full px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <User size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
-                      <span className="font-medium">{item.author}</span>
+                      <User size={10} className="text-purple-400" />
+                      <span className="font-medium truncate">{item.author}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Calendar size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
+                      <Calendar size={10} className="text-purple-400" />
                       <span>{item.timestamp.toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className={`kawaii-entry p-5 relative group transition-all flex-1 ${
+                <div className={`kawaii-entry p-4 relative group transition-all flex-1 ${
                   groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
                 }`}>
                   {/* Group border highlight */}
@@ -231,7 +245,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                     <img
                       src={`/storage/images/${item.content}`}
                       alt="Guest entry"
-                      className="max-w-full h-32 object-cover rounded-lg shadow-md border-2 border-purple-100 dark:border-purple-600 cursor-pointer hover:border-purple-300 dark:hover:border-purple-400 hover:shadow-lg transition-all"
+                      className="max-w-full h-24 object-cover rounded-lg shadow-md border-2 border-purple-100 dark:border-purple-600 cursor-pointer hover:border-purple-300 dark:hover:border-purple-400 hover:shadow-lg transition-all"
                       onClick={() => openLightbox(`/storage/images/${item.content}`, `Guest entry by ${item.author}`)}
                       title="Click to view larger"
                     />
@@ -240,13 +254,13 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                       🔍
                     </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-lg sm:rounded-full px-3 sm:px-4 py-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-lg sm:rounded-full px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <User size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
-                      <span className="font-medium">{item.author}</span>
+                      <User size={10} className="text-purple-400" />
+                      <span className="font-medium truncate">{item.author}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Calendar size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
+                      <Calendar size={10} className="text-purple-400" />
                       <span>{item.timestamp.toLocaleDateString()}</span>
                     </div>
                   </div>

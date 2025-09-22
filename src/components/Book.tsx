@@ -7,10 +7,11 @@ import { useTheme } from '@/contexts/ThemeContext'
 import BookPage from './BookPage'
 import AddEntryModal from './AddEntryModal'
 import ImageLightbox from './ImageLightbox'
+import TextLightbox from './TextLightbox'
 
 const BookContent = () => {
   const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage, contentItems } = useGuestbook()
-  const { isOpen, imageSrc, imageAlt, openLightbox, closeLightbox } = useLightbox()
+  const { isOpen, imageSrc, imageAlt, textContent, textAuthor, contentType, openLightbox, closeLightbox } = useLightbox()
   const { isDark, toggleTheme } = useTheme()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showJumpModal, setShowJumpModal] = useState(false)
@@ -32,10 +33,10 @@ const BookContent = () => {
       // Desktop: Convert individual page number to spread number
       // Page 1-2 -> spread 0, Page 3-4 -> spread 1, etc.
       targetSpread = Math.floor((inputPageNum - 1) / 2)
-  } else {
+    } else {
       // Mobile: Direct page to spread mapping
       targetSpread = inputPageNum - 1
-  }
+    }
 
     if (targetSpread >= 0 && targetSpread < totalPages) {
       setIsPageTransitioning(true)
@@ -337,12 +338,21 @@ const BookContent = () => {
         )}
       </AnimatePresence>
 
-      <ImageLightbox
-        src={imageSrc}
-        alt={imageAlt}
-        isOpen={isOpen}
-        onClose={closeLightbox}
-      />
+      {contentType === 'image' ? (
+        <ImageLightbox
+          src={imageSrc}
+          alt={imageAlt}
+          isOpen={isOpen}
+          onClose={closeLightbox}
+        />
+      ) : (
+        <TextLightbox
+          content={textContent}
+          author={textAuthor}
+          isOpen={isOpen}
+          onClose={closeLightbox}
+        />
+      )}
 
       <footer className="text-center text-purple-600 dark:text-purple-300 text-xs sm:text-sm font-medium py-4 mt-auto">
         Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">zautumn</a>{' '}

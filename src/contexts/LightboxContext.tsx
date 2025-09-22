@@ -4,7 +4,11 @@ interface LightboxContextType {
   isOpen: boolean
   imageSrc: string
   imageAlt: string
+  textContent: string
+  textAuthor: string
+  contentType: 'image' | 'text'
   openLightbox: (src: string, alt: string) => void
+  openTextLightbox: (content: string, author: string) => void
   closeLightbox: () => void
 }
 
@@ -18,19 +22,32 @@ export const LightboxProvider: React.FC<LightboxProviderProps> = ({ children }) 
   const [isOpen, setIsOpen] = useState(false)
   const [imageSrc, setImageSrc] = useState('')
   const [imageAlt, setImageAlt] = useState('')
+  const [textContent, setTextContent] = useState('')
+  const [textAuthor, setTextAuthor] = useState('')
+  const [contentType, setContentType] = useState<'image' | 'text'>('image')
 
   const openLightbox = (src: string, alt: string) => {
     setImageSrc(src)
     setImageAlt(alt)
+    setContentType('image')
+    setIsOpen(true)
+  }
+
+  const openTextLightbox = (content: string, author: string) => {
+    setTextContent(content)
+    setTextAuthor(author)
+    setContentType('text')
     setIsOpen(true)
   }
 
   const closeLightbox = () => {
     setIsOpen(false)
-    // Clear the image data after animation completes
+    // Clear all data after animation completes
     setTimeout(() => {
       setImageSrc('')
       setImageAlt('')
+      setTextContent('')
+      setTextAuthor('')
     }, 300)
   }
 
@@ -38,7 +55,11 @@ export const LightboxProvider: React.FC<LightboxProviderProps> = ({ children }) 
     isOpen,
     imageSrc,
     imageAlt,
+    textContent,
+    textAuthor,
+    contentType,
     openLightbox,
+    openTextLightbox,
     closeLightbox
   }
 
