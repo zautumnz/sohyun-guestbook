@@ -21,42 +21,58 @@ const PrintableGuestbook = () => {
         </div>
       </div>
 
-      {/* All Content Items Grid */}
-      <div className="print-entries-grid">
-        {contentItems.map((item, index) => (
-          <div key={item.id} className="print-entry">
-            <div className="print-entry-number">#{index + 1}</div>
-
-            {item.type === 'text' ? (
-              <div className="print-text-entry">
-                <div className="print-entry-content">
-                  "{item.content}"
+      {/* All Content Items */}
+      <div className="print-entries-container">
+        {contentItems.map((item, index) => {
+          const previousItem = index > 0 ? contentItems[index - 1] : null
+          const isFirstImage = item.type === 'image' && (!previousItem || previousItem.type === 'text')
+          const isConsecutiveImage = item.type === 'image' && previousItem?.type === 'image'
+          
+          return item.type === 'text' ? (
+            <div key={item.id} className="print-entry print-text-entry">
+              <div className="print-entry-number">#{index + 1}</div>
+              <div className="print-entry-content">
+                "{item.content}"
+              </div>
+              <div className="print-entry-meta">
+                <div className="print-author">
+                  <User size={12} />
+                  <span>{item.author}</span>
                 </div>
-              </div>
-            ) : (
-              <div className="print-image-entry">
-                <div className="print-entry-content">
-                  <img
-                    src={`/storage/images/${item.content}`}
-                    alt="Guest entry"
-                    className="print-image"
-                  />
+                <div className="print-date">
+                  <Calendar size={12} />
+                  <span>{item.timestamp.toLocaleDateString()}</span>
                 </div>
-              </div>
-            )}
-
-            <div className="print-entry-meta">
-              <div className="print-author">
-                <User size={12} />
-                <span>{item.author}</span>
-              </div>
-              <div className="print-date">
-                <Calendar size={12} />
-                <span>{item.timestamp.toLocaleDateString()}</span>
               </div>
             </div>
-          </div>
-        ))}
+          ) : (
+            <div 
+              key={item.id} 
+              className={`print-image-page ${isFirstImage ? 'first-image' : ''} ${isConsecutiveImage ? 'consecutive-image' : ''}`}
+            >
+              <div className="print-image-header">
+                <div className="print-entry-number">#{index + 1}</div>
+                <div className="print-entry-meta">
+                  <div className="print-author">
+                    <User size={12} />
+                    <span>{item.author}</span>
+                  </div>
+                  <div className="print-date">
+                    <Calendar size={12} />
+                    <span>{item.timestamp.toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="print-image-container">
+                <img
+                  src={`/storage/images/${item.content}`}
+                  alt="Guest entry"
+                  className="print-image-full-page"
+                />
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

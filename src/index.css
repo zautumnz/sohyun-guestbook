@@ -372,11 +372,8 @@
     color: #999 !important;
   }
 
-  /* Entries Grid */
-  .print-entries-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 15pt !important;
+  /* Entries Container */
+  .print-entries-container {
     margin-bottom: 30pt !important;
   }
 
@@ -419,24 +416,109 @@
     padding-right: 40pt !important; /* Space for entry number */
   }
 
-  /* Image Entry Styles */
-  .print-image-entry .print-entry-content {
-    margin-bottom: 10pt !important;
-    text-align: center !important;
-    padding-right: 40pt !important; /* Space for entry number */
+  /* Text Entry Styles - Grid Layout */
+  .print-text-entry {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    border: 1pt solid #ccc !important;
+    border-radius: 8pt !important;
+    padding: 12pt !important;
+    background: #fafafa !important;
+    margin-bottom: 15pt !important;
+    position: relative !important;
+    min-height: 80pt !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    width: 48% !important;
+    float: left !important;
+    margin-right: 4% !important;
   }
 
-  .print-image {
+  .print-text-entry:nth-child(even) {
+    float: right !important;
+    margin-right: 0 !important;
+  }
+
+  .print-text-entry:after {
+    content: "" !important;
+    display: table !important;
+    clear: both !important;
+  }
+
+  /* Full Page Image Styles */
+  .print-image-page {
+    page-break-before: auto !important;
+    page-break-after: avoid !important;
+    width: 100% !important;
+    min-height: 90vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    position: relative !important;
+    background: white !important;
+    clear: both !important;
+  }
+
+  /* Force page break only when following text content */
+  .print-text-entry + .print-image-page {
+    page-break-before: always !important;
+  }
+
+  /* Force page break for subsequent images */
+  .print-image-page + .print-image-page {
+    page-break-before: always !important;
+  }
+
+  /* First image after text content - ensure clean break */
+  .print-image-page.first-image {
+    page-break-before: always !important;
+    clear: both !important;
+  }
+
+  /* Consecutive images - ensure they start on new pages */
+  .print-image-page.consecutive-image {
+    page-break-before: always !important;
+  }
+
+  /* If image is the very first item, don't force unnecessary break */
+  .print-entries-container > .print-image-page:first-child {
+    page-break-before: auto !important;
+  }
+
+  .print-image-header {
+    position: absolute !important;
+    top: 20pt !important;
+    left: 20pt !important;
+    right: 20pt !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    z-index: 10 !important;
+  }
+
+  .print-image-container {
+    width: 100% !important;
+    height: 75vh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 20pt !important;
+  }
+
+  .print-image-full-page {
     max-width: 100% !important;
-    max-height: 120pt !important;
+    max-height: 100% !important;
     width: auto !important;
     height: auto !important;
-    border: 1pt solid #ddd !important;
-    border-radius: 4pt !important;
     object-fit: contain !important;
     display: block !important;
     margin: 0 auto !important;
     background: white !important;
+    border: 2pt solid #ddd !important;
+    border-radius: 8pt !important;
+    box-shadow: 0 4pt 8pt rgba(0,0,0,0.1) !important;
     -webkit-print-color-adjust: exact !important;
     color-adjust: exact !important;
   }
@@ -474,21 +556,40 @@
   }
 
   /* Prevent orphaned entries */
-  .print-entry {
-    orphans: 3 !important;
-    widows: 3 !important;
+  .print-text-entry {
+    orphans: 2 !important;
+    widows: 2 !important;
+    page-break-inside: avoid !important;
   }
 
-  /* Ensure proper spacing for large content */
-  .print-entry:nth-child(odd) {
-    page-break-after: auto !important;
+  /* Clear floats every two text entries to prevent layout issues */
+  .print-text-entry:nth-child(2n):after {
+    content: "" !important;
+    display: block !important;
+    clear: both !important;
+    height: 0 !important;
   }
 
   /* Handle single column layout for narrow pages */
   @media print and (max-width: 600pt) {
-    .print-entries-grid {
-      grid-template-columns: 1fr !important;
+    .print-text-entry {
+      width: 100% !important;
+      float: none !important;
+      margin-right: 0 !important;
     }
+  }
+
+  /* Clear floats after all content */
+  .print-entries-container:after {
+    content: "" !important;
+    display: block !important;
+    clear: both !important;
+    height: 0 !important;
+  }
+
+  /* Prevent empty pages at the end */
+  .print-entries-container > *:last-child {
+    page-break-after: avoid !important;
   }
 
   /* Hide screen-only elements completely */
