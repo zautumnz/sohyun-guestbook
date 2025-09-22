@@ -1,23 +1,30 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { guestbookApi, CreateEntryPayload } from '../services/guestbookApi'
+import { guestbookApi, CreateEntryPayload, ContentItem, CreateContentItem } from '../services/guestbookApi'
 
 export interface GuestbookEntry {
   id: string;
-  type: 'text' | 'image';
-  content: string;
+  content: ContentItem[];
   author: string;
   timestamp: Date;
   pageNumber: number;
   position: { x: number; y: number };
 }
 
+export interface ContentItemWithMeta extends ContentItem {
+  id: string;
+  author: string;
+  timestamp: Date;
+  entryId: string;
+}
+
 interface GuestbookContextType {
   entries: GuestbookEntry[];
+  contentItems: ContentItemWithMeta[];
   currentPage: number;
   totalPages: number;
   loading: boolean;
   error: string | null;
-  addEntry: (entry: Omit<GuestbookEntry, 'id' | 'timestamp' | 'pageNumber'>) => Promise<void>;
+  addEntry: (entry: { content: CreateContentItem[]; author: string; position: { x: number; y: number } }) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   setCurrentPage: (page: number) => void;
   goToPage: (page: number) => void;
@@ -34,8 +41,20 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [error, setError] = useState<string | null>(null)
 
   const [currentPage, setCurrentPageState] = useState(0)
-  const entriesPerSpread = 4 // 2 entries per side, 2 sides per spread
-  const totalPages = Math.max(1, Math.ceil(entries.length / entriesPerSpread) + 1)
+
+  // Convert entries to content items for pagination
+  const contentItems: ContentItemWithMeta[] = entries.flatMap(entry =>
+    entry.content.map(item => ({
+      ...item,
+      id: `${entry.id}_${entry.content.indexOf(item)}`,
+      author: entry.author,
+      timestamp: entry.timestamp,
+      entryId: entry.id
+    }))
+  )
+
+  const itemsPerSpread = 4 // 2 items per side, 2 sides per spread
+  const totalPages = Math.max(1, Math.ceil(contentItems.length / itemsPerSpread) + 1)
 
   // Convert API timestamp string to Date object
   const transformApiEntry = (apiEntry: GuestbookEntry & { timestamp: string }): GuestbookEntry => ({
@@ -59,11 +78,10 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }
 
-  const addEntry = async (newEntry: Omit<GuestbookEntry, 'id' | 'timestamp' | 'pageNumber'>) => {
+  const addEntry = async (newEntry: { content: CreateContentItem[]; author: string; position: { x: number; y: number } }) => {
     try {
       setError(null)
       const createPayload: CreateEntryPayload = {
-        type: newEntry.type,
         content: newEntry.content,
         author: newEntry.author,
         position: newEntry.position
@@ -102,14 +120,14 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [])
 
   const setCurrentPage = (page: number) => {
-    const maxPages = Math.max(1, Math.ceil(entries.length / entriesPerSpread) + 1)
+    const maxPages = Math.max(1, Math.ceil(contentItems.length / itemsPerSpread) + 1)
     if (page >= 0 && page < maxPages) {
       setCurrentPageState(page)
     }
   }
 
   const nextPage = () => {
-    const maxPages = Math.max(1, Math.ceil(entries.length / entriesPerSpread) + 1)
+    const maxPages = Math.max(1, Math.ceil(contentItems.length / itemsPerSpread) + 1)
     if (currentPage < maxPages - 1) {
       setCurrentPage(currentPage + 1)
     }
@@ -128,6 +146,7 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   return (
     <GuestbookContext.Provider value={{
       entries,
+      contentItems,
       currentPage,
       totalPages,
       loading,

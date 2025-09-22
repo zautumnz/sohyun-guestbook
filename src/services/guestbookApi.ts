@@ -1,16 +1,24 @@
-export interface GuestbookEntry {
-  id: string;
+export interface ContentItem {
   type: 'text' | 'image';
   content: string;
+}
+
+export interface GuestbookEntry {
+  id: string;
+  content: ContentItem[];
   author: string;
   timestamp: string;
   pageNumber: number;
   position: { x: number; y: number };
 }
 
-export interface CreateEntryPayload {
+export interface CreateContentItem {
   type: 'text' | 'image';
   content: string | File | Blob;
+}
+
+export interface CreateEntryPayload {
+  content: CreateContentItem[];
   author: string;
   position: { x: number; y: number };
 }
@@ -80,31 +88,45 @@ class GuestbookAPI {
   }
 
   async createEntry(entryData: CreateEntryPayload): Promise<GuestbookEntry> {
-    let processedContent = entryData.content
+    const processedContent: ContentItem[] = []
 
-    // Base64 encode images
-    if (entryData.type === 'image') {
-      if (entryData.content instanceof File || entryData.content instanceof Blob) {
-        // Convert File or Blob to data URL format
-        processedContent = await this.convertToBase64(entryData.content)
-      } else if (typeof entryData.content === 'string') {
-        if (this.isUrl(entryData.content)) {
-          // Fetch image from URL and convert to data URL format
-          processedContent = await this.fetchImageAsBase64(entryData.content)
-        } else if (!this.isDataUrl(entryData.content)) {
-          // If it's raw base64 data, wrap it in data URL format
-          // Assume JPEG if no format specified
-          if (!entryData.content.startsWith('data:')) {
-            processedContent = `data:image/jpeg;base64,${entryData.content}`
+    // Process each content item
+    for (const item of entryData.content) {
+      if (item.type === 'image') {
+        let processedImageContent = item.content
+
+        if (item.content instanceof File || item.content instanceof Blob) {
+          // Convert File or Blob to data URL format
+          processedImageContent = await this.convertToBase64(item.content)
+        } else if (typeof item.content === 'string') {
+          if (this.isUrl(item.content)) {
+            // Fetch image from URL and convert to data URL format
+            processedImageContent = await this.fetchImageAsBase64(item.content)
+          } else if (!this.isDataUrl(item.content)) {
+            // If it's raw base64 data, wrap it in data URL format
+            // Assume JPEG if no format specified
+            if (!item.content.startsWith('data:')) {
+              processedImageContent = `data:image/jpeg;base64,${item.content}`
+            }
           }
+          // If it's already a data URL, leave it as-is
         }
-        // If it's already a data URL, leave it as-is
+
+        processedContent.push({
+          type: 'image',
+          content: processedImageContent as string
+        })
+      } else {
+        processedContent.push({
+          type: 'text',
+          content: item.content as string
+        })
       }
     }
 
     const payload = {
       ...entryData,
-      content: processedContent as string,
+      content: processedContent,
     }
 
     return this.request<GuestbookEntry>('/entry', {

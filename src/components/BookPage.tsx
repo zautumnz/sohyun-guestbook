@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import { Calendar, User, Trash2 } from 'lucide-react'
+import type { ContentItemWithMeta } from '@/contexts/GuestbookContext'
 
 interface BookPageProps {
   pageNumber: number;
@@ -9,7 +10,7 @@ interface BookPageProps {
 }
 
 const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
-  const { entries, deleteEntry } = useGuestbook()
+  const { contentItems, deleteEntry } = useGuestbook()
   const [showDeleteButtons, setShowDeleteButtons] = useState(false)
   const [isContentReady, setIsContentReady] = useState(false)
 
@@ -40,17 +41,17 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
     }
   }
 
-  // Get entries for this side
-  let pageEntries;
+  // Get content items for this side
+  let pageItems: ContentItemWithMeta[]
   if (side === 'single') {
-    // Mobile: 2 entries per page
+    // Mobile: 2 items per page
     const startIndex = pageNumber * 2
-    pageEntries = entries.slice(startIndex, startIndex + 2)
+    pageItems = contentItems.slice(startIndex, startIndex + 2)
   } else {
-    // Desktop: 2 entries per side, 4 per spread
+    // Desktop: 2 items per side, 4 per spread
     const spreadStartIndex = pageNumber * 4
     const sideStartIndex = side === 'left' ? spreadStartIndex : spreadStartIndex + 2
-    pageEntries = entries.slice(sideStartIndex, sideStartIndex + 2)
+    pageItems = contentItems.slice(sideStartIndex, sideStartIndex + 2)
   }
 
   return (
@@ -101,21 +102,21 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
         </div>
       )}
 
-      {/* Entries */}
+      {/* Content Items */}
       <div className="relative z-10 space-y-6">
-        {pageEntries.map((entry, index) => (
+        {pageItems.map((item, index) => (
           <motion.div
-            key={entry.id}
+            key={item.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isContentReady ? 1 : 0, y: isContentReady ? 0 : 20 }}
             transition={{ delay: isContentReady ? index * 0.1 : 0, duration: 0.3 }}
             className="relative"
           >
-            {entry.type === 'text' ? (
+            {item.type === 'text' ? (
               <div className="kawaii-entry p-5 relative group hover:scale-[1.02] transition-all">
                 {showDeleteButtons && (
                   <button
-                    onClick={() => handleDelete(entry.id)}
+                    onClick={() => handleDelete(item.entryId)}
                     className="absolute top-3 right-3 p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl"
                     title="Delete entry"
                   >
@@ -124,10 +125,10 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                 )}
                 <div className="mb-3">
                   <div className="text-purple-800 font-serif leading-relaxed text-sm sm:text-base">
-                    "{entry.content.split('\n').map((line, index) => (
+                    "{item.content.split('\n').map((line, index) => (
                       <React.Fragment key={index}>
                         {line}
-                        {index < entry.content.split('\n').length - 1 && <br />}
+                        {index < item.content.split('\n').length - 1 && <br />}
                       </React.Fragment>
                     ))}"
                   </div>
@@ -135,11 +136,11 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-purple-600 bg-purple-50/50 rounded-lg sm:rounded-full px-3 sm:px-4 py-2">
                   <div className="flex items-center gap-2">
                     <User size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
-                    <span className="font-medium">{entry.author}</span>
+                    <span className="font-medium">{item.author}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
-                    <span>{entry.timestamp.toLocaleDateString()}</span>
+                    <span>{item.timestamp.toLocaleDateString()}</span>
                   </div>
                 </div>
               </div>
@@ -147,7 +148,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
               <div className="kawaii-entry p-5 relative group hover:scale-[1.02] transition-all">
                 {showDeleteButtons && (
                   <button
-                    onClick={() => handleDelete(entry.id)}
+                    onClick={() => handleDelete(item.entryId)}
                     className="absolute top-3 right-3 p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl z-10"
                     title="Delete entry"
                   >
@@ -156,7 +157,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                 )}
                 <div className="mb-3 relative">
                   <img
-                      src={entry.type === 'image' ? `/storage/images/${entry.content}` : entry.content}
+                    src={`/storage/images/${item.content}`}
                     alt="Guest entry"
                     className="max-w-full h-32 object-cover rounded-lg shadow-md border-2 border-purple-100"
                   />
@@ -165,11 +166,11 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-purple-600 bg-purple-50/50 rounded-lg sm:rounded-full px-3 sm:px-4 py-2">
                   <div className="flex items-center gap-2">
                     <User size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
-                    <span className="font-medium">{entry.author}</span>
+                    <span className="font-medium">{item.author}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar size={12} className="sm:w-3.5 sm:h-3.5 text-purple-400" />
-                    <span>{entry.timestamp.toLocaleDateString()}</span>
+                    <span>{item.timestamp.toLocaleDateString()}</span>
                   </div>
                 </div>
               </div>

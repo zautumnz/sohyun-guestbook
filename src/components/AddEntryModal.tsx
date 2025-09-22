@@ -1,42 +1,47 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Type, Image, Upload } from 'lucide-react'
+import { X, Type, Image, Upload, Plus, Trash2 } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import { useToast } from '@/hooks/use-toast'
+import { CreateContentItem } from '@/services/guestbookApi'
 
 interface AddEntryModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+interface ContentItemInput {
+  type: 'text' | 'image';
+  content: string | File;
+  id: string;
+}
+
 const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
   const { addEntry } = useGuestbook()
   const { toast } = useToast()
-  const [entryType, setEntryType] = useState<'text' | 'image'>('text')
   const [author, setAuthor] = useState('')
-  const [textContent, setTextContent] = useState('')
-  const [imageUrl, setImageUrl] = useState('')
+  const [contentItems, setContentItems] = useState<ContentItemInput[]>([
+    { type: 'text', content: '', id: 'item-0' }
+  ])
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const onDrop = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0]
-    if (file) {
-      // In a real app, you'd upload this to your server
-      // For demo purposes, we'll create a local URL
-      const url = URL.createObjectURL(file)
-      setImageUrl(url)
-      console.log('File selected:', file.name)
+  const addContentItem = (type: 'text' | 'image') => {
+    const newId = `item-${Date.now()}`
+    setContentItems(prev => [...prev, { type, content: '', id: newId }])
+  }
+
+  const removeContentItem = (id: string) => {
+    if (contentItems.length > 1) {
+      setContentItems(prev => prev.filter(item => item.id !== id))
     }
   }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.gif']
-    },
-    maxFiles: 1
-  })
+  const updateContentItem = (id: string, content: string | File) => {
+    setContentItems(prev => prev.map(item =>
+      item.id === id ? { ...item, content } : item
+    ))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -51,17 +56,16 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
       return
     }
 
-    if (entryType === 'text' && !textContent.trim()) {
-      toast({
-        title: "Please enter your message",
-        variant: "destructive"
-      })
-      return
-    }
+    // Validate all content items
+    const hasEmptyContent = contentItems.some(item =>
+      (item.type === 'text' && !item.content.toString().trim()) ||
+      (item.type === 'image' && !item.content)
+    )
 
-    if (entryType === 'image' && !imageUrl) {
+    if (hasEmptyContent) {
       toast({
-        title: "Please select an image",
+        title: "Please fill in all content items",
+        description: "All text fields must have content and all images must be selected",
         variant: "destructive"
       })
       return
@@ -70,9 +74,14 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
     try {
       setIsSubmitting(true)
 
+      // Convert contentItems to the format expected by the API
+      const contentForAPI: CreateContentItem[] = contentItems.map(item => ({
+        type: item.type,
+        content: item.content as string | File | Blob
+      }))
+
       await addEntry({
-        type: entryType,
-        content: entryType === 'text' ? textContent : imageUrl,
+        content: contentForAPI,
         author: author.trim(),
         position: { x: Math.random() * 80 + 10, y: Math.random() * 60 + 20 }
       })
@@ -84,9 +93,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
 
       // Reset form
       setAuthor('')
-      setTextContent('')
-      setImageUrl('')
-      setEntryType('text')
+      setContentItems([{ type: 'text', content: '', id: 'item-0' }])
       onClose()
     } catch (error) {
       toast({
@@ -149,83 +156,43 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-purple-700 mb-3 flex items-center gap-2">
-                  💭 Entry Type
-                </label>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setEntryType('text')}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl border-2 transition-all ${
-                      entryType === 'text'
-                        ? 'kawaii-border bg-purple-100 text-purple-700 shadow-md'
-                        : 'border-purple-200 bg-purple-50/30 text-purple-600 hover:bg-purple-50'
-                    }`}
-                  >
-                    <Type size={18} />
-                    📝 Text
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEntryType('image')}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl border-2 transition-all ${
-                      entryType === 'image'
-                        ? 'kawaii-border bg-purple-100 text-purple-700 shadow-md'
-                        : 'border-purple-200 bg-purple-50/30 text-purple-600 hover:bg-purple-50'
-                    }`}
-                  >
-                    <Image size={18} />
-                    🖼️ Image
-                  </button>
-                </div>
-              </div>
-
-              {entryType === 'text' ? (
-                <div>
-                  <label className="block text-sm font-medium text-purple-700 mb-2 flex items-center gap-2">
-                    💌 Your Message
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-medium text-purple-700 flex items-center gap-2">
+                    💭 Content Items
                   </label>
-                  <textarea
-                    value={textContent}
-                    onChange={(e) => setTextContent(e.target.value)}
-                    rows={4}
-                    className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-purple-50/50 text-purple-800 placeholder-purple-400 resize-none"
-                    placeholder="Share your thoughts... ✨"
-                    required
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-sm font-medium text-purple-700 mb-2 flex items-center gap-2">
-                    🖼️ Upload Image
-                  </label>
-                  <div
-                    {...getRootProps()}
-                    className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
-                      isDragActive
-                        ? 'border-purple-400 bg-purple-100/50 scale-105'
-                        : 'border-purple-200 hover:border-purple-400 hover:bg-purple-50/30'
-                    }`}
-                  >
-                    <input {...getInputProps()} />
-                    {imageUrl ? (
-                      <div>
-                        <img src={imageUrl} alt="Preview" className="max-w-full h-32 object-cover mx-auto rounded-lg border-2 border-purple-200 shadow-md" />
-                        <p className="text-sm text-purple-600 mt-3 flex items-center justify-center gap-1">
-                          ✨ Click to change image ✨
-                        </p>
-                      </div>
-                    ) : (
-                      <div>
-                        <Upload className="mx-auto h-12 w-12 text-purple-400 mb-3" />
-                        <p className="text-purple-600 flex items-center justify-center gap-2">
-                          {isDragActive ? '🌟 Drop the image here! 🌟' : '📸 Drag & drop an image, or click to select ✨'}
-                        </p>
-                      </div>
-                    )}
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => addContentItem('text')}
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs bg-gradient-to-r from-purple-400 to-purple-500 text-white rounded-lg hover:from-purple-500 hover:to-purple-600 transition-all"
+                    >
+                      <Plus size={12} />
+                      📝 Text
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addContentItem('image')}
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs bg-gradient-to-r from-pink-400 to-pink-500 text-white rounded-lg hover:from-pink-500 hover:to-pink-600 transition-all"
+                    >
+                      <Plus size={12} />
+                      🖼️ Image
+                    </button>
                   </div>
                 </div>
-              )}
+
+                <div className="space-y-4 max-h-60 overflow-y-auto">
+                  {contentItems.map((item, index) => (
+                    <ContentItemInput
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      onUpdate={(content) => updateContentItem(item.id, content)}
+                      onRemove={() => removeContentItem(item.id)}
+                      canRemove={contentItems.length > 1}
+                    />
+                  ))}
+                </div>
+              </div>
 
               <div className="flex gap-4 pt-6">
                 <button
@@ -248,6 +215,98 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
         </motion.div>
       )}
     </AnimatePresence>
+  )
+}
+
+interface ContentItemInputProps {
+  item: ContentItemInput;
+  index: number;
+  onUpdate: (content: string | File) => void;
+  onRemove: () => void;
+  canRemove: boolean;
+}
+
+const ContentItemInput: React.FC<ContentItemInputProps> = ({ 
+  item, 
+  index, 
+  onUpdate, 
+  onRemove, 
+  canRemove 
+}) => {
+  const onDrop = (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0]
+    if (file) {
+      onUpdate(file)
+    }
+  }
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif']
+    },
+    maxFiles: 1
+  })
+
+  return (
+    <div className="kawaii-border bg-purple-50/30 rounded-xl p-4 relative">
+      {canRemove && (
+        <button
+          type="button"
+          onClick={onRemove}
+          className="absolute top-2 right-2 p-1.5 bg-gradient-to-r from-red-400 to-red-500 text-white rounded-full hover:from-red-500 hover:to-red-600 transition-all shadow-sm"
+          title="Remove item"
+        >
+          <Trash2 size={12} />
+        </button>
+      )}
+      
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-xs font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
+          {index + 1}. {item.type === 'text' ? '📝 Text' : '🖼️ Image'}
+        </span>
+      </div>
+
+      {item.type === 'text' ? (
+        <textarea
+          value={item.content as string}
+          onChange={(e) => onUpdate(e.target.value)}
+          rows={3}
+          className="w-full px-3 py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 bg-white text-purple-800 placeholder-purple-400 resize-none text-sm"
+          placeholder="Enter your text... ✨"
+        />
+      ) : (
+        <div
+          {...getRootProps()}
+          className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all ${
+            isDragActive
+              ? 'border-purple-400 bg-purple-100/50 scale-105'
+              : 'border-purple-200 hover:border-purple-400 hover:bg-purple-50/30'
+          }`}
+        >
+          <input {...getInputProps()} />
+          {item.content ? (
+            <div>
+              <img 
+                src={item.content instanceof File ? URL.createObjectURL(item.content) : item.content as string} 
+                alt="Preview" 
+                className="max-w-full h-20 object-cover mx-auto rounded-lg border-2 border-purple-200 shadow-sm" 
+              />
+              <p className="text-xs text-purple-600 mt-2">
+                ✨ Click to change ✨
+              </p>
+            </div>
+          ) : (
+            <div>
+              <Upload className="mx-auto h-8 w-8 text-purple-400 mb-2" />
+              <p className="text-purple-600 text-xs">
+                {isDragActive ? '🌟 Drop here! 🌟' : '📸 Click or drop image ✨'}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
 

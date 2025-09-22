@@ -6,7 +6,7 @@ import BookPage from './BookPage'
 import AddEntryModal from './AddEntryModal'
 
 const Book = () => {
-  const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage } = useGuestbook()
+  const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage, contentItems } = useGuestbook()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showJumpModal, setShowJumpModal] = useState(false)
   const [jumpPageInput, setJumpPageInput] = useState('')
@@ -27,10 +27,10 @@ const Book = () => {
       // Desktop: Convert individual page number to spread number
       // Page 1-2 -> spread 0, Page 3-4 -> spread 1, etc.
       targetSpread = Math.floor((inputPageNum - 1) / 2)
-    } else {
+  } else {
       // Mobile: Direct page to spread mapping
       targetSpread = inputPageNum - 1
-    }
+  }
     
     if (targetSpread >= 0 && targetSpread < totalPages) {
       setIsPageTransitioning(true)

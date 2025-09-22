@@ -116,7 +116,7 @@ app.delete('/entry/:id', (req, res) => {
       return res.status(404).json({ error: 'Entry not found' })
     }
 
-    // Read entry to check if it has an associated image
+    // Read entry to check if it has associated images
     let entryData
     try {
       const entryContent = fs.readFileSync(entryFilePath, 'utf8')
@@ -126,16 +126,20 @@ app.delete('/entry/:id', (req, res) => {
       return res.status(500).json({ error: 'Failed to read entry' })
     }
 
-    // Delete associated image file if it exists
-    if (entryData.type === 'image' && entryData.content) {
-      const imageFilePath = path.join(IMAGES_DIR, entryData.content)
-      if (fs.existsSync(imageFilePath)) {
-        try {
-          fs.unlinkSync(imageFilePath)
-          console.log('Deleted image file:', entryData.content)
-        } catch (error) {
-          console.error('Error deleting image file:', error)
-          // Continue with entry deletion even if image deletion fails
+    // Delete associated image files if they exist
+    if (entryData.content && Array.isArray(entryData.content)) {
+      for (const item of entryData.content) {
+        if (item.type === 'image' && item.content) {
+          const imageFilePath = path.join(IMAGES_DIR, item.content)
+          if (fs.existsSync(imageFilePath)) {
+            try {
+              fs.unlinkSync(imageFilePath)
+              console.log('Deleted image file:', item.content)
+            } catch (error) {
+              console.error('Error deleting image file:', error)
+              // Continue with deletion even if image file deletion fails
+            }
+          }
         }
       }
     }
@@ -164,19 +168,33 @@ app.delete('/entry/:id', (req, res) => {
 // POST /entry - Create a new entry
 app.post('/entry', (req, res) => {
   try {
-    const { type, content, author, position } = req.body
+    const { content, author, position } = req.body
 
     // Validation
-    if (!type || !content || !author || !position) {
+    if (!content || !author || !position) {
       return res.status(400).json({
-        error: 'Missing required fields: type, content, author, position'
+        error: 'Missing required fields: content, author, position'
       })
     }
 
-    if (!['text', 'image'].includes(type)) {
+    if (!Array.isArray(content) || content.length === 0) {
       return res.status(400).json({
-        error: 'Invalid type. Must be either "text" or "image"'
+        error: 'Content must be a non-empty array of content items'
       })
+    }
+
+    // Validate each content item
+    for (const item of content) {
+      if (!item.type || !item.content) {
+        return res.status(400).json({
+          error: 'Each content item must have type and content fields'
+        })
+      }
+      if (!['text', 'image'].includes(item.type)) {
+        return res.status(400).json({
+          error: 'Each content item type must be either "text" or "image"'
+        })
+      }
     }
 
     if (!position.x || !position.y || typeof position.x !== 'number' || typeof position.y !== 'number') {
@@ -195,21 +213,30 @@ app.post('/entry', (req, res) => {
     // Generate entry ID
     const entryId = uuidv4()
 
-    // Handle image storage
-    let processedContent = content
-    if (type === 'image') {
-      const imageFilename = saveImage(content, entryId)
-      if (!imageFilename) {
-        return res.status(500).json({ error: 'Failed to save image' })
+    // Process content items
+    const processedContent = []
+    for (let i = 0; i < content.length; i++) {
+      const item = content[i]
+      if (item.type === 'image') {
+        const imageFilename = saveImage(item.content, `${entryId}_${i}`)
+        if (!imageFilename) {
+          return res.status(500).json({ error: 'Failed to save image' })
+        }
+        processedContent.push({
+          type: 'image',
+          content: imageFilename
+        })
+      } else {
+        processedContent.push({
+          type: 'text',
+          content: item.content
+        })
       }
-      // Store image filename instead of base64 data
-      processedContent = imageFilename
     }
 
     // Create new entry
     const entry = {
       id: entryId,
-      type,
       content: processedContent,
       author,
       timestamp: new Date().toISOString(),
