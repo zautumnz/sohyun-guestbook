@@ -52,7 +52,7 @@ const BookContent = () => {
 
   if (loading && totalPages === 1) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex items-center justify-center px-10 py-10 relative">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10 relative">
         <div className="kawaii-star absolute top-20 left-20">✨</div>
         <div className="kawaii-star absolute top-32 right-32">⭐</div>
         <div className="kawaii-star absolute bottom-40 left-40">💫</div>
@@ -66,7 +66,7 @@ const BookContent = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex items-center justify-center px-10 py-10 relative">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10 relative">
         <div className="kawaii-star absolute top-20 left-20">✨</div>
         <div className="kawaii-star absolute top-32 right-32">⭐</div>
         <div className="kawaii-star absolute bottom-40 left-40">💫</div>
@@ -86,7 +86,7 @@ const BookContent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex flex-col items-center justify-center px-10 py-10 relative overflow-hidden no-print">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10 relative overflow-hidden no-print">
       {/* Floating stars */}
       <div className="kawaii-star absolute top-10 left-10 text-2xl">✨</div>
       <div className="kawaii-star absolute top-20 right-20 text-xl">⭐</div>
@@ -94,22 +94,8 @@ const BookContent = () => {
       <div className="kawaii-star absolute bottom-20 right-10 text-2xl">🌟</div>
       <div className="kawaii-star absolute bottom-40 left-20 text-lg">✨</div>
 
-      {/* Theme toggle in upper left */}
-      <div className="absolute top-8 left-8 z-10 flex flex-col items-center gap-3">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={toggleTheme}
-          className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
-          title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-        >
-          {isDark ? <Sun size={16} /> : <Moon size={16} />}
-          <span className="hidden sm:inline">{isDark ? '☀️' : '🌙'}</span>
-        </motion.button>
-      </div>
-
       {/* Chibi image in upper right */}
-      <div className="absolute top-8 right-8 z-10 flex flex-col items-center gap-3 hidden sm:flex">
+      <div className="absolute top-8 right-8 z-10 hidden sm:flex flex-col items-center gap-3">
         <img
           src="/assets/chibi.jpg"
           alt="Chibi Sohyun"
@@ -129,16 +115,44 @@ const BookContent = () => {
         </motion.button>
       </div>
 
-      <div className="relative flex-1 flex items-center justify-center">
+      {/* Theme toggle in upper right - always visible */}
+      <div className="absolute top-8 right-8 z-10 flex sm:hidden flex-col items-center gap-3">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={toggleTheme}
+          className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
+          title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+        >
+          {isDark ? <Sun size={14} /> : <Moon size={14} />}
+          <span className="hidden sm:inline">{isDark ? '#lightmode' : '#darkmode'}</span>
+        </motion.button>
+      </div>
+
+      {/* Theme toggle for desktop - positioned under PDF */}
+      <div className="absolute top-44 right-8 z-10 hidden sm:flex flex-col items-center gap-3">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={toggleTheme}
+          className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
+          title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+        >
+          {isDark ? <Sun size={16} /> : <Moon size={16} />}
+          <span className="hidden sm:inline">{isDark ? '#lightmode' : '#darkmode'}</span>
+        </motion.button>
+      </div>
+
+      <div className="relative flex-1 flex items-center justify-center w-full">
         {/* Book Shadow */}
         <div className="absolute inset-0 bg-purple-300/30 dark:bg-purple-600/40 blur-2xl transform translate-y-8 scale-95 rounded-3xl" />
 
         {/* Book Container */}
-        <div className="relative kawaii-border bg-gradient-to-br from-purple-200 to-pink-200 dark:from-purple-800 dark:to-indigo-800 p-6 lg:p-8 rounded-2xl shadow-2xl w-full max-w-none min-w-0 xl:min-w-[800px]">
+        <div className="relative kawaii-border bg-gradient-to-br from-purple-200 to-pink-200 dark:from-purple-800 dark:to-indigo-800 p-4 sm:p-6 lg:p-8 xl:p-10 2xl:p-12 rounded-2xl shadow-2xl w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl min-w-0">
           <div className="kawaii-border bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-purple-900 rounded-xl shadow-inner lace-border">
 
             {/* Book Pages - Responsive Layout */}
-            <div className="relative w-full h-[60vh] min-h-[500px] max-h-[700px] overflow-hidden rounded-xl flex">
+            <div className="relative w-full h-[60vh] min-h-[500px] sm:h-[65vh] lg:h-[70vh] xl:h-[72vh] 2xl:h-[75vh] max-h-[800px] overflow-hidden rounded-xl flex">
               <AnimatePresence mode="wait" onExitComplete={() => setIsPageTransitioning(false)}>
                 <motion.div
                   key={currentPage}
