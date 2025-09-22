@@ -87,7 +87,7 @@ const BookContent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10 relative overflow-hidden no-print">
+    <div className="h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-2 sm:py-3 lg:py-4 xl:py-5 relative overflow-hidden no-print">
       {/* Floating stars */}
       <div className="kawaii-star absolute top-10 left-10 text-2xl">✨</div>
       <div className="kawaii-star absolute top-20 right-20 text-xl">⭐</div>
@@ -354,7 +354,7 @@ const BookContent = () => {
         />
       )}
 
-      <footer className="text-center text-purple-600 dark:text-purple-300 text-xs sm:text-sm font-medium py-4 mt-auto">
+      <footer className="text-center text-purple-600 dark:text-purple-300 text-xs sm:text-sm font-medium py-2 mt-auto">
         Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">zautumn</a>{' '}
         and <a target="_blank" href="https://apollo.cafe/@joeywerepyre" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">joeywerepyre</a>
       </footer>

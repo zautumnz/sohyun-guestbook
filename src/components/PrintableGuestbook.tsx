@@ -24,53 +24,63 @@ const PrintableGuestbook = () => {
       {/* All Content Items */}
       <div className="print-entries-container">
         {contentItems.map((item, index) => {
-          const previousItem = index > 0 ? contentItems[index - 1] : null
-          const isFirstImage = item.type === 'image' && (!previousItem || previousItem.type === 'text')
-          const isConsecutiveImage = item.type === 'image' && previousItem?.type === 'image'
-          
-          return item.type === 'text' ? (
-            <div key={item.id} className="print-entry print-text-entry">
-              <div className="print-entry-number">#{index + 1}</div>
-              <div className="print-entry-content">
-                "{item.content}"
-              </div>
-              <div className="print-entry-meta">
-                <div className="print-author">
-                  <User size={12} />
-                  <span>{item.author}</span>
-                </div>
-                <div className="print-date">
-                  <Calendar size={12} />
-                  <span>{item.timestamp.toLocaleDateString()}</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div 
-              key={item.id} 
-              className={`print-image-page ${isFirstImage ? 'first-image' : ''} ${isConsecutiveImage ? 'consecutive-image' : ''}`}
-            >
-              <div className="print-image-header">
-                <div className="print-entry-number">#{index + 1}</div>
-                <div className="print-entry-meta">
-                  <div className="print-author">
-                    <User size={12} />
-                    <span>{item.author}</span>
+          // Add clear div before images to prevent gaps
+          const needsClearBefore = item.type === 'image' && index > 0 &&
+            contentItems.slice(0, index).some(prevItem => prevItem.type === 'text')
+
+          return (
+            <React.Fragment key={item.id}>
+              {needsClearBefore && (
+                <div style={{ clear: 'both', height: '0', margin: '0', padding: '0', pageBreakInside: 'avoid' }}></div>
+              )}
+
+              {item.type === 'text' ? (
+                <div className="print-entry print-text-entry">
+                  <div className="print-entry-number">#{index + 1}</div>
+                  <div className="print-entry-content">
+                    "{item.content.split('\n').map((line, i) => (
+                      <React.Fragment key={i}>
+                        {line}
+                        {i < item.content.split('\n').length - 1 && <br />}
+                      </React.Fragment>
+                    ))}"
                   </div>
-                  <div className="print-date">
-                    <Calendar size={12} />
-                    <span>{item.timestamp.toLocaleDateString()}</span>
+                  <div className="print-entry-meta">
+                    <div className="print-author">
+                      <User size={12} />
+                      <span>{item.author}</span>
+                    </div>
+                    <div className="print-date">
+                      <Calendar size={12} />
+                      <span>{item.timestamp.toLocaleDateString()}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="print-image-container">
-                <img
-                  src={`/storage/images/${item.content}`}
-                  alt="Guest entry"
-                  className="print-image-full-page"
-                />
-              </div>
-            </div>
+              ) : (
+                <div className="print-image-page">
+                  <div className="print-image-header">
+                    <div className="print-entry-number">#{index + 1}</div>
+                    <div className="print-entry-meta">
+                      <div className="print-author">
+                        <User size={12} />
+                        <span>{item.author}</span>
+                      </div>
+                      <div className="print-date">
+                        <Calendar size={12} />
+                        <span>{item.timestamp.toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="print-image-container">
+                    <img
+                      src={`/storage/images/${item.content}`}
+                      alt="Guest entry"
+                      className="print-image-full-page"
+                    />
+                  </div>
+                </div>
+              )}
+            </React.Fragment>
           )
         })}
       </div>

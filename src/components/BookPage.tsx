@@ -44,9 +44,9 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
     }
   }
 
-  // Get unique entry IDs in current page for color alternation
+  // Get unique entry IDs from all content items for consistent color alternation across pages
   const getEntryColorIndex = (entryId: string) => {
-    const uniqueEntryIds = [...new Set(pageItems.map(item => item.entryId))].sort()
+    const uniqueEntryIds = [...new Set(contentItems.map(item => item.entryId))].sort()
     return uniqueEntryIds.indexOf(entryId) % 3 // Cycle through 3 color variants
   }
 
@@ -133,7 +133,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
       )}
 
       {/* Content Items */}
-      <div className="relative z-10 space-y-4">
+      <div className="relative z-10 space-y-4 lg:space-y-6 xl:space-y-8">
         {pageItems.map((item, index) => {
           const groupInfo = getGroupInfo(item)
           const colorIndex = getEntryColorIndex(item.entryId)
@@ -196,14 +196,14 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                       <Trash2 size={12} />
                     </button>
                   )}
-                  
+
                   {/* Text length indicator */}
                   {item.content.length > 120 && (
                     <div className="absolute top-3 left-3 bg-purple-100/80 dark:bg-purple-700/80 backdrop-blur-sm rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Eye size={12} className="text-purple-600 dark:text-purple-300" />
                     </div>
                   )}
-                  
+
                   <div className="mb-3">
                     <div className="text-purple-800 dark:text-purple-200 font-serif leading-relaxed text-sm sm:text-base">
                       <div className="max-h-[60px] overflow-hidden relative">
