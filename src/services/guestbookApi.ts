@@ -10,6 +10,7 @@ export interface GuestbookEntry {
   timestamp: string;
   pageNumber: number;
   position: { x: number; y: number };
+  approved?: boolean;
 }
 
 export interface CreateContentItem {
@@ -83,8 +84,9 @@ class GuestbookAPI {
     return response.json()
   }
 
-  async getEntries(): Promise<GuestbookEntry[]> {
-    return this.request<GuestbookEntry[]>('/entries')
+  async getEntries(password?: string): Promise<GuestbookEntry[]> {
+    const url = password ? `/entries?pw=${encodeURIComponent(password)}` : '/entries'
+    return this.request<GuestbookEntry[]>(url)
   }
 
   async createEntry(entryData: CreateEntryPayload): Promise<GuestbookEntry> {
@@ -138,6 +140,13 @@ class GuestbookAPI {
   async deleteEntry(id: string): Promise<{ success: boolean; message: string }> {
     return this.request(`/entry/${id}`, {
       method: 'DELETE',
+    })
+  }
+
+  async approveEntry(id: string, password: string): Promise<{ success: boolean; message: string; entry: GuestbookEntry }> {
+    return this.request(`/entry/${id}/approve`, {
+      method: 'PUT',
+      body: JSON.stringify({ password }),
     })
   }
 

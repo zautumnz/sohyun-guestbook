@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer, Hash, Moon, Sun } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer, Hash, Moon, Sun, Shield, Clock, CheckCircle } from 'lucide-react'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import { LightboxProvider, useLightbox } from '@/contexts/LightboxContext'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -10,7 +10,7 @@ import ImageLightbox from './ImageLightbox'
 import TextLightbox from './TextLightbox'
 
 const BookContent = () => {
-  const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage, contentItems } = useGuestbook()
+  const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage, contentItems, isAdmin, pendingEntries, entries } = useGuestbook()
   const { isOpen, imageSrc, imageAlt, imageAuthor, imageAvatarImage, textContent, textAuthor, textAvatarImage, contentType, openLightbox, closeLightbox } = useLightbox()
   const { isDark, toggleTheme } = useTheme()
   const [showAddModal, setShowAddModal] = useState(false)
@@ -141,6 +141,36 @@ const BookContent = () => {
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
           <span className="hidden sm:inline">{isDark ? '#lightmode' : '#darkmode'}</span>
         </motion.button>
+
+        {/* Admin status indicator */}
+        {isAdmin && (
+          <div className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-green-400 to-emerald-400 text-white text-sm font-medium rounded-full shadow-lg">
+            <Shield size={14} />
+            <span className="text-xs">Admin</span>
+          </div>
+        )}
+
+        {/* Entry status for admin */}
+        {isAdmin && (
+          <div className="flex flex-col gap-1">
+            <div className="kawaii-button flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-blue-400 to-cyan-400 text-white text-xs font-medium rounded-full shadow-sm">
+              <CheckCircle size={10} />
+              <span>{entries.filter(e => e.approved).length} approved</span>
+            </div>
+            {pendingEntries.length > 0 && (
+              <div className="kawaii-button flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-medium rounded-full shadow-sm">
+                <Clock size={10} />
+                <span>{pendingEntries.length} pending</span>
+              </div>
+            )}
+            {entries.filter(e => !e.approved).length > 0 && (
+              <div className="kawaii-button flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-red-400 to-pink-400 text-white text-xs font-medium rounded-full shadow-sm">
+                <AlertCircle size={10} />
+                <span>{entries.filter(e => !e.approved).length} unapproved</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="relative flex-1 flex items-center justify-center w-full">

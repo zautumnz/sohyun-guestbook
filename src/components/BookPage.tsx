@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import { useLightbox } from '@/contexts/LightboxContext'
-import { Calendar, Trash2, Eye } from 'lucide-react'
+import { Calendar, Trash2, Eye, Check, Clock } from 'lucide-react'
 import type { ContentItemWithMeta } from '@/contexts/GuestbookContext'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
@@ -12,7 +12,7 @@ interface BookPageProps {
 }
 
 const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
-  const { contentItems, deleteEntry } = useGuestbook()
+  const { contentItems, entries, pendingEntries, deleteEntry, approveEntry, isAdmin } = useGuestbook()
   const { openLightbox, openTextLightbox } = useLightbox()
   const [showDeleteButtons, setShowDeleteButtons] = useState(false)
   const [isContentReady, setIsContentReady] = useState(false)
@@ -23,6 +23,28 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
     const password = urlParams.get('pw')
     setShowDeleteButtons(password === '20250514')
   }, [])
+
+  // Helper function to get entry approval status
+  const getEntryApprovalStatus = (entryId: string) => {
+    const pendingEntry = pendingEntries.find(entry => entry.id === entryId)
+    const approvedEntry = entries.find(entry => entry.id === entryId)
+
+    if (pendingEntry) {
+      return { isPending: true, isApproved: false }
+    }
+    if (approvedEntry) {
+      return { isPending: false, isApproved: approvedEntry.approved || false }
+    }
+    return { isPending: false, isApproved: false }
+  }
+
+  const handleApprove = async (entryId: string) => {
+    try {
+      await approveEntry(entryId)
+    } catch (error) {
+      alert('Failed to approve entry. Please try again.')
+    }
+  }
 
   // Handle content readiness when page changes
   useEffect(() => {
@@ -143,6 +165,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
         {pageItems.map((item, index) => {
           const groupInfo = getGroupInfo(item)
           const colorIndex = getEntryColorIndex(item.entryId)
+          const approvalStatus = getEntryApprovalStatus(item.entryId)
 
           return (
             <motion.div
@@ -180,7 +203,10 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
               {item.type === 'text' ? (
                 <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 relative group transition-all flex-1 cursor-pointer ${
                   groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
-                } hover:shadow-lg`}
+                } hover:shadow-lg ${
+                  approvalStatus.isPending ? 'ring-2 ring-yellow-300/50 bg-yellow-50/30 dark:bg-yellow-900/20' :
+                  (!approvalStatus.isApproved && isAdmin) ? 'ring-2 ring-red-300/50 bg-red-50/30 dark:bg-red-900/20' : ''
+                }`}
                 onClick={() => openTextLightbox(item.content, item.author, `${getDrawingIndex(item.entryId)}.png`)}>
                   {/* Group border highlight */}
                   {groupInfo.isGrouped && (
@@ -190,17 +216,45 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                       'group-border-middle'
                     }`} />
                   )}
+                  {/* Admin controls */}
                   {showDeleteButtons && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleDelete(item.entryId)
-                      }}
-                      className="absolute top-3 right-3 p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl z-10"
-                      title="Delete entry"
-                    >
-                      <Trash2 size={12} />
-                    </button>
+                    <div className="absolute top-3 right-3 flex gap-1 z-10">
+                      {!approvalStatus.isApproved && !approvalStatus.isPending && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleApprove(item.entryId)
+                          }}
+                          className="p-2 rounded-full bg-gradient-to-r from-green-400 to-emerald-400 hover:from-green-500 hover:to-emerald-500 text-white transition-all shadow-lg hover:shadow-xl"
+                          title="Approve entry"
+                        >
+                          <Check size={12} />
+                        </button>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDelete(item.entryId)
+                        }}
+                        className="p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl"
+                        title="Delete entry"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Approval status indicator */}
+                  {(approvalStatus.isPending || (!approvalStatus.isApproved && isAdmin)) && (
+                    <div className={`absolute top-3 left-3 p-1 rounded-full ${
+                      approvalStatus.isPending ? 'bg-yellow-100/80 dark:bg-yellow-900/80' : 'bg-red-100/80 dark:bg-red-900/80'
+                    } backdrop-blur-sm`} title={approvalStatus.isPending ? "Pending approval" : "Needs approval"}>
+                      {approvalStatus.isPending ? (
+                        <Clock size={12} className="text-yellow-600 dark:text-yellow-300" />
+                      ) : (
+                        <Clock size={12} className="text-red-600 dark:text-red-300" />
+                      )}
+                    </div>
                   )}
 
                   {/* Text length indicator */}
@@ -240,7 +294,10 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
               ) : (
                 <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 relative group transition-all flex-1 cursor-pointer ${
                   groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
-                } hover:shadow-lg`}
+                } hover:shadow-lg ${
+                  approvalStatus.isPending ? 'ring-2 ring-yellow-300/50 bg-yellow-50/30 dark:bg-yellow-900/20' :
+                  (!approvalStatus.isApproved && isAdmin) ? 'ring-2 ring-red-300/50 bg-red-50/30 dark:bg-red-900/20' : ''
+                }`}
                 onClick={() => openLightbox(`/storage/images/${item.content}`, `Guest entry by ${item.author}`, item.author, `${getDrawingIndex(item.entryId)}.png`)}>
                   {/* Group border highlight */}
                   {groupInfo.isGrouped && (
@@ -250,17 +307,45 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                       'group-border-middle'
                     }`} />
                   )}
+                  {/* Admin controls */}
                   {showDeleteButtons && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleDelete(item.entryId)
-                      }}
-                      className="absolute top-3 right-3 p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl z-10"
-                      title="Delete entry"
-                    >
-                      <Trash2 size={12} />
-                    </button>
+                    <div className="absolute top-3 right-3 flex gap-1 z-10">
+                      {!approvalStatus.isApproved && !approvalStatus.isPending && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleApprove(item.entryId)
+                          }}
+                          className="p-2 rounded-full bg-gradient-to-r from-green-400 to-emerald-400 hover:from-green-500 hover:to-emerald-500 text-white transition-all shadow-lg hover:shadow-xl"
+                          title="Approve entry"
+                        >
+                          <Check size={12} />
+                        </button>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDelete(item.entryId)
+                        }}
+                        className="p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl"
+                        title="Delete entry"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Approval status indicator */}
+                  {(approvalStatus.isPending || (!approvalStatus.isApproved && isAdmin)) && (
+                    <div className={`absolute top-3 left-3 p-1 rounded-full ${
+                      approvalStatus.isPending ? 'bg-yellow-100/80 dark:bg-yellow-900/80' : 'bg-red-100/80 dark:bg-red-900/80'
+                    } backdrop-blur-sm`} title={approvalStatus.isPending ? "Pending approval" : "Needs approval"}>
+                      {approvalStatus.isPending ? (
+                        <Clock size={12} className="text-yellow-600 dark:text-yellow-300" />
+                      ) : (
+                        <Clock size={12} className="text-red-600 dark:text-red-300" />
+                      )}
+                    </div>
                   )}
                   <div className="mb-3 relative">
                     <img

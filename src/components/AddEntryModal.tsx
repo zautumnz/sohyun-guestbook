@@ -95,8 +95,8 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
       })
 
       toast({
-        title: "Entry added successfully!",
-        description: "Your message has been added to the guestbook."
+        title: "Entry submitted successfully!",
+        description: "Your message has been queued for review and will appear after approval."
       })
 
       // Reset form

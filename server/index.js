@@ -41,7 +41,12 @@ const loadEntries = () => {
     const entries = entryFiles.map(file => {
       const filePath = path.join(ENTRIES_DIR, file)
       const data = fs.readFileSync(filePath, 'utf8')
-      return JSON.parse(data)
+      const entry = JSON.parse(data)
+      // Add backward compatibility: set approved to true for existing entries without the field
+      if (entry.approved === undefined) {
+        entry.approved = true
+      }
+      return entry
     })
     return entries.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
   } catch (error) {
@@ -97,12 +102,24 @@ const saveImage = (base64Data, entryId) => {
 // Cache for entries (reload from disk on startup)
 let entries = loadEntries()
 
-// GET /entries - Get all entries
+// GET /entries - Get all entries (approved only by default)
 app.get('/entries', (req, res) => {
   try {
     // Reload entries from disk to ensure freshness
     entries = loadEntries()
-    res.json(entries)
+    
+    // Check if admin password is provided to show all entries
+    const password = req.query.pw
+    if (password === '20250514') {
+      // Admin view: return all entries with approval status
+      console.log(`Admin access: returning ${entries.length} total entries`)
+      res.json(entries)
+    } else {
+      // Public view: return only approved entries
+      const approvedEntries = entries.filter(entry => entry.approved === true)
+      console.log(`Public access: returning ${approvedEntries.length} approved entries out of ${entries.length} total`)
+      res.json(approvedEntries)
+    }
   } catch (error) {
     console.error('Error fetching entries:', error)
     res.status(500).json({ error: 'Failed to fetch entries' })
@@ -257,8 +274,11 @@ app.post('/entry', (req, res) => {
       author,
       timestamp: new Date().toISOString(),
       pageNumber,
-      position
+      position,
+      approved: false
     }
+
+    console.log(`Creating new entry for review: ${entryId} by ${author}`)
 
     // Save entry to disk
     if (!saveEntry(entry)) {
@@ -305,13 +325,69 @@ app.get('/storage/images/:filename', (req, res) => {
   }
 })
 
+// PUT /entry/:id/approve - Approve an entry (admin only)
+app.put('/entry/:id/approve', (req, res) => {
+  try {
+    const entryId = req.params.id
+    const { password } = req.body
+
+    // Validation
+    if (!entryId) {
+      return res.status(400).json({ error: 'Entry ID is required' })
+    }
+
+    if (password !== '20250514') {
+      return res.status(401).json({ error: 'Invalid password' })
+    }
+
+    // Check if entry exists
+    const entryFilePath = path.join(ENTRIES_DIR, `${entryId}.json`)
+    if (!fs.existsSync(entryFilePath)) {
+      return res.status(404).json({ error: 'Entry not found' })
+    }
+
+    // Read and update entry
+    let entryData
+    try {
+      const entryContent = fs.readFileSync(entryFilePath, 'utf8')
+      entryData = JSON.parse(entryContent)
+    } catch (error) {
+      console.error('Error reading entry file:', error)
+      return res.status(500).json({ error: 'Failed to read entry' })
+    }
+
+    // Update approval status
+    entryData.approved = true
+
+    // Save updated entry
+    if (!saveEntry(entryData)) {
+      return res.status(500).json({ error: 'Failed to update entry' })
+    }
+
+    // Update in-memory cache
+    const entryIndex = entries.findIndex(entry => entry.id === entryId)
+    if (entryIndex !== -1) {
+      entries[entryIndex] = entryData
+    }
+
+    console.log(`Entry approved: ${entryId} by ${entryData.author}`)
+    res.json({ success: true, message: 'Entry approved successfully', entry: entryData })
+
+  } catch (error) {
+    console.error('Error approving entry:', error)
+    res.status(500).json({ error: 'Failed to approve entry' })
+  }
+})
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   const entryCount = entries.length
+  const approvedCount = entries.filter(entry => entry.approved === true).length
   res.json({
     status: 'Server is running',
     timestamp: new Date().toISOString(),
     entryCount,
+    approvedCount,
     storageDir: STORAGE_DIR
   })
 })
@@ -335,6 +411,7 @@ app.listen(PORT, () => {
   console.log(`API endpoints:`)
   console.log(`  GET    http://localhost:${PORT}/entries`)
   console.log(`  POST   http://localhost:${PORT}/entry`)
+  console.log(`  PUT    http://localhost:${PORT}/entry/:id/approve`)
   console.log(`  DELETE http://localhost:${PORT}/entry/:id`)
   console.log(`  GET    http://localhost:${PORT}/images/:filename`)
   console.log(`  GET    http://localhost:${PORT}/health`)
