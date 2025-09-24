@@ -88,6 +88,14 @@ const BookContent = () => {
 
   return (
     <div className="h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-2 sm:py-3 lg:py-4 xl:py-5 relative overflow-hidden no-print">
+      {/* Beta Warning Banner */}
+      <div className="absolute top-0 left-0 right-0 z-50 bg-amber-100 dark:bg-amber-900 border-b border-amber-200 dark:border-amber-700 py-2 px-4">
+        <div className="flex items-center justify-center gap-2 text-amber-800 dark:text-amber-200">
+          <AlertCircle size={16} className="flex-shrink-0" />
+          <span className="text-sm font-medium">Beta - All entries will be deleted before going live</span>
+        </div>
+      </div>
+      
       {/* Floating stars */}
       <div className="kawaii-star absolute top-10 left-10 text-2xl">✨</div>
       <div className="kawaii-star absolute top-20 right-20 text-xl">⭐</div>

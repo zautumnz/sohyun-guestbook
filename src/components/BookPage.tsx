@@ -75,7 +75,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
   // Get drawing image index for consistent avatar across entries
   const getDrawingIndex = (entryId: string) => {
     const uniqueEntryIds = [...new Set(contentItems.map(item => item.entryId))].sort()
-    return (uniqueEntryIds.indexOf(entryId) % 8) + 1 // Cycle through 1-8
+    return (uniqueEntryIds.indexOf(entryId) % 9) + 1 // Cycle through 1-9
   }
 
   // Get content items for this side
