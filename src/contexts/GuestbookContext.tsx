@@ -67,7 +67,7 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // Calculate total pages based on whether we're using mobile or desktop layout
   // For desktop: use itemsPerSpread (6), for mobile: use itemsPerMobilePage (3)
   // We'll use the desktop calculation as the base since the context doesn't know the viewport
-  const totalPages = Math.max(1, Math.ceil(contentItems.length / itemsPerSpread) + 1)
+  const totalPages = Math.max(1, Math.ceil(contentItems.length / itemsPerSpread))
 
   // Convert API timestamp string to Date object
   const transformApiEntry = (apiEntry: GuestbookEntry & { timestamp: string }): GuestbookEntry => ({
