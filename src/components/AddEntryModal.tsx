@@ -105,7 +105,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
       onClose()
     } catch (error) {
       let errorMessage = "Something went wrong"
-      
+
       if (error instanceof Error) {
         errorMessage = error.message
         // Check if it's a server response error about file size
@@ -113,7 +113,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
           errorMessage = "One or more images exceed the 50MB size limit. Please choose smaller images."
         }
       }
-      
+
       toast({
         title: "Failed to add entry",
         description: errorMessage,
@@ -147,7 +147,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
             <div className="absolute bottom-4 left-8 text-purple-300/30 text-xs kawaii-star">💫</div>
 
             <div className="flex items-center justify-between mb-8 relative z-10">
-              <h2 className="text-2xl font-serif text-purple-800 flex items-center gap-2">
+              <h2 className="text-2xl font-serif text-purple-800 dark:text-purple-200 flex items-center gap-2">
                 💝 Add Your Entry ✨
               </h2>
               <button
@@ -160,7 +160,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
 
             <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
               <div>
-                <label className="block text-sm font-medium text-purple-700 mb-2 flex items-center gap-2">
+                <label className="block text-sm font-medium text-purple-700 dark:text-purple-200 mb-2 flex items-center gap-2">
                   ⭐ Your Name
                 </label>
                 <input
@@ -175,7 +175,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
 
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="block text-sm font-medium text-purple-700 flex items-center gap-2">
+                  <label className="block text-sm font-medium text-purple-700 dark:text-purple-200 flex items-center gap-2">
                     💭 Content Items
                   </label>
                   <div className="flex gap-2">
@@ -265,7 +265,7 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
         })
         return
       }
-      
+
       // Handle other rejection reasons
       toast({
         title: "File not accepted",
@@ -274,7 +274,7 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
       })
       return
     }
-    
+
     const file = acceptedFiles[0]
     if (file) {
       // Additional client-side size check as backup

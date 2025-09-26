@@ -58,6 +58,13 @@ const BookContent = () => {
     }
 
     if (targetSpread >= 0 && targetSpread < totalPages) {
+      // Check if we're already on the target spread - if so, just close the modal
+      if (targetSpread === currentPage) {
+        setShowJumpModal(false)
+        setJumpPageInput('')
+        return
+      }
+
       setIsPageTransitioning(true)
       goToPage(targetSpread)
       setShowJumpModal(false)
@@ -273,7 +280,7 @@ const BookContent = () => {
             </div>
 
             {/* Navigation Controls */}
-            <div className="flex justify-between items-center mt-6 px-6">
+            <div className="flex justify-between items-center mt-6 px-6 pb-2">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -353,12 +360,14 @@ const BookContent = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="kawaii-modal bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-800 dark:to-purple-900 rounded-xl p-6 shadow-2xl max-w-sm w-full"
+              className="kawaii-modal bg-white dark:bg-slate-800 rounded-xl p-6 shadow-2xl max-w-sm w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-200 mb-4 text-center">
-                🔍 Jump to Page
-              </h3>
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-700 dark:to-purple-800 -m-6 mb-4 p-6 rounded-t-xl">
+                <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-200 text-center">
+                  🔍 Jump to Page
+                </h3>
+              </div>
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">

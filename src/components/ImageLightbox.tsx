@@ -70,11 +70,11 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({ src, alt, author, avatarI
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
-            className="relative max-w-4xl w-full max-h-[95vh] kawaii-modal bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-800 dark:to-purple-900 rounded-xl shadow-2xl overflow-hidden"
+            className="relative max-w-4xl w-full max-h-[95vh] kawaii-modal bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="p-4 border-b border-purple-200 dark:border-purple-600">
+            <div className="p-4 border-b border-purple-200 dark:border-purple-600 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-700 dark:to-purple-800">
               <div className="flex items-center gap-3">
                 <div style={{ borderRadius: '9999px' }} className="rounded-full kawaii-border bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-700 dark:to-indigo-700 p-2">
                   <img
@@ -101,7 +101,7 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({ src, alt, author, avatarI
             </div>
 
             {/* Footer with decorative elements */}
-            <div className="p-3 bg-purple-100/50 dark:bg-purple-800/50 border-t border-purple-200 dark:border-purple-600">
+            <div className="p-3 bg-gradient-to-r from-purple-100/50 to-pink-100/50 dark:from-purple-800/50 dark:to-slate-700/50 border-t border-purple-200 dark:border-purple-600">
               <div className="flex justify-center gap-2 text-purple-400 dark:text-purple-300">
                 <span>✨</span>
                 <span>📷</span>

@@ -113,7 +113,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
   }
 
   return (
-    <div className={`w-full h-full p-6 book-page relative overflow-hidden ${
+    <div className={`w-full h-full book-page relative ${
       side === 'left' ? 'pr-4' :
       side === 'right' ? 'pl-4' :
       'px-2' // single page mode
@@ -126,13 +126,13 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
         </div>
       )}
       {/* Kawaii decorative stars */}
-      <div className="absolute top-4 left-8 text-purple-300/40 text-sm kawaii-star">✨</div>
-      <div className="absolute top-12 right-12 text-pink-300/40 text-xs kawaii-star">⭐</div>
-      <div className="absolute bottom-8 left-16 text-purple-300/40 text-xs kawaii-star">💫</div>
-      <div className="absolute bottom-16 right-8 text-pink-300/40 text-sm kawaii-star">🌟</div>
+      <div className="absolute top-4 left-8 text-purple-300/40 text-sm kawaii-star pointer-events-none">✨</div>
+      <div className="absolute top-12 right-12 text-pink-300/40 text-xs kawaii-star pointer-events-none">⭐</div>
+      <div className="absolute bottom-8 left-16 text-purple-300/40 text-xs kawaii-star pointer-events-none">💫</div>
+      <div className="absolute bottom-16 right-8 text-pink-300/40 text-sm kawaii-star pointer-events-none">🌟</div>
 
       {/* Paper texture overlay with kawaii pattern */}
-      <div className="absolute inset-0 opacity-15 paper-texture" />
+      <div className="absolute inset-0 opacity-15 paper-texture pointer-events-none" />
 
       {/* Ruled lines for writing */}
       <div className="absolute inset-8 pointer-events-none">
@@ -146,22 +146,24 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
       </div>
 
       {/* Decorative lace border */}
-      <div className="absolute top-0 left-0 right-0 h-4 lace-border opacity-30" />
-      <div className="absolute bottom-0 left-0 right-0 h-4 lace-border opacity-30" />
+      <div className="absolute top-0 left-0 right-0 h-4 lace-border opacity-30 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-4 lace-border opacity-30 pointer-events-none" />
 
-      {/* Page Header - show on left side or single page mode */}
-      {(side === 'left' || side === 'single') && (
-        <div className="relative z-10 mb-6">
-          <div className="kawaii-border bg-gradient-to-r from-purple-100/80 to-pink-100/80 rounded-full px-4 py-2 mx-auto w-fit">
-            <h2 className="text-base sm:text-lg font-serif text-purple-800 dark:text-purple-200 text-center flex items-center gap-2">
-              ✨ Sohyun's Birthday Book ✨
-            </h2>
+      {/* Scrollable content container */}
+      <div className="relative z-10 h-full overflow-y-auto sm:overflow-hidden custom-scrollbar p-6">
+        {/* Page Header - show on left side or single page mode */}
+        {(side === 'left' || side === 'single') && (
+          <div className="mb-3">
+            <div className="kawaii-border bg-gradient-to-r from-purple-100/80 to-pink-100/80 rounded-full px-3 py-1 mx-auto w-fit">
+              <h2 className="text-sm sm:text-base font-serif text-purple-800 dark:text-purple-200 text-center flex items-center gap-2">
+                ✨ Sohyun's Birthday Book ✨
+              </h2>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Content Items */}
-      <div className="relative z-10 space-y-2 lg:space-y-3 xl:space-y-6 2xl:space-y-10">
+        {/* Content Items */}
+        <div className="space-y-1 lg:space-y-2 xl:space-y-4 2xl:space-y-6 pb-6">
         {pageItems.map((item, index) => {
           const groupInfo = getGroupInfo(item)
           const colorIndex = getEntryColorIndex(item.entryId)
@@ -380,12 +382,14 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
         })}
       </div>
 
-      {/* Page number at bottom */}
+      </div>
+
+      {/* Page number at bottom - outside scrollable content */}
       <div className={`absolute bottom-4 ${
         side === 'left' ? 'left-6' :
         side === 'right' ? 'right-6' :
-        'left-1/2 transform -translate-x-1/2' // center for single page
-      }`}>
+        'right-6' // bottom right for single page (mobile)
+      } z-20`}>
         <div className="kawaii-border bg-gradient-to-r from-purple-100 to-pink-100 rounded-full px-3 py-1">
           <span className="text-purple-600 dark:text-purple-300 font-serif text-xs sm:text-sm flex items-center gap-1">
             ⭐ {side === 'single' ? (pageNumber + 1) :
