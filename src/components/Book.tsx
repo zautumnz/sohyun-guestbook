@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer, Hash, Moon, Sun, Shield, Clock, CheckCircle } from 'lucide-react'
 import { useGuestbook } from '@/contexts/GuestbookContext'
@@ -17,9 +17,28 @@ const BookContent = () => {
   const [showJumpModal, setShowJumpModal] = useState(false)
   const [jumpPageInput, setJumpPageInput] = useState('')
   const [isPageTransitioning, setIsPageTransitioning] = useState(false)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
+
+  // Check for first visit and show welcome modal
+  // Uses 'guestbook-welcome-shown' localStorage key to track if user has seen the welcome message
+  useEffect(() => {
+    const hasVisited = localStorage.getItem('guestbook-welcome-shown')
+    if (!hasVisited) {
+      setShowWelcomeModal(true)
+      localStorage.setItem('guestbook-welcome-shown', 'true')
+    }
+  }, [])
 
   const handlePrint = () => {
     window.print()
+  }
+
+  const handleChibiClick = () => {
+    setShowWelcomeModal(true)
+  }
+
+  const handleCloseWelcomeModal = () => {
+    setShowWelcomeModal(false)
   }
 
   const handleJumpToPage = () => {
@@ -95,7 +114,7 @@ const BookContent = () => {
           <span className="text-sm font-medium">Beta - All entries will be deleted before going live</span>
         </div>
       </div>
-      
+
       {/* Floating stars */}
       <div className="kawaii-star absolute top-10 left-10 text-2xl">✨</div>
       <div className="kawaii-star absolute top-20 right-20 text-xl">⭐</div>
@@ -109,7 +128,9 @@ const BookContent = () => {
           style={{ width: '100%' }}
           src="/assets/chibi.jpg"
           alt="Chibi Sohyun"
-          className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300"
+          className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300 cursor-pointer"
+          onClick={handleChibiClick}
+          title="Click to view welcome message"
         />
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -394,6 +415,19 @@ const BookContent = () => {
           onClose={closeLightbox}
         />
       )}
+
+      {/* Welcome Modal */}
+      <TextLightbox
+        content="Welcome to Sohyun's Birthday Guestbook! 💙
+
+For Sohyun's birthday, we invite you to share your thoughts and memories with her.
+
+You can leave a message or image (or both!) for Sohyun here. Click the 'Add Entry' button to get started."
+        author="Creator"
+        avatarImage="1.png"
+        isOpen={showWelcomeModal}
+        onClose={handleCloseWelcomeModal}
+      />
 
       <footer className="text-center text-purple-600 dark:text-purple-300 text-xs sm:text-sm font-medium py-2 mt-auto">
         Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">zautumn</a>{' '}
