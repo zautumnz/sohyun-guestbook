@@ -117,7 +117,7 @@ const BookContent = () => {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-2 sm:py-3 lg:py-4 xl:py-5 relative overflow-hidden no-print">
+    <div className="h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-2 sm:py-3 lg:py-4 xl:py-3 2xl:py-5 relative overflow-hidden no-print">
       {/* Beta Warning Banner */}
       <div className="absolute top-0 left-0 right-0 z-50 bg-amber-100 dark:bg-amber-900 border-b border-amber-200 dark:border-amber-700 py-2 px-4">
         <div className="flex items-center justify-center gap-2 text-amber-800 dark:text-amber-200">
@@ -218,11 +218,11 @@ const BookContent = () => {
         <div className="absolute inset-0 bg-purple-300/30 dark:bg-purple-600/40 blur-2xl transform translate-y-8 scale-95 rounded-3xl" />
 
         {/* Book Container */}
-        <div className="relative kawaii-border bg-gradient-to-br from-purple-200 to-pink-200 dark:from-purple-800 dark:to-indigo-800 p-4 sm:p-6 lg:p-8 xl:p-10 2xl:p-12 rounded-2xl shadow-2xl w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl min-w-0">
+        <div className="relative kawaii-border bg-gradient-to-br from-purple-200 to-pink-200 dark:from-purple-800 dark:to-indigo-800 p-4 sm:p-6 lg:p-8 xl:p-8 2xl:p-12 rounded-2xl shadow-2xl w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl min-w-0">
           <div className="kawaii-border bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-purple-900 rounded-xl shadow-inner lace-border">
 
             {/* Book Pages - Responsive Layout */}
-            <div className="relative w-full h-[60vh] min-h-[500px] sm:h-[65vh] lg:h-[70vh] xl:h-[72vh] 2xl:h-[75vh] max-h-[800px] overflow-hidden rounded-xl flex">
+            <div className="relative w-full h-[60vh] min-h-[500px] sm:h-[65vh] lg:h-[70vh] xl:h-[68vh] 2xl:h-[75vh] max-h-[800px] overflow-hidden rounded-xl flex">
               <AnimatePresence mode="wait" onExitComplete={() => setIsPageTransitioning(false)}>
                 <motion.div
                   key={currentPage}

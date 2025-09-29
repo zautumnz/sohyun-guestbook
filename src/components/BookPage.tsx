@@ -163,7 +163,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
         )}
 
         {/* Content Items */}
-        <div className="space-y-1 lg:space-y-2 xl:space-y-4 2xl:space-y-6 pb-6">
+        <div className="space-y-1 lg:space-y-2 xl:space-y-3 2xl:space-y-6 pb-6">
         {pageItems.map((item, index) => {
           const groupInfo = getGroupInfo(item)
           const colorIndex = getEntryColorIndex(item.entryId)
@@ -203,7 +203,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
               )}
 
               {item.type === 'text' ? (
-                <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 relative group transition-all flex-1 cursor-pointer ${
+                <div className={`kawaii-entry kawaii-entry-${colorIndex} p-3 xl:p-3 2xl:p-4 relative group transition-all flex-1 cursor-pointer ${
                   groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
                 } hover:shadow-lg ${
                   approvalStatus.isPending ? 'ring-2 ring-yellow-300/50 bg-yellow-50/30 dark:bg-yellow-900/20' :
@@ -294,7 +294,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
                   </div>
                 </div>
               ) : (
-                <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 relative group transition-all flex-1 cursor-pointer ${
+                <div className={`kawaii-entry kawaii-entry-${colorIndex} p-3 xl:p-3 2xl:p-4 relative group transition-all flex-1 cursor-pointer ${
                   groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
                 } hover:shadow-lg ${
                   approvalStatus.isPending ? 'ring-2 ring-yellow-300/50 bg-yellow-50/30 dark:bg-yellow-900/20' :

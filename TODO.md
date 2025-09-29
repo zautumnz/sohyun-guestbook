@@ -3,3 +3,4 @@
 * Use assets/entry-format to signify the sub-entry type
 * Add cover page
 * Add a wolf emoji on the scrollbar thumb
+* Still messed up on larger screens
