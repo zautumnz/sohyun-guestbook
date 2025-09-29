@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer, Hash, Moon, Sun, Shield, Clock, CheckCircle } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer, Hash, Moon, Sun, Shield, Clock, CheckCircle, Calendar } from 'lucide-react'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import { LightboxProvider, useLightbox } from '@/contexts/LightboxContext'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -11,7 +11,7 @@ import TextLightbox from './TextLightbox'
 
 const BookContent = () => {
   const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage, contentItems, isAdmin, pendingEntries, entries } = useGuestbook()
-  const { isOpen, imageSrc, imageAlt, imageAuthor, imageAvatarImage, textContent, textAuthor, textAvatarImage, contentType, openLightbox, closeLightbox } = useLightbox()
+  const { isOpen, imageSrc, imageAlt, imageAuthor, imageAvatarImage, textContent, textAuthor, textAvatarImage, contentType, openLightbox, openTextLightbox, closeLightbox } = useLightbox()
   const { isDark, toggleTheme } = useTheme()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showJumpModal, setShowJumpModal] = useState(false)
@@ -53,11 +53,15 @@ const BookContent = () => {
       // Page 1-2 -> spread 0, Page 3-4 -> spread 1, etc.
       targetSpread = Math.floor((inputPageNum - 1) / 2)
     } else {
-      // Mobile: Direct page to spread mapping
+      // Mobile: Direct page number to spread mapping (page 1 -> spread 0, page 2 -> spread 1)
       targetSpread = inputPageNum - 1
     }
 
-    if (targetSpread >= 0 && targetSpread < totalPages) {
+    // Calculate mobile-specific total pages (each spread shows as one page)
+    const mobileTotalPages = Math.max(1, Math.ceil(contentItems.length / 3))
+    const maxPages = isDesktop ? totalPages : mobileTotalPages
+
+    if (targetSpread >= 0 && targetSpread < maxPages) {
       // Check if we're already on the target spread - if so, just close the modal
       if (targetSpread === currentPage) {
         setShowJumpModal(false)
@@ -231,9 +235,125 @@ const BookContent = () => {
                   onAnimationStart={() => setIsPageTransitioning(true)}
                   onAnimationComplete={() => setIsPageTransitioning(false)}
                 >
-                  {/* Mobile: Single Page View */}
-                  <div className="w-full h-full relative sm:hidden">
-                    <BookPage pageNumber={currentPage} side="single" />
+                  {/* Mobile: Scrollable All Entries View */}
+                  <div className="w-full h-full relative sm:hidden overflow-y-auto custom-scrollbar">
+                    <div className="space-y-4 p-4">
+                      {contentItems.map((item, index) => {
+                        const uniqueEntryIds = [...new Set(contentItems.map(item => item.entryId))].sort()
+                        const colorIndex = uniqueEntryIds.indexOf(item.entryId) % 3
+                        const drawingIndex = (uniqueEntryIds.indexOf(item.entryId) % 9) + 1
+                        
+                        // Helper function to check if items are part of the same entry group
+                        const getGroupInfo = (item: typeof contentItems[0]) => {
+                          const groupItems = contentItems.filter(ci => ci.entryId === item.entryId)
+                          const isGrouped = groupItems.length > 1
+                          const itemIndex = groupItems.findIndex(gi => gi.id === item.id)
+                          const isFirst = itemIndex === 0
+                          const isLast = itemIndex === groupItems.length - 1
+
+                          // Determine content mix for group icon
+                          const hasText = groupItems.some(gi => gi.type === 'text')
+                          const hasImage = groupItems.some(gi => gi.type === 'image')
+                          let groupIcon = '📝'
+                          if (hasText && hasImage) {
+                            groupIcon = '📷📝'
+                          } else if (hasImage) {
+                            groupIcon = '📷'
+                          }
+
+                          return { isGrouped, isFirst, isLast, totalItems: groupItems.length, itemIndex, groupIcon }
+                        }
+                        
+                        const groupInfo = getGroupInfo(item)
+                        
+                        return (
+                          <div key={`${item.entryId}_${index}`} className="relative flex items-start gap-3">
+                            {/* Group indicator and connecting line */}
+                            {groupInfo.isGrouped && (
+                              <div className="flex flex-col items-center group-indicator pt-4 flex-shrink-0">
+                                {/* Group badge */}
+                                <div className={`group-badge group-badge-${colorIndex}`}>
+                                  <span className="text-xs">{groupInfo.groupIcon}</span>
+                                  <span>{groupInfo.itemIndex + 1}/{groupInfo.totalItems}</span>
+                                </div>
+
+                                {/* Connecting line to next item in group */}
+                                {!groupInfo.isLast && (
+                                  <div className={`group-connecting-line group-connecting-line-${colorIndex}`} />
+                                )}
+                              </div>
+                            )}
+                            
+                            <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 rounded-lg shadow-lg transition-all duration-200 cursor-pointer flex-1 relative ${
+                              groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
+                            }`}>
+                              {/* Group border highlight */}
+                              {groupInfo.isGrouped && (
+                                <div className={`group-border group-border-${colorIndex} ${
+                                  groupInfo.isFirst ? 'group-border-first' :
+                                  groupInfo.isLast ? 'group-border-last' :
+                                  'group-border-middle'
+                                }`} />
+                              )}
+                              
+                              {item.type === 'text' ? (
+                                <div 
+                                  className="space-y-3"
+                                  onClick={() => openTextLightbox(item.content, item.author, `${drawingIndex}.png`)}
+                                >
+                                  <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words leading-relaxed">
+                                    {item.content}
+                                  </p>
+                                  <div className="flex items-center gap-2 text-xs text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-full px-3 py-2">
+                                    <img
+                                      src={`/assets/drawings/${drawingIndex}.png`}
+                                      alt="Author avatar"
+                                      className="w-6 h-6 rounded-full object-cover border border-purple-300/50"
+                                    />
+                                    <span className="font-medium truncate">{item.author}</span>
+                                    <div className="flex items-center gap-1 ml-auto">
+                                      <Calendar size={10} className="text-purple-400" />
+                                      <span>{new Date(item.timestamp).toLocaleDateString()}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div 
+                                  className="space-y-3"
+                                  onClick={() => openLightbox(`/storage/images/${item.content}`, `Entry by ${item.author}`, item.author, `${drawingIndex}.png`)}
+                                >
+                                  <img
+                                    src={`/storage/images/${item.content}`}
+                                    alt={`Entry by ${item.author}`}
+                                    className="w-full rounded-lg hover:opacity-90 transition-opacity"
+                                  />
+                                  <div className="flex items-center gap-2 text-xs text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-full px-3 py-2">
+                                    <img
+                                      src={`/assets/drawings/${drawingIndex}.png`}
+                                      alt="Author avatar"
+                                      className="w-6 h-6 rounded-full object-cover border border-purple-300/50"
+                                    />
+                                    <span className="font-medium truncate">{item.author}</span>
+                                    <div className="flex items-center gap-1 ml-auto">
+                                      <Calendar size={10} className="text-purple-400" />
+                                      <span>{new Date(item.timestamp).toLocaleDateString()}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
+                      {contentItems.length === 0 && (
+                        <div className="text-center text-purple-600 dark:text-purple-400 py-12">
+                          <div className="kawaii-entry p-6 rounded-lg">
+                            <p className="text-lg mb-2">✨ No entries yet! ✨</p>
+                            <p className="text-sm opacity-80">Be the first to leave a message for Sohyun!</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Desktop: Two Page Spread */}
@@ -279,8 +399,8 @@ const BookContent = () => {
               <div className="absolute bottom-4 right-4 text-purple-400/50 dark:text-purple-300/70 text-lg">🌟</div>
             </div>
 
-            {/* Navigation Controls */}
-            <div className="flex justify-between items-center mt-6 px-6 pb-2">
+            {/* Navigation Controls - Hidden on Mobile */}
+            <div className="hidden sm:flex justify-between items-center mt-6 px-6 pb-2">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -289,13 +409,13 @@ const BookContent = () => {
                   prevPage()
                 }}
                 disabled={currentPage === 0 || isPageTransitioning}
-                className="kawaii-button flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-3 text-white font-medium text-sm sm:text-base rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="kawaii-button flex items-center gap-2 px-6 py-3 text-white font-medium text-base rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                <ChevronLeft size={16} className="sm:w-5 sm:h-5" />
-                <span className="hidden xs:inline">←</span> <span className="hidden sm:inline">Previous</span><span className="sm:hidden">Prev</span>
+                <ChevronLeft size={20} />
+                Previous
               </motion.button>
 
-              <div className="flex items-center gap-2 sm:gap-6">
+              <div className="flex items-center gap-6">
                 {(loading || isPageTransitioning) && (
                   <RefreshCw className="animate-spin h-5 w-5 text-purple-400" />
                 )}
@@ -304,7 +424,7 @@ const BookContent = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowJumpModal(true)}
-                  className="kawaii-button hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-400 to-blue-400 text-white font-medium text-sm rounded-full transition-all"
+                  className="kawaii-button flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-400 to-blue-400 text-white font-medium text-sm rounded-full transition-all"
                 >
                   <Hash size={14} />
                   Jump
@@ -314,13 +434,11 @@ const BookContent = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowAddModal(true)}
-                  className="kawaii-button flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-pink-400 to-purple-400 text-white font-medium text-sm sm:text-base rounded-full transition-all"
+                  className="kawaii-button flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-400 to-purple-400 text-white font-medium text-base rounded-full transition-all"
                 >
-                  <Plus size={16} className="sm:w-5 sm:h-5" />
-                  <span className="hidden xs:inline">💝</span> <span className="hidden sm:inline">Add Entry</span><span className="sm:hidden">Add</span>
+                  <Plus size={16} />
+                  💝 Add Entry
                 </motion.button>
-
-
               </div>
 
               <motion.button
@@ -331,10 +449,23 @@ const BookContent = () => {
                   nextPage()
                 }}
                 disabled={currentPage >= totalPages - 1 || isPageTransitioning}
-                className="kawaii-button flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-3 text-white font-medium text-sm sm:text-base rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="kawaii-button flex items-center gap-2 px-6 py-3 text-white font-medium text-base rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                <span className="hidden sm:inline">Next</span><span className="sm:hidden">Next</span> <span className="hidden xs:inline">→</span>
-                <ChevronRight size={16} className="sm:w-5 sm:h-5" />
+                Next
+                <ChevronRight size={20} />
+              </motion.button>
+            </div>
+
+            {/* Mobile Add Button - Centered */}
+            <div className="sm:hidden flex justify-center mt-6 px-6 pb-2">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowAddModal(true)}
+                className="kawaii-button flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-400 to-purple-400 text-white font-medium text-base rounded-full transition-all"
+              >
+                <Plus size={16} />
+                💝 Add Entry
               </motion.button>
             </div>
           </div>
@@ -371,12 +502,12 @@ const BookContent = () => {
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">
-                  Page Number (1-{window.innerWidth >= 640 ? totalPages * 2 : totalPages})
+                  Page Number (1-{window.innerWidth >= 640 ? totalPages * 2 : Math.max(1, Math.ceil(contentItems.length / 3))})
                 </label>
                 <input
                   type="number"
                   min="1"
-                  max={window.innerWidth >= 640 ? totalPages * 2 : totalPages}
+                  max={window.innerWidth >= 640 ? totalPages * 2 : Math.max(1, Math.ceil(contentItems.length / 3))}
                   value={jumpPageInput}
                   onChange={(e) => setJumpPageInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleJumpToPage()}
@@ -395,7 +526,7 @@ const BookContent = () => {
                 </button>
                 <button
                   onClick={handleJumpToPage}
-                  disabled={!jumpPageInput || parseInt(jumpPageInput) < 1 || parseInt(jumpPageInput) > (window.innerWidth >= 640 ? totalPages * 2 : totalPages)}
+                  disabled={!jumpPageInput || parseInt(jumpPageInput) < 1 || parseInt(jumpPageInput) > (window.innerWidth >= 640 ? totalPages * 2 : Math.max(1, Math.ceil(contentItems.length / 3)))}
                   className="kawaii-button px-4 py-2 text-white font-medium text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   ✨ Jump ✨

@@ -27,6 +27,7 @@ interface GuestbookContextType {
   loading: boolean;
   error: string | null;
   isAdmin: boolean;
+  isMobile: boolean;
   addEntry: (entry: { content: CreateContentItem[]; author: string; position: { x: number; y: number } }) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   approveEntry: (id: string) => Promise<void>;
@@ -47,6 +48,7 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [error, setError] = useState<string | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [adminPassword, setAdminPassword] = useState<string>('')
+  const [isMobile, setIsMobile] = useState(false)
 
   const [currentPage, setCurrentPageState] = useState(0)
 
@@ -65,8 +67,6 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const itemsPerSpread = 6 // 3 items per side, 2 sides per spread
   const itemsPerMobilePage = 3 // 3 items per mobile page
   // Calculate total pages based on whether we're using mobile or desktop layout
-  // For desktop: use itemsPerSpread (6), for mobile: use itemsPerMobilePage (3)
-  // We'll use the desktop calculation as the base since the context doesn't know the viewport
   const totalPages = Math.max(1, Math.ceil(contentItems.length / itemsPerSpread))
 
   // Convert API timestamp string to Date object
@@ -93,14 +93,23 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, [isAdmin, adminPassword])
 
-  // Check for admin mode on mount
+  // Check for mobile viewport and admin mode on mount
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
     const urlParams = new URLSearchParams(window.location.search)
     const password = urlParams.get('pw')
     if (password === '20250514') {
       setIsAdmin(true)
       setAdminPassword(password)
     }
+    
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   // Refresh entries when admin mode changes
@@ -227,6 +236,7 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       loading,
       error,
       isAdmin,
+      isMobile,
       addEntry,
       deleteEntry,
       approveEntry,
