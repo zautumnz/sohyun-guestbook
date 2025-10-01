@@ -81,7 +81,7 @@ const saveImage = (base64Data, entryId) => {
 
     // Check file size (base64 is ~33% larger than original, so we check the base64 size)
     const sizeInBytes = (imageData.length * 3) / 4
-    const maxSizeInBytes = 50 * 1024 * 1024 // 50MB
+    const maxSizeInBytes = 70 * 1024 * 1024 // 70MB
 
     if (sizeInBytes > maxSizeInBytes) {
       throw new Error('Image size exceeds 50MB limit')
