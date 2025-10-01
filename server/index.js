@@ -17,6 +17,9 @@ const isProd = process.env.NODE_ENV === 'production'
 const STORAGE_DIR = path.join(isProd ? '/var/storage' : process.cwd(), 'storage')
 const ENTRIES_DIR = path.join(STORAGE_DIR, 'entries')
 const IMAGES_DIR = path.join(STORAGE_DIR, 'images')
+const REMOVED_DIR = path.join(STORAGE_DIR, 'removed')
+const REMOVED_ENTRIES_DIR = path.join(REMOVED_DIR, 'entries')
+const REMOVED_IMAGES_DIR = path.join(REMOVED_DIR, 'images')
 
 // Ensure storage directories exist
 const ensureDirectories = () => {
@@ -28,6 +31,15 @@ const ensureDirectories = () => {
   }
   if (!fs.existsSync(IMAGES_DIR)) {
     fs.mkdirSync(IMAGES_DIR, { recursive: true })
+  }
+  if (!fs.existsSync(REMOVED_DIR)) {
+    fs.mkdirSync(REMOVED_DIR, { recursive: true })
+  }
+  if (!fs.existsSync(REMOVED_ENTRIES_DIR)) {
+    fs.mkdirSync(REMOVED_ENTRIES_DIR, { recursive: true })
+  }
+  if (!fs.existsSync(REMOVED_IMAGES_DIR)) {
+    fs.mkdirSync(REMOVED_IMAGES_DIR, { recursive: true })
   }
 }
 
@@ -152,38 +164,40 @@ app.delete('/entry/:id', (req, res) => {
       return res.status(500).json({ error: 'Failed to read entry' })
     }
 
-    // Delete associated image files if they exist
+    // Move associated image files if they exist
     if (entryData.content && Array.isArray(entryData.content)) {
       for (const item of entryData.content) {
         if (item.type === 'image' && item.content) {
           const imageFilePath = path.join(IMAGES_DIR, item.content)
+          const removedImagePath = path.join(REMOVED_IMAGES_DIR, item.content)
           if (fs.existsSync(imageFilePath)) {
             try {
-              fs.unlinkSync(imageFilePath)
-              console.log('Deleted image file:', item.content)
+              fs.renameSync(imageFilePath, removedImagePath)
+              console.log('Moved image file to removed:', item.content)
             } catch (error) {
-              console.error('Error deleting image file:', error)
-              // Continue with deletion even if image file deletion fails
+              console.error('Error moving image file:', error)
+              // Continue with removal even if image file move fails
             }
           }
         }
       }
     }
 
-    // Delete entry file
+    // Move entry file to removed directory
+    const removedEntryPath = path.join(REMOVED_ENTRIES_DIR, `${entryId}.json`)
     try {
-      fs.unlinkSync(entryFilePath)
-      console.log('Deleted entry file:', entryId)
+      fs.renameSync(entryFilePath, removedEntryPath)
+      console.log('Moved entry file to removed:', entryId)
     } catch (error) {
-      console.error('Error deleting entry file:', error)
-      return res.status(500).json({ error: 'Failed to delete entry' })
+      console.error('Error moving entry file:', error)
+      return res.status(500).json({ error: 'Failed to move entry' })
     }
 
     // Remove from in-memory cache
     entries = entries.filter(entry => entry.id !== entryId)
 
-    console.log('Entry deleted:', entryId)
-    res.json({ success: true, message: 'Entry deleted successfully' })
+    console.log('Entry moved to removed:', entryId)
+    res.json({ success: true, message: 'Entry moved to removed directory' })
 
   } catch (error) {
     console.error('Error deleting entry:', error)
@@ -379,15 +393,195 @@ app.put('/entry/:id/approve', (req, res) => {
   }
 })
 
+// PUT /entry/:id/reject - Reject an entry and move to removed directory (admin only)
+app.put('/entry/:id/reject', (req, res) => {
+  try {
+    const entryId = req.params.id
+    const { password } = req.body
+
+    // Validation
+    if (!entryId) {
+      return res.status(400).json({ error: 'Entry ID is required' })
+    }
+
+    if (password !== 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
+      return res.status(401).json({ error: 'Invalid password' })
+    }
+
+    // Check if entry exists
+    const entryFilePath = path.join(ENTRIES_DIR, `${entryId}.json`)
+    if (!fs.existsSync(entryFilePath)) {
+      return res.status(404).json({ error: 'Entry not found' })
+    }
+
+    // Read entry to check if it has associated images
+    let entryData
+    try {
+      const entryContent = fs.readFileSync(entryFilePath, 'utf8')
+      entryData = JSON.parse(entryContent)
+    } catch (error) {
+      console.error('Error reading entry file:', error)
+      return res.status(500).json({ error: 'Failed to read entry' })
+    }
+
+    // Move associated image files if they exist
+    if (entryData.content && Array.isArray(entryData.content)) {
+      for (const item of entryData.content) {
+        if (item.type === 'image' && item.content) {
+          const imageFilePath = path.join(IMAGES_DIR, item.content)
+          const removedImagePath = path.join(REMOVED_IMAGES_DIR, item.content)
+          if (fs.existsSync(imageFilePath)) {
+            try {
+              fs.renameSync(imageFilePath, removedImagePath)
+              console.log('Moved image file to removed:', item.content)
+            } catch (error) {
+              console.error('Error moving image file:', error)
+              // Continue with removal even if image file move fails
+            }
+          }
+        }
+      }
+    }
+
+    // Move entry file to removed directory
+    const removedEntryPath = path.join(REMOVED_ENTRIES_DIR, `${entryId}.json`)
+    try {
+      fs.renameSync(entryFilePath, removedEntryPath)
+      console.log('Moved entry file to removed:', entryId)
+    } catch (error) {
+      console.error('Error moving entry file:', error)
+      return res.status(500).json({ error: 'Failed to move entry' })
+    }
+
+    // Remove from in-memory cache
+    entries = entries.filter(entry => entry.id !== entryId)
+
+    console.log(`Entry rejected and moved to removed: ${entryId} by ${entryData.author}`)
+    res.json({ success: true, message: 'Entry rejected and moved to removed directory' })
+
+  } catch (error) {
+    console.error('Error rejecting entry:', error)
+    res.status(500).json({ error: 'Failed to reject entry' })
+  }
+})
+
+// GET /removed/entries - Get all removed entries (admin only)
+app.get('/removed/entries', (req, res) => {
+  try {
+    const password = req.query.pw
+    if (password !== 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
+      return res.status(401).json({ error: 'Invalid password' })
+    }
+
+    // Load removed entries from disk
+    const removedEntryFiles = fs.readdirSync(REMOVED_ENTRIES_DIR).filter(file => file.endsWith('.json'))
+    const removedEntries = removedEntryFiles.map(file => {
+      const filePath = path.join(REMOVED_ENTRIES_DIR, file)
+      const data = fs.readFileSync(filePath, 'utf8')
+      return JSON.parse(data)
+    }).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+
+    console.log(`Admin access: returning ${removedEntries.length} removed entries`)
+    res.json(removedEntries)
+  } catch (error) {
+    console.error('Error fetching removed entries:', error)
+    res.status(500).json({ error: 'Failed to fetch removed entries' })
+  }
+})
+
+// PUT /removed/entry/:id/restore - Restore a removed entry (admin only)
+app.put('/removed/entry/:id/restore', (req, res) => {
+  try {
+    const entryId = req.params.id
+    const { password } = req.body
+
+    // Validation
+    if (!entryId) {
+      return res.status(400).json({ error: 'Entry ID is required' })
+    }
+
+    if (password !== 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
+      return res.status(401).json({ error: 'Invalid password' })
+    }
+
+    // Check if removed entry exists
+    const removedEntryPath = path.join(REMOVED_ENTRIES_DIR, `${entryId}.json`)
+    if (!fs.existsSync(removedEntryPath)) {
+      return res.status(404).json({ error: 'Removed entry not found' })
+    }
+
+    // Read removed entry
+    let entryData
+    try {
+      const entryContent = fs.readFileSync(removedEntryPath, 'utf8')
+      entryData = JSON.parse(entryContent)
+    } catch (error) {
+      console.error('Error reading removed entry file:', error)
+      return res.status(500).json({ error: 'Failed to read removed entry' })
+    }
+
+    // Restore associated image files if they exist
+    if (entryData.content && Array.isArray(entryData.content)) {
+      for (const item of entryData.content) {
+        if (item.type === 'image' && item.content) {
+          const removedImagePath = path.join(REMOVED_IMAGES_DIR, item.content)
+          const imageFilePath = path.join(IMAGES_DIR, item.content)
+          if (fs.existsSync(removedImagePath)) {
+            try {
+              fs.renameSync(removedImagePath, imageFilePath)
+              console.log('Restored image file from removed:', item.content)
+            } catch (error) {
+              console.error('Error restoring image file:', error)
+              // Continue with restoration even if image file move fails
+            }
+          }
+        }
+      }
+    }
+
+    // Restore entry file from removed directory
+    const entryFilePath = path.join(ENTRIES_DIR, `${entryId}.json`)
+    try {
+      fs.renameSync(removedEntryPath, entryFilePath)
+      console.log('Restored entry file from removed:', entryId)
+    } catch (error) {
+      console.error('Error restoring entry file:', error)
+      return res.status(500).json({ error: 'Failed to restore entry' })
+    }
+
+    // Add back to in-memory cache
+    entries.push(entryData)
+    entries.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+
+    console.log(`Entry restored from removed: ${entryId} by ${entryData.author}`)
+    res.json({ success: true, message: 'Entry restored successfully', entry: entryData })
+
+  } catch (error) {
+    console.error('Error restoring entry:', error)
+    res.status(500).json({ error: 'Failed to restore entry' })
+  }
+})
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   const entryCount = entries.length
   const approvedCount = entries.filter(entry => entry.approved === true).length
+  
+  // Count removed entries
+  let removedCount = 0
+  try {
+    removedCount = fs.readdirSync(REMOVED_ENTRIES_DIR).filter(file => file.endsWith('.json')).length
+  } catch (error) {
+    // Directory might not exist yet
+    removedCount = 0
+  }
+  
   res.json({
     status: 'Server is running',
     timestamp: new Date().toISOString(),
     entryCount,
     approvedCount,
+    removedCount,
     storageDir: STORAGE_DIR
   })
 })
@@ -412,7 +606,10 @@ app.listen(PORT, () => {
   console.log(`  GET    http://localhost:${PORT}/entries`)
   console.log(`  POST   http://localhost:${PORT}/entry`)
   console.log(`  PUT    http://localhost:${PORT}/entry/:id/approve`)
+  console.log(`  PUT    http://localhost:${PORT}/entry/:id/reject`)
   console.log(`  DELETE http://localhost:${PORT}/entry/:id`)
+  console.log(`  GET    http://localhost:${PORT}/removed/entries?pw=PASSWORD`)
+  console.log(`  PUT    http://localhost:${PORT}/removed/entry/:id/restore`)
   console.log(`  GET    http://localhost:${PORT}/images/:filename`)
   console.log(`  GET    http://localhost:${PORT}/health`)
 })
