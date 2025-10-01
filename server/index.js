@@ -110,7 +110,7 @@ app.get('/entries', (req, res) => {
 
     // Check if admin password is provided to show all entries
     const password = req.query.pw
-    if (password === '20250514') {
+    if (password === 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
       // Admin view: return all entries with approval status
       console.log(`Admin access: returning ${entries.length} total entries`)
       res.json(entries)
@@ -336,7 +336,7 @@ app.put('/entry/:id/approve', (req, res) => {
       return res.status(400).json({ error: 'Entry ID is required' })
     }
 
-    if (password !== '20250514') {
+    if (password !== 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
       return res.status(401).json({ error: 'Invalid password' })
     }
 

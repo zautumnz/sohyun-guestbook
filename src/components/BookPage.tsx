@@ -21,7 +21,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const password = urlParams.get('pw')
-    setShowDeleteButtons(password === '20250514')
+    setShowDeleteButtons(password === 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU')
   }, [])
 
   // Helper function to get entry approval status

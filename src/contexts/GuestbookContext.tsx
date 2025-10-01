@@ -31,7 +31,6 @@ interface GuestbookContextType {
   addEntry: (entry: { content: CreateContentItem[]; author: string; position: { x: number; y: number } }) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   approveEntry: (id: string) => Promise<void>;
-  setAdminMode: (password: string) => Promise<void>;
   setCurrentPage: (page: number) => void;
   goToPage: (page: number) => void;
   nextPage: () => void;
@@ -98,17 +97,17 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 640)
     }
-    
+
     checkMobile()
     window.addEventListener('resize', checkMobile)
-    
+
     const urlParams = new URLSearchParams(window.location.search)
     const password = urlParams.get('pw')
-    if (password === '20250514') {
+    if (password === 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
       setIsAdmin(true)
       setAdminPassword(password)
     }
-    
+
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
@@ -194,7 +193,7 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       setError(null)
       await guestbookApi.approveEntry(id, adminPassword)
-      
+
       // Move from pending to approved entries if it exists in pending
       const pendingEntry = pendingEntries.find(entry => entry.id === id)
       if (pendingEntry) {
@@ -202,27 +201,17 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setEntries(prev => [...prev, { ...pendingEntry, approved: true }])
       } else {
         // Update existing entry
-        setEntries(prev => prev.map(entry => 
+        setEntries(prev => prev.map(entry =>
           entry.id === id ? { ...entry, approved: true } : entry
         ))
       }
-      
+
       console.log('Approved entry:', id)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to approve entry'
       setError(errorMessage)
       console.error('Error approving entry:', err)
       throw err
-    }
-  }
-
-  const setAdminMode = async (password: string) => {
-    if (password === '20250514') {
-      setIsAdmin(true)
-      setAdminPassword(password)
-      // refreshEntries will be called automatically by the useEffect
-    } else {
-      throw new Error('Invalid password')
     }
   }
 
@@ -240,7 +229,6 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       addEntry,
       deleteEntry,
       approveEntry,
-      setAdminMode,
       setCurrentPage,
       goToPage,
       nextPage,
