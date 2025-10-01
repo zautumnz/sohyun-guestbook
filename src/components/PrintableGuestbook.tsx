@@ -16,8 +16,16 @@ const PrintableGuestbook = () => {
       <div className="print-header">
         <h1>✨ Sohyun's Birthday Guestbook ✨</h1>
         <p>A collection of birthday wishes and memories</p>
-        <div className="print-date">
-          {contentItems.length} messages printed on {new Date().toLocaleDateString()}
+
+        {/* Footer */}
+        <div className="print-footer">
+          <div className="print-date">
+            {contentItems.length} messages printed on {new Date().toLocaleDateString()}
+          </div>
+          Made with 💙 by <span className="font-semibold">zautumn</span>{' '}
+          and <span className="font-semibold">joeywerepyre</span>.
+          Thanks to <span className="font-semibold">Nites</span>{' '}
+          and <span className="font-semibold">YL2002</span> for testing.
         </div>
       </div>
 

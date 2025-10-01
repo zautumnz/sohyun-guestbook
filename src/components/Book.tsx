@@ -242,7 +242,7 @@ const BookContent = () => {
                         const uniqueEntryIds = [...new Set(contentItems.map(item => item.entryId))].sort()
                         const colorIndex = uniqueEntryIds.indexOf(item.entryId) % 3
                         const drawingIndex = (uniqueEntryIds.indexOf(item.entryId) % 9) + 1
-                        
+
                         // Helper function to check if items are part of the same entry group
                         const getGroupInfo = (item: typeof contentItems[0]) => {
                           const groupItems = contentItems.filter(ci => ci.entryId === item.entryId)
@@ -263,9 +263,9 @@ const BookContent = () => {
 
                           return { isGrouped, isFirst, isLast, totalItems: groupItems.length, itemIndex, groupIcon }
                         }
-                        
+
                         const groupInfo = getGroupInfo(item)
-                        
+
                         return (
                           <div key={`${item.entryId}_${index}`} className="relative flex items-start gap-3">
                             {/* Group indicator and connecting line */}
@@ -283,7 +283,7 @@ const BookContent = () => {
                                 )}
                               </div>
                             )}
-                            
+
                             <div className={`kawaii-entry kawaii-entry-${colorIndex} p-4 rounded-lg shadow-lg transition-all duration-200 cursor-pointer flex-1 relative ${
                               groupInfo.isGrouped ? 'grouped-item' : 'hover:scale-[1.02]'
                             }`}>
@@ -295,9 +295,9 @@ const BookContent = () => {
                                   'group-border-middle'
                                 }`} />
                               )}
-                              
+
                               {item.type === 'text' ? (
-                                <div 
+                                <div
                                   className="space-y-3"
                                   onClick={() => openTextLightbox(item.content, item.author, `${drawingIndex}.png`)}
                                 >
@@ -318,7 +318,7 @@ const BookContent = () => {
                                   </div>
                                 </div>
                               ) : (
-                                <div 
+                                <div
                                   className="space-y-3"
                                   onClick={() => openLightbox(`/storage/images/${item.content}`, `Entry by ${item.author}`, item.author, `${drawingIndex}.png`)}
                                 >
@@ -571,7 +571,9 @@ You can leave a message or image (or both!) for Sohyun here. Click the 'Add Entr
 
       <footer className="text-center text-purple-600 dark:text-purple-300 text-xs sm:text-sm font-medium py-2 mt-auto">
         Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">zautumn</a>{' '}
-        and <a target="_blank" href="https://apollo.cafe/@joeywerepyre" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">joeywerepyre</a>
+        and <a target="_blank" href="https://apollo.cafe/@joeywerepyre" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">joeywerepyre</a>.
+        Thanks to <a target="_blank" href="https://apollo.cafe/@nites" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">Nites</a>{' '}
+        and <a target="_blank" href="https://apollo.cafe/@YL2002" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">YL2002</a> for testing.
       </footer>
     </div>
   )
