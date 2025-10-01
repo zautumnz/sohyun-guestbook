@@ -78,15 +78,15 @@ const saveImage = (base64Data, entryId) => {
 
     const imageType = matches[1]
     const imageData = matches[2]
-    
+
     // Check file size (base64 is ~33% larger than original, so we check the base64 size)
     const sizeInBytes = (imageData.length * 3) / 4
     const maxSizeInBytes = 50 * 1024 * 1024 // 50MB
-    
+
     if (sizeInBytes > maxSizeInBytes) {
       throw new Error('Image size exceeds 50MB limit')
     }
-    
+
     const filename = `${entryId}.${imageType}`
     const filePath = path.join(IMAGES_DIR, filename)
 
@@ -107,7 +107,7 @@ app.get('/entries', (req, res) => {
   try {
     // Reload entries from disk to ensure freshness
     entries = loadEntries()
-    
+
     // Check if admin password is provided to show all entries
     const password = req.query.pw
     if (password === '20250514') {
@@ -205,7 +205,7 @@ app.post('/entry', (req, res) => {
 
     if (!Array.isArray(content) || content.length === 0) {
       return res.status(400).json({
-        error: 'Content must be a non-empty array of content items'
+        error: 'Content must be a non-empty array of items'
       })
     }
 

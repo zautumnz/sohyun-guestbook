@@ -17,7 +17,7 @@ const PrintableGuestbook = () => {
         <h1>✨ Sohyun's Birthday Guestbook ✨</h1>
         <p>A collection of birthday wishes and memories</p>
         <div className="print-date">
-          {contentItems.length} items printed on {new Date().toLocaleDateString()}
+          {contentItems.length} messages printed on {new Date().toLocaleDateString()}
         </div>
       </div>
 

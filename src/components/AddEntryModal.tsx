@@ -72,7 +72,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
 
     if (hasEmptyContent) {
       toast({
-        title: "Please fill in all content items",
+        title: "Please fill in all items",
         description: "All text fields must have content and all images must be selected",
         variant: "destructive"
       })
@@ -176,7 +176,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <label className="block text-sm font-medium text-purple-700 dark:text-purple-200 flex items-center gap-2">
-                    💭 Content Items
+                    💭 Messages and Images
                   </label>
                   <div className="flex gap-2">
                     <button
