@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3001
 
 // Middleware
 app.use(cors())
-app.use(express.json({ limit: '50mb' })) // Increased limit for image uploads
+app.use(express.json({ limit: '90mb' })) // Increased limit for image uploads
 app.use(express.urlencoded({ extended: true }))
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -81,7 +81,7 @@ const saveImage = (base64Data, entryId) => {
 
     // Check file size (base64 is ~33% larger than original, so we check the base64 size)
     const sizeInBytes = (imageData.length * 3) / 4
-    const maxSizeInBytes = 70 * 1024 * 1024 // 70MB
+    const maxSizeInBytes = 90 * 1024 * 1024 // 90MB
 
     if (sizeInBytes > maxSizeInBytes) {
       throw new Error('Image size exceeds 50MB limit')

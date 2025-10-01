@@ -109,8 +109,8 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
       if (error instanceof Error) {
         errorMessage = error.message
         // Check if it's a server response error about file size
-        if (errorMessage.includes('Image size exceeds 50MB limit')) {
-          errorMessage = "One or more images exceed the 50MB size limit. Please choose smaller images."
+        if (errorMessage.includes('Image size exceeds 40MB limit')) {
+          errorMessage = "One or more images exceed the 40MB size limit. Please choose smaller images."
         }
       }
 
@@ -260,7 +260,7 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
       if (rejection.errors.some((error) => error.code === 'file-too-large')) {
         toast({
           title: "File too large",
-          description: `Image must be smaller than 50MB. Your file is ${formatFileSize(rejection.file.size)}.`,
+          description: `Image must be smaller than 40MB. Your file is ${formatFileSize(rejection.file.size)}.`,
           variant: "destructive"
         })
         return
@@ -281,7 +281,7 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
       if (file.size > 50 * 1024 * 1024) {
         toast({
           title: "File too large",
-          description: `Image must be smaller than 50MB. Your file is ${formatFileSize(file.size)}.`,
+          description: `Image must be smaller than 40MB. Your file is ${formatFileSize(file.size)}.`,
           variant: "destructive"
         })
         return
@@ -296,7 +296,7 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
       'image/*': ['.jpeg', '.jpg', '.png', '.gif']
     },
     maxFiles: 1,
-    maxSize: 50 * 1024 * 1024 // 50MB in bytes
+    maxSize: 40 * 1024 * 1024 // 40MB in bytes
   })
 
   return (
@@ -359,7 +359,7 @@ const ContentItemInput: React.FC<ContentItemInputProps> = ({
             <div>
               <Upload className="mx-auto h-8 w-8 text-purple-400 dark:text-purple-300 mb-2 transition-colors" />
               <p className="text-purple-600 dark:text-purple-300 text-xs transition-colors">
-                {isDragActive ? '🌟 Drop here! 🌟' : '📸 Click or drop image ✨'}
+                {isDragActive ? '🌟 Drop here! 🌟' : '📸 Click or drop image (less than 40MB) ✨'}
               </p>
             </div>
           )}
