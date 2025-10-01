@@ -156,7 +156,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
           <div className="mb-3">
             <div className="kawaii-border bg-gradient-to-r from-purple-100/80 to-pink-100/80 rounded-full px-3 py-1 mx-auto w-fit">
               <h2 className="text-sm sm:text-base font-serif text-purple-800 dark:text-purple-200 text-center flex items-center gap-2">
-                ✨ Sohyun's Birthday Book ✨
+                ✨ #소현과_사랑에빠지다 ✨
               </h2>
             </div>
           </div>

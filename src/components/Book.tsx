@@ -558,11 +558,14 @@ const BookContent = () => {
 
       {/* Welcome Modal */}
       <TextLightbox
-        content="Welcome to Sohyun's Birthday Guestbook! 💙
-
+        content="#Fall_In_Love_With_Sohyun 💙
 For Sohyun's birthday, we invite you to share your thoughts and memories with her.
+You can leave a message or image (or both!) for Sohyun here. Click the 'Add Entry' button to get started.
 
-You can leave a message or image (or both!) for Sohyun here. Click the 'Add Entry' button to get started."
+#소현과_사랑에빠지다
+소현이의 생일을 축하하며, 소현이와의 추억이나 전하고 싶은 마음을 함께 나눠주세요.
+여기에서 소현이에게 메시지나 (text) 사진 (image) [또는 둘 다!] 을 남길 수 있어요.
+시작하려면 ‘Add entry’ 버튼을 눌러주세요!"
         author="Creator"
         avatarImage="1.png"
         isOpen={showWelcomeModal}

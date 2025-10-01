@@ -14,7 +14,7 @@ const PrintableGuestbook = () => {
     <div className="print-only">
       {/* Print Header */}
       <div className="print-header">
-        <h1>✨ Sohyun's Birthday Guestbook ✨</h1>
+        <h1>✨ #소현과_사랑에빠지다 ✨</h1>
         <p>A collection of birthday wishes and memories</p>
 
         {/* Footer */}
