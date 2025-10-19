@@ -14,15 +14,18 @@ interface BookPageProps {
 const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
   const { contentItems, entries, pendingEntries, deleteEntry, approveEntry, isAdmin } = useGuestbook()
   const { openLightbox, openTextLightbox } = useLightbox()
-  const [showDeleteButtons, setShowDeleteButtons] = useState(false)
+  const [showDeleteButtons, _setShowDeleteButtons] = useState(false)
   const [isContentReady, setIsContentReady] = useState(false)
 
+  /*
   // Check for password query parameter
+  // This is the worst possible way to do auth, but it only had to last two weeks
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const password = urlParams.get('pw')
     setShowDeleteButtons(password === 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU')
   }, [])
+  */
 
   // Helper function to get entry approval status
   const getEntryApprovalStatus = (entryId: string) => {

@@ -45,8 +45,8 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [pendingEntries, setPendingEntries] = useState<GuestbookEntry[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [adminPassword, setAdminPassword] = useState<string>('')
+  const [isAdmin, _setIsAdmin] = useState(false)
+  const [adminPassword, _setAdminPassword] = useState<string>('')
   const [isMobile, setIsMobile] = useState(false)
 
   const [currentPage, setCurrentPageState] = useState(0)
@@ -101,12 +101,15 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     checkMobile()
     window.addEventListener('resize', checkMobile)
 
+    /*
+    This is the worst possible way to do auth, but it only had to last two weeks
     const urlParams = new URLSearchParams(window.location.search)
     const password = urlParams.get('pw')
     if (password === 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
       setIsAdmin(true)
       setAdminPassword(password)
     }
+    */
 
     return () => window.removeEventListener('resize', checkMobile)
   }, [])

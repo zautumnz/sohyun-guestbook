@@ -10,6 +10,8 @@ import ImageLightbox from './ImageLightbox'
 import TextLightbox from './TextLightbox'
 
 const BookContent = () => {
+  // Disable new submissions now that it's past Sohyun's birthday
+  const disableSubmit = true
   const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage, contentItems, isAdmin, pendingEntries, entries } = useGuestbook()
   const { isOpen, imageSrc, imageAlt, imageAuthor, imageAvatarImage, textContent, textAuthor, textAvatarImage, contentType, openLightbox, openTextLightbox, closeLightbox } = useLightbox()
   const { isDark, toggleTheme } = useTheme()
@@ -424,6 +426,8 @@ const BookContent = () => {
                 </motion.button>
 
                 <motion.button
+                  title={disableSubmit ? 'New submissions disabled' : 'Add Entry'}
+                  disabled={disableSubmit}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowAddModal(true)}
@@ -452,6 +456,8 @@ const BookContent = () => {
             {/* Mobile Add Button - Centered */}
             <div className="sm:hidden flex justify-center mt-6 px-6 pb-2">
               <motion.button
+                title={disableSubmit ? 'New submissions disabled' : 'Add Entry'}
+                disabled={disableSubmit}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowAddModal(true)}

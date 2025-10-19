@@ -120,18 +120,19 @@ app.get('/entries', (req, res) => {
     // Reload entries from disk to ensure freshness
     entries = loadEntries()
 
+    // Fake auth
     // Check if admin password is provided to show all entries
-    const password = req.query.pw
-    if (password === 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
-      // Admin view: return all entries with approval status
-      console.log(`Admin access: returning ${entries.length} total entries`)
-      res.json(entries)
-    } else {
-      // Public view: return only approved entries
-      const approvedEntries = entries.filter(entry => entry.approved === true)
-      console.log(`Public access: returning ${approvedEntries.length} approved entries out of ${entries.length} total`)
-      res.json(approvedEntries)
-    }
+    // const password = req.query.pw
+    // if (password === 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
+    // Admin view: return all entries with approval status
+    // console.log(`Admin access: returning ${entries.length} total entries`)
+    // res.json(entries)
+    // } else {
+    // Public view: return only approved entries
+    const approvedEntries = entries.filter(entry => entry.approved === true)
+    console.log(`Public access: returning ${approvedEntries.length} approved entries out of ${entries.length} total`)
+    res.json(approvedEntries)
+    // }
   } catch (error) {
     console.error('Error fetching entries:', error)
     res.status(500).json({ error: 'Failed to fetch entries' })
@@ -140,6 +141,7 @@ app.get('/entries', (req, res) => {
 
 // DELETE /entry/:id - Delete an entry and associated files
 app.delete('/entry/:id', (req, res) => {
+  return 401
   try {
     const entryId = req.params.id
 
@@ -207,6 +209,7 @@ app.delete('/entry/:id', (req, res) => {
 
 // POST /entry - Create a new entry
 app.post('/entry', (req, res) => {
+  return 401
   try {
     const { content, author, position } = req.body
 
@@ -341,6 +344,8 @@ app.get('/storage/images/:filename', (req, res) => {
 
 // PUT /entry/:id/approve - Approve an entry (admin only)
 app.put('/entry/:id/approve', (req, res) => {
+  // Disable fake auth
+  return 401
   try {
     const entryId = req.params.id
     const { password } = req.body
@@ -395,6 +400,8 @@ app.put('/entry/:id/approve', (req, res) => {
 
 // PUT /entry/:id/reject - Reject an entry and move to removed directory (admin only)
 app.put('/entry/:id/reject', (req, res) => {
+  // Disable fake auth
+  return 401
   try {
     const entryId = req.params.id
     const { password } = req.body
@@ -467,6 +474,8 @@ app.put('/entry/:id/reject', (req, res) => {
 
 // GET /removed/entries - Get all removed entries (admin only)
 app.get('/removed/entries', (req, res) => {
+  // Disable fake auth
+  return 401
   try {
     const password = req.query.pw
     if (password !== 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
@@ -491,6 +500,8 @@ app.get('/removed/entries', (req, res) => {
 
 // PUT /removed/entry/:id/restore - Restore a removed entry (admin only)
 app.put('/removed/entry/:id/restore', (req, res) => {
+  // Disable fake auth
+  return 401
   try {
     const entryId = req.params.id
     const { password } = req.body
@@ -566,7 +577,7 @@ app.put('/removed/entry/:id/restore', (req, res) => {
 app.get('/health', (req, res) => {
   const entryCount = entries.length
   const approvedCount = entries.filter(entry => entry.approved === true).length
-  
+
   // Count removed entries
   let removedCount = 0
   try {
@@ -575,7 +586,7 @@ app.get('/health', (req, res) => {
     // Directory might not exist yet
     removedCount = 0
   }
-  
+
   res.json({
     status: 'Server is running',
     timestamp: new Date().toISOString(),
@@ -605,11 +616,11 @@ app.listen(PORT, () => {
   console.log(`API endpoints:`)
   console.log(`  GET    http://localhost:${PORT}/entries`)
   console.log(`  POST   http://localhost:${PORT}/entry`)
-  console.log(`  PUT    http://localhost:${PORT}/entry/:id/approve`)
-  console.log(`  PUT    http://localhost:${PORT}/entry/:id/reject`)
+  // console.log(`  PUT    http://localhost:${PORT}/entry/:id/approve`)
+  // console.log(`  PUT    http://localhost:${PORT}/entry/:id/reject`)
   console.log(`  DELETE http://localhost:${PORT}/entry/:id`)
-  console.log(`  GET    http://localhost:${PORT}/removed/entries?pw=PASSWORD`)
-  console.log(`  PUT    http://localhost:${PORT}/removed/entry/:id/restore`)
+  // console.log(`  GET    http://localhost:${PORT}/removed/entries?pw=PASSWORD`)
+  // console.log(`  PUT    http://localhost:${PORT}/removed/entry/:id/restore`)
   console.log(`  GET    http://localhost:${PORT}/images/:filename`)
   console.log(`  GET    http://localhost:${PORT}/health`)
 })
