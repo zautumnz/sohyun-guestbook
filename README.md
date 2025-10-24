@@ -1,5 +1,8 @@
 This was about half vibe-coded (Claude Sonnet and Opus in Zed). It's buggy and insecure and weird. That's okay, it only had to last for a couple weeks.
 
+See 2025-entries for everything submitted, or move those contents to storage/ to
+serve again.
+
 It was at <https://sohyun-guestbook.onrender.com>
 
 Usage:
