@@ -3,6 +3,8 @@ import fetch from 'node-fetch'
 import fs from 'fs'
 import path from 'path'
 
+// TODO: move to real tests
+
 const API_BASE = 'http://localhost:3001'
 
 // Test data
@@ -71,13 +73,13 @@ async function testStorageSystem() {
     // Verify image entry file and image file were created
     const imageEntryFilePath = path.join(process.cwd(), 'server', 'storage', 'entries', `${imageEntry.id}.json`)
     const imageFilePath = path.join(process.cwd(), 'server', 'storage', 'images', imageEntry.content)
-    
+
     if (fs.existsSync(imageEntryFilePath)) {
       console.log('   ✅ Image entry file saved to disk')
     } else {
       console.log('   ❌ Image entry file NOT found on disk')
     }
-    
+
     if (fs.existsSync(imageFilePath)) {
       console.log('   ✅ Image file saved to disk')
     } else {
@@ -99,16 +101,16 @@ async function testStorageSystem() {
     const finalResponse = await fetch(`${API_BASE}/entries`)
     const finalEntries = await finalResponse.json()
     console.log(`   📝 Total entries after creation: ${finalEntries.length}`)
-    
+
     const foundTextEntry = finalEntries.find(e => e.id === textEntry.id)
     const foundImageEntry = finalEntries.find(e => e.id === imageEntry.id)
-    
+
     if (foundTextEntry) {
       console.log('   ✅ Text entry found in entries list')
     } else {
       console.log('   ❌ Text entry NOT found in entries list')
     }
-    
+
     if (foundImageEntry) {
       console.log('   ✅ Image entry found in entries list')
       console.log(`   🖼️  Image content is filename: ${foundImageEntry.content}`)
@@ -120,14 +122,14 @@ async function testStorageSystem() {
     console.log('\n7. Storage directory structure:')
     const entriesDir = path.join(process.cwd(), 'server', 'storage', 'entries')
     const imagesDir = path.join(process.cwd(), 'server', 'storage', 'images')
-    
+
     if (fs.existsSync(entriesDir)) {
       const entryFiles = fs.readdirSync(entriesDir)
       console.log(`   📁 Entries directory: ${entryFiles.length} files`)
       entryFiles.slice(0, 3).forEach(file => console.log(`      - ${file}`))
       if (entryFiles.length > 3) console.log(`      ... and ${entryFiles.length - 3} more`)
     }
-    
+
     if (fs.existsSync(imagesDir)) {
       const imageFiles = fs.readdirSync(imagesDir)
       console.log(`   🖼️  Images directory: ${imageFiles.length} files`)
@@ -136,7 +138,7 @@ async function testStorageSystem() {
     }
 
     console.log('\n🎉 Storage system test completed successfully!')
-    
+
   } catch (error) {
     console.error('\n❌ Test failed:', error.message)
     if (error.code === 'ECONNREFUSED') {

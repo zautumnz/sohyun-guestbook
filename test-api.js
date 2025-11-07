@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// TODO: move to real tests
+
 const API_BASE_URL = 'http://localhost:3001';
 
 async function testHealthEndpoint() {
@@ -30,7 +32,7 @@ async function testGetEntries() {
 
 async function testCreateEntry() {
   console.log('🔍 Testing POST /entry...');
-  
+
   const testEntry = {
     type: 'text',
     content: 'This is a test entry from the API test script!',
@@ -63,7 +65,7 @@ async function testCreateEntry() {
 
 async function testInvalidEntry() {
   console.log('🔍 Testing POST /entry with invalid data...');
-  
+
   const invalidEntry = {
     type: 'invalid',
     content: '',
@@ -120,11 +122,11 @@ async function runAllTests() {
   // Test getting entries again (should have our new entry)
   console.log('🔍 Testing GET /entries after creating entry...');
   const finalEntries = await testGetEntries();
-  
+
   console.log('\n📊 Test Summary:');
   console.log(`- Initial entries: ${initialEntries.length}`);
   console.log(`- Final entries: ${finalEntries.length}`);
-  
+
   if (createdEntry && finalEntries.length === initialEntries.length + 1) {
     console.log('✅ All tests passed! API is working correctly.');
   } else {
