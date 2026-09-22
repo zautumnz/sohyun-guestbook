@@ -9,37 +9,33 @@ const PORT = process.env.PORT || 3001
 
 // Middleware
 app.use(cors())
-app.use(express.json({ limit: '90mb' })) // Increased limit for image uploads
+app.use(express.json({ limit: '10mb' })) // Reduced from 90mb - no images in v2.0
 app.use(express.urlencoded({ extended: true }))
 
 const isProd = process.env.NODE_ENV === 'production'
-// Storage directories
+// Storage directories - v2.0 uses 2026 subdirectory
 const STORAGE_DIR = path.join(isProd ? '/var/storage' : process.cwd(), 'storage')
-const ENTRIES_DIR = path.join(STORAGE_DIR, 'entries')
-const IMAGES_DIR = path.join(STORAGE_DIR, 'images')
-const REMOVED_DIR = path.join(STORAGE_DIR, 'removed')
+const YEAR_DIR = path.join(STORAGE_DIR, '2026')
+const ENTRIES_DIR = path.join(YEAR_DIR, 'entries')
+const REMOVED_DIR = path.join(YEAR_DIR, 'removed')
 const REMOVED_ENTRIES_DIR = path.join(REMOVED_DIR, 'entries')
-const REMOVED_IMAGES_DIR = path.join(REMOVED_DIR, 'images')
 
 // Ensure storage directories exist
 const ensureDirectories = () => {
   if (!fs.existsSync(STORAGE_DIR)) {
     fs.mkdirSync(STORAGE_DIR, { recursive: true })
   }
+  if (!fs.existsSync(YEAR_DIR)) {
+    fs.mkdirSync(YEAR_DIR, { recursive: true })
+  }
   if (!fs.existsSync(ENTRIES_DIR)) {
     fs.mkdirSync(ENTRIES_DIR, { recursive: true })
-  }
-  if (!fs.existsSync(IMAGES_DIR)) {
-    fs.mkdirSync(IMAGES_DIR, { recursive: true })
   }
   if (!fs.existsSync(REMOVED_DIR)) {
     fs.mkdirSync(REMOVED_DIR, { recursive: true })
   }
   if (!fs.existsSync(REMOVED_ENTRIES_DIR)) {
     fs.mkdirSync(REMOVED_ENTRIES_DIR, { recursive: true })
-  }
-  if (!fs.existsSync(REMOVED_IMAGES_DIR)) {
-    fs.mkdirSync(REMOVED_IMAGES_DIR, { recursive: true })
   }
 }
 
@@ -79,34 +75,24 @@ const saveEntry = (entry) => {
   }
 }
 
-// Save image to disk and return filename
-const saveImage = (base64Data, entryId) => {
+// Helper function to validate YouTube URL and extract video ID
+const extractYouTubeId = (url) => {
   try {
-    // Extract image format from base64 data
-    const matches = base64Data.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/)
-    if (!matches) {
-      throw new Error('Invalid base64 image format')
+    // Support various YouTube URL formats
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+      /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+    ]
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern)
+      if (match && match[1]) {
+        return match[1]
+      }
     }
-
-    const imageType = matches[1]
-    const imageData = matches[2]
-
-    // Check file size (base64 is ~33% larger than original, so we check the base64 size)
-    const sizeInBytes = (imageData.length * 3) / 4
-    const maxSizeInBytes = 90 * 1024 * 1024 // 90MB
-
-    if (sizeInBytes > maxSizeInBytes) {
-      throw new Error('Image size exceeds 50MB limit')
-    }
-
-    const filename = `${entryId}.${imageType}`
-    const filePath = path.join(IMAGES_DIR, filename)
-
-    // Write image file
-    fs.writeFileSync(filePath, Buffer.from(imageData, 'base64'))
-    return filename
+    return null
   } catch (error) {
-    console.error('Error saving image:', error)
+    console.error('Error extracting YouTube ID:', error)
     return null
   }
 }
@@ -120,96 +106,32 @@ app.get('/entries', (req, res) => {
     // Reload entries from disk to ensure freshness
     entries = loadEntries()
 
-    // Fake auth
     // Check if admin password is provided to show all entries
-    // const password = req.query.pw
-    // if (password === 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
-    // Admin view: return all entries with approval status
-    // console.log(`Admin access: returning ${entries.length} total entries`)
-    // res.json(entries)
-    // } else {
-    // Public view: return only approved entries
-    const approvedEntries = entries.filter(entry => entry.approved === true)
-    console.log(`Public access: returning ${approvedEntries.length} approved entries out of ${entries.length} total`)
-    res.json(approvedEntries)
-    // }
+    const password = req.query.pw
+    if (password === 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
+      // Admin view: return all entries with approval status
+      console.log(`Admin access: returning ${entries.length} total entries`)
+      res.json(entries)
+    } else {
+      // Public view: return only approved entries
+      const approvedEntries = entries.filter(entry => entry.approved === true)
+      console.log(`Public access: returning ${approvedEntries.length} approved entries out of ${entries.length} total`)
+      res.json(approvedEntries)
+    }
   } catch (error) {
     console.error('Error fetching entries:', error)
     res.status(500).json({ error: 'Failed to fetch entries' })
   }
 })
 
-// DELETE /entry/:id - Delete an entry and associated files
+// DELETE /entry/:id - Delete an entry (disabled for public use)
 app.delete('/entry/:id', (req, res) => {
-  return 401
-  try {
-    const entryId = req.params.id
-
-    // Validation
-    if (!entryId) {
-      return res.status(400).json({ error: 'Entry ID is required' })
-    }
-
-    // Check if entry exists
-    const entryFilePath = path.join(ENTRIES_DIR, `${entryId}.json`)
-    if (!fs.existsSync(entryFilePath)) {
-      return res.status(404).json({ error: 'Entry not found' })
-    }
-
-    // Read entry to check if it has associated images
-    let entryData
-    try {
-      const entryContent = fs.readFileSync(entryFilePath, 'utf8')
-      entryData = JSON.parse(entryContent)
-    } catch (error) {
-      console.error('Error reading entry file:', error)
-      return res.status(500).json({ error: 'Failed to read entry' })
-    }
-
-    // Move associated image files if they exist
-    if (entryData.content && Array.isArray(entryData.content)) {
-      for (const item of entryData.content) {
-        if (item.type === 'image' && item.content) {
-          const imageFilePath = path.join(IMAGES_DIR, item.content)
-          const removedImagePath = path.join(REMOVED_IMAGES_DIR, item.content)
-          if (fs.existsSync(imageFilePath)) {
-            try {
-              fs.renameSync(imageFilePath, removedImagePath)
-              console.log('Moved image file to removed:', item.content)
-            } catch (error) {
-              console.error('Error moving image file:', error)
-              // Continue with removal even if image file move fails
-            }
-          }
-        }
-      }
-    }
-
-    // Move entry file to removed directory
-    const removedEntryPath = path.join(REMOVED_ENTRIES_DIR, `${entryId}.json`)
-    try {
-      fs.renameSync(entryFilePath, removedEntryPath)
-      console.log('Moved entry file to removed:', entryId)
-    } catch (error) {
-      console.error('Error moving entry file:', error)
-      return res.status(500).json({ error: 'Failed to move entry' })
-    }
-
-    // Remove from in-memory cache
-    entries = entries.filter(entry => entry.id !== entryId)
-
-    console.log('Entry moved to removed:', entryId)
-    res.json({ success: true, message: 'Entry moved to removed directory' })
-
-  } catch (error) {
-    console.error('Error deleting entry:', error)
-    res.status(500).json({ error: 'Failed to delete entry' })
-  }
+  // Disabled - use reject endpoint instead
+  return res.status(401).json({ error: 'Delete disabled - use admin reject endpoint' })
 })
 
-// POST /entry - Create a new entry
+// POST /entry - Create a new entry (v2.0: music + text, no images)
 app.post('/entry', (req, res) => {
-  return 401
   try {
     const { content, author, position } = req.body
 
@@ -226,16 +148,78 @@ app.post('/entry', (req, res) => {
       })
     }
 
+    // v2.0: Validate that entry has at least music OR text (cannot be blank)
+    const hasMusic = content.some(item => item.type === 'music')
+    const hasText = content.some(item => item.type === 'text')
+
+    if (!hasMusic && !hasText) {
+      return res.status(400).json({
+        error: 'Entry must have at least one music or text item'
+      })
+    }
+
     // Validate each content item
+    const processedContent = []
     for (const item of content) {
       if (!item.type || !item.content) {
         return res.status(400).json({
           error: 'Each content item must have type and content fields'
         })
       }
-      if (!['text', 'image'].includes(item.type)) {
+
+      // v2.0: Only 'text' and 'music' allowed (no images)
+      if (!['text', 'music'].includes(item.type)) {
         return res.status(400).json({
-          error: 'Each content item type must be either "text" or "image"'
+          error: 'Each content item type must be either "text" or "music"'
+        })
+      }
+
+      if (item.type === 'music') {
+        // Validate music content structure
+        if (typeof item.content !== 'object') {
+          return res.status(400).json({
+            error: 'Music content must be an object with song details'
+          })
+        }
+
+        const { youtubeUrl, songTitle, artist, albumArtUrl } = item.content
+
+        // YouTube URL is required for music entries
+        if (!youtubeUrl) {
+          return res.status(400).json({
+            error: 'Music entries must have a YouTube URL'
+          })
+        }
+
+        // Extract and validate YouTube video ID
+        const youtubeId = extractYouTubeId(youtubeUrl)
+        if (!youtubeId) {
+          return res.status(400).json({
+            error: 'Invalid YouTube URL format'
+          })
+        }
+
+        // Store music metadata
+        processedContent.push({
+          type: 'music',
+          content: {
+            youtubeUrl,
+            youtubeId,
+            songTitle: songTitle || '',
+            artist: artist || '',
+            albumArtUrl: albumArtUrl || ''
+          }
+        })
+      } else {
+        // Text content
+        if (typeof item.content !== 'string' || !item.content.trim()) {
+          return res.status(400).json({
+            error: 'Text content must be a non-empty string'
+          })
+        }
+        processedContent.push({
+          type: 'text',
+          content: item.content
         })
       }
     }
@@ -256,35 +240,7 @@ app.post('/entry', (req, res) => {
     // Generate entry ID
     const entryId = uuidv4()
 
-    // Process content items
-    const processedContent = []
-    for (let i = 0; i < content.length; i++) {
-      const item = content[i]
-      if (item.type === 'image') {
-        try {
-          const imageFilename = saveImage(item.content, `${entryId}_${i}`)
-          if (!imageFilename) {
-            return res.status(500).json({ error: 'Failed to save image' })
-          }
-          processedContent.push({
-            type: 'image',
-            content: imageFilename
-          })
-        } catch (error) {
-          if (error.message === 'Image size exceeds 50MB limit') {
-            return res.status(400).json({ error: 'Image size exceeds 50MB limit. Please choose a smaller image.' })
-          }
-          return res.status(500).json({ error: 'Failed to process image: ' + error.message })
-        }
-      } else {
-        processedContent.push({
-          type: 'text',
-          content: item.content
-        })
-      }
-    }
-
-    // Create new entry
+    // Create new entry (v2.0: starts as unapproved)
     const entry = {
       id: entryId,
       content: processedContent,
@@ -292,7 +248,7 @@ app.post('/entry', (req, res) => {
       timestamp: new Date().toISOString(),
       pageNumber,
       position,
-      approved: false
+      approved: false  // v2.0: requires admin approval
     }
 
     console.log(`Creating new entry for review: ${entryId} by ${author}`)
@@ -314,38 +270,10 @@ app.post('/entry', (req, res) => {
   }
 })
 
-// Serve images from storage
-app.get('/storage/images/:filename', (req, res) => {
-  try {
-    const filename = req.params.filename
-    const imagePath = path.join(IMAGES_DIR, filename)
-
-    if (!fs.existsSync(imagePath)) {
-      return res.status(404).json({ error: 'Image not found' })
-    }
-
-    // Set appropriate content type based on file extension
-    const ext = path.extname(filename).toLowerCase()
-    const contentType = {
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.png': 'image/png',
-      '.gif': 'image/gif',
-      '.webp': 'image/webp'
-    }[ext] || 'application/octet-stream'
-
-    res.setHeader('Content-Type', contentType)
-    res.sendFile(imagePath)
-  } catch (error) {
-    console.error('Error serving image:', error)
-    res.status(500).json({ error: 'Failed to serve image' })
-  }
-})
+// v2.0: Image serving removed - no images in v2
 
 // PUT /entry/:id/approve - Approve an entry (admin only)
 app.put('/entry/:id/approve', (req, res) => {
-  // Disable fake auth
-  return 401
   try {
     const entryId = req.params.id
     const { password } = req.body
@@ -400,8 +328,6 @@ app.put('/entry/:id/approve', (req, res) => {
 
 // PUT /entry/:id/reject - Reject an entry and move to removed directory (admin only)
 app.put('/entry/:id/reject', (req, res) => {
-  // Disable fake auth
-  return 401
   try {
     const entryId = req.params.id
     const { password } = req.body
@@ -421,7 +347,7 @@ app.put('/entry/:id/reject', (req, res) => {
       return res.status(404).json({ error: 'Entry not found' })
     }
 
-    // Read entry to check if it has associated images
+    // Read entry data for logging
     let entryData
     try {
       const entryContent = fs.readFileSync(entryFilePath, 'utf8')
@@ -431,24 +357,7 @@ app.put('/entry/:id/reject', (req, res) => {
       return res.status(500).json({ error: 'Failed to read entry' })
     }
 
-    // Move associated image files if they exist
-    if (entryData.content && Array.isArray(entryData.content)) {
-      for (const item of entryData.content) {
-        if (item.type === 'image' && item.content) {
-          const imageFilePath = path.join(IMAGES_DIR, item.content)
-          const removedImagePath = path.join(REMOVED_IMAGES_DIR, item.content)
-          if (fs.existsSync(imageFilePath)) {
-            try {
-              fs.renameSync(imageFilePath, removedImagePath)
-              console.log('Moved image file to removed:', item.content)
-            } catch (error) {
-              console.error('Error moving image file:', error)
-              // Continue with removal even if image file move fails
-            }
-          }
-        }
-      }
-    }
+    // v2.0: No image cleanup needed - only moving entry JSON file
 
     // Move entry file to removed directory
     const removedEntryPath = path.join(REMOVED_ENTRIES_DIR, `${entryId}.json`)
@@ -474,8 +383,6 @@ app.put('/entry/:id/reject', (req, res) => {
 
 // GET /removed/entries - Get all removed entries (admin only)
 app.get('/removed/entries', (req, res) => {
-  // Disable fake auth
-  return 401
   try {
     const password = req.query.pw
     if (password !== 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU') {
@@ -500,8 +407,6 @@ app.get('/removed/entries', (req, res) => {
 
 // PUT /removed/entry/:id/restore - Restore a removed entry (admin only)
 app.put('/removed/entry/:id/restore', (req, res) => {
-  // Disable fake auth
-  return 401
   try {
     const entryId = req.params.id
     const { password } = req.body
@@ -531,24 +436,7 @@ app.put('/removed/entry/:id/restore', (req, res) => {
       return res.status(500).json({ error: 'Failed to read removed entry' })
     }
 
-    // Restore associated image files if they exist
-    if (entryData.content && Array.isArray(entryData.content)) {
-      for (const item of entryData.content) {
-        if (item.type === 'image' && item.content) {
-          const removedImagePath = path.join(REMOVED_IMAGES_DIR, item.content)
-          const imageFilePath = path.join(IMAGES_DIR, item.content)
-          if (fs.existsSync(removedImagePath)) {
-            try {
-              fs.renameSync(removedImagePath, imageFilePath)
-              console.log('Restored image file from removed:', item.content)
-            } catch (error) {
-              console.error('Error restoring image file:', error)
-              // Continue with restoration even if image file move fails
-            }
-          }
-        }
-      }
-    }
+    // v2.0: No image restoration needed - only moving entry JSON file
 
     // Restore entry file from removed directory
     const entryFilePath = path.join(ENTRIES_DIR, `${entryId}.json`)
@@ -610,18 +498,18 @@ if (process.env.NODE_ENV === 'production') {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Guestbook server running on port ${PORT}`)
-  console.log(`Storage directory: ${STORAGE_DIR}`)
+  console.log(`Guestbook v2.0 server running on port ${PORT}`)
+  console.log(`Storage directory: ${YEAR_DIR}`)
   console.log(`Loaded ${entries.length} existing entries`)
   console.log(`API endpoints:`)
-  console.log(`  GET    http://localhost:${PORT}/entries`)
+  console.log(`  GET    http://localhost:${PORT}/entries (public - approved only)`)
+  console.log(`  GET    http://localhost:${PORT}/entries?pw=PASSWORD (admin - all entries)`)
   console.log(`  POST   http://localhost:${PORT}/entry`)
-  // console.log(`  PUT    http://localhost:${PORT}/entry/:id/approve`)
-  // console.log(`  PUT    http://localhost:${PORT}/entry/:id/reject`)
+  console.log(`  PUT    http://localhost:${PORT}/entry/:id/approve`)
+  console.log(`  PUT    http://localhost:${PORT}/entry/:id/reject`)
   console.log(`  DELETE http://localhost:${PORT}/entry/:id`)
-  // console.log(`  GET    http://localhost:${PORT}/removed/entries?pw=PASSWORD`)
-  // console.log(`  PUT    http://localhost:${PORT}/removed/entry/:id/restore`)
-  console.log(`  GET    http://localhost:${PORT}/images/:filename`)
+  console.log(`  GET    http://localhost:${PORT}/removed/entries?pw=PASSWORD`)
+  console.log(`  PUT    http://localhost:${PORT}/removed/entry/:id/restore`)
   console.log(`  GET    http://localhost:${PORT}/health`)
 })
 
