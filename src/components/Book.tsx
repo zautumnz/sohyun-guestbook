@@ -4,22 +4,51 @@ import { ChevronLeft, ChevronRight, Plus, AlertCircle, RefreshCw, Printer, Hash,
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import { LightboxProvider, useLightbox } from '@/contexts/LightboxContext'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
+import { MusicRecommendation } from '@/services/guestbookApi'
 import BookPage from './BookPage'
 import AddEntryModal from './AddEntryModal'
 import ImageLightbox from './ImageLightbox'
 import TextLightbox from './TextLightbox'
+import MusicPlayer from './MusicPlayer'
 
 const BookContent = () => {
-  // Disable new submissions now that it's past Sohyun's birthday
-  const disableSubmit = true
+  // v2.0: Submissions enabled for new music recommendations
+  const disableSubmit = false
   const { currentPage, totalPages, nextPage, prevPage, loading, error, refreshEntries, goToPage, contentItems, isAdmin, pendingEntries, entries } = useGuestbook()
   const { isOpen, imageSrc, imageAlt, imageAuthor, imageAvatarImage, textContent, textAuthor, textAvatarImage, contentType, openLightbox, openTextLightbox, closeLightbox } = useLightbox()
   const { isDark, toggleTheme } = useTheme()
+  const { setPlaylist } = useMusicPlayer()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showJumpModal, setShowJumpModal] = useState(false)
   const [jumpPageInput, setJumpPageInput] = useState('')
   const [isPageTransitioning, setIsPageTransitioning] = useState(false)
   const [showWelcomeModal, setShowWelcomeModal] = useState(false)
+
+  // v2.0: Build music playlist from entries
+  useEffect(() => {
+    const musicTracks = entries
+      .flatMap(entry =>
+        entry.content
+          .filter(item => item.type === 'music')
+          .map(item => {
+            const music = item.content as MusicRecommendation
+            return {
+              id: entry.id,
+              youtubeId: music.youtubeId || '',
+              songTitle: music.songTitle || 'Unknown Song',
+              artist: music.artist || 'Unknown Artist',
+              albumArtUrl: music.albumArtUrl || '',
+              author: entry.author
+            }
+          })
+      )
+      .filter(track => track.youtubeId) // Only include tracks with valid YouTube IDs
+
+    if (musicTracks.length > 0) {
+      setPlaylist(musicTracks)
+    }
+  }, [entries, setPlaylist])
 
   // Check for first visit and show welcome modal
   // Uses 'guestbook-welcome-shown' localStorage key to track if user has seen the welcome message
@@ -246,14 +275,14 @@ const BookContent = () => {
                           const isFirst = itemIndex === 0
                           const isLast = itemIndex === groupItems.length - 1
 
-                          // Determine content mix for group icon
+                          // v2.0: Determine content mix for group icon
                           const hasText = groupItems.some(gi => gi.type === 'text')
-                          const hasImage = groupItems.some(gi => gi.type === 'image')
+                          const hasMusic = groupItems.some(gi => gi.type === 'music')
                           let groupIcon = '📝'
-                          if (hasText && hasImage) {
-                            groupIcon = '📷📝'
-                          } else if (hasImage) {
-                            groupIcon = '📷'
+                          if (hasText && hasMusic) {
+                            groupIcon = '🎵📝'
+                          } else if (hasMusic) {
+                            groupIcon = '🎵'
                           }
 
                           return { isGrouped, isFirst, isLast, totalItems: groupItems.length, itemIndex, groupIcon }
@@ -294,10 +323,10 @@ const BookContent = () => {
                               {item.type === 'text' ? (
                                 <div
                                   className="space-y-3"
-                                  onClick={() => openTextLightbox(item.content, item.author, `${drawingIndex}.png`)}
+                                  onClick={() => openTextLightbox(item.content as string, item.author, `${drawingIndex}.png`)}
                                 >
                                   <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words leading-relaxed">
-                                    {item.content}
+                                    {item.content as string}
                                   </p>
                                   <div className="flex items-center gap-2 text-xs text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-full px-3 py-2">
                                     <img
@@ -571,11 +600,11 @@ You can leave a message or image (or both!) for Sohyun here. Click the 'Add Entr
         onClose={handleCloseWelcomeModal}
       />
 
-      <footer className="text-center text-purple-600 dark:text-purple-300 text-xs sm:text-sm font-medium py-2 mt-auto">
-        Made with 💙 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">zautumn</a>{' '}
-        and <a target="_blank" href="https://apollo.cafe/@joeywerepyre" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">joeywerepyre</a>.
-        Thanks to <a target="_blank" href="https://apollo.cafe/@nites" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">Nites</a>{' '}
-        and <a target="_blank" href="https://apollo.cafe/@YL2002" className="underline hover:text-purple-800 dark:hover:text-purple-200 transition-colors">YL2002</a> for testing.
+      {/* v2.0: Music Player */}
+      <MusicPlayer />
+
+      <footer className="text-center text-amber-600 dark:text-amber-300 text-xs sm:text-sm font-medium py-2 mt-auto mb-24">
+        Made with 💛 by <a target="_blank" href="http://sohyunsbiggestfan.com" className="underline hover:text-amber-800 dark:hover:text-amber-200 transition-colors">zautumn</a>
       </footer>
     </div>
   )

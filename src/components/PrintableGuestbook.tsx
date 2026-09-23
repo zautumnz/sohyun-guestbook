@@ -1,6 +1,7 @@
 import React from 'react'
 import { useGuestbook } from '@/contexts/GuestbookContext'
 import { Calendar, User } from 'lucide-react'
+import { MusicRecommendation } from '@/services/guestbookApi'
 
 const PrintableGuestbook = () => {
   const { entries, contentItems, loading, error } = useGuestbook()
@@ -32,24 +33,16 @@ const PrintableGuestbook = () => {
       {/* All Content Items */}
       <div className="print-entries-container">
         {contentItems.map((item, index) => {
-          // Add clear div before images to prevent gaps
-          const needsClearBefore = item.type === 'image' && index > 0 &&
-            contentItems.slice(0, index).some(prevItem => prevItem.type === 'text')
-
           return (
             <React.Fragment key={item.id}>
-              {needsClearBefore && (
-                <div style={{ clear: 'both', height: '0', margin: '0', padding: '0', pageBreakInside: 'avoid' }}></div>
-              )}
-
               {item.type === 'text' ? (
                 <div className="print-entry print-text-entry">
                   <div className="print-entry-number">#{index + 1}</div>
                   <div className="print-entry-content">
-                    "{item.content.split('\n').map((line, i) => (
+                    "{(item.content as string).split('\n').map((line, i) => (
                       <React.Fragment key={i}>
                         {line}
-                        {i < item.content.split('\n').length - 1 && <br />}
+                        {i < (item.content as string).split('\n').length - 1 && <br />}
                       </React.Fragment>
                     ))}"
                   </div>
@@ -64,30 +57,7 @@ const PrintableGuestbook = () => {
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="print-image-page">
-                  <div className="print-image-header">
-                    <div className="print-entry-number">#{index + 1}</div>
-                    <div className="print-entry-meta">
-                      <div className="print-author">
-                        <User size={12} />
-                        <span>{item.author}</span>
-                      </div>
-                      <div className="print-date">
-                        <Calendar size={12} />
-                        <span>{item.timestamp.toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="print-image-container">
-                    <img
-                      src={`/storage/images/${item.content}`}
-                      alt="Guest entry"
-                      className="print-image-full-page"
-                    />
-                  </div>
-                </div>
-              )}
+              ) : null /* v2.0: removed image support, music entries not printed */}
             </React.Fragment>
           )
         })}

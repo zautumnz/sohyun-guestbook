@@ -1,6 +1,15 @@
+// v2.0: Music recommendation metadata
+export interface MusicRecommendation {
+  youtubeUrl: string;
+  youtubeId?: string;
+  songTitle?: string;
+  artist?: string;
+  albumArtUrl?: string;
+}
+
 export interface ContentItem {
-  type: 'text' | 'image';
-  content: string;
+  type: 'text' | 'music';  // v2.0: removed 'image', added 'music'
+  content: string | MusicRecommendation;
 }
 
 export interface GuestbookEntry {
@@ -14,8 +23,8 @@ export interface GuestbookEntry {
 }
 
 export interface CreateContentItem {
-  type: 'text' | 'image';
-  content: string | File | Blob;
+  type: 'text' | 'music';  // v2.0: removed 'image', added 'music'
+  content: string | MusicRecommendation;
 }
 
 export interface CreateEntryPayload {
@@ -27,42 +36,24 @@ export interface CreateEntryPayload {
 const API_BASE_URL = globals.environment === 'production' ? '' : 'http://localhost:3001'
 
 class GuestbookAPI {
-  private async convertToBase64(file: File | Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        const result = reader.result as string
-        // Keep the full data URL format for server compatibility
-        resolve(result)
-      }
-      reader.onerror = () => reject(new Error('Failed to read file'))
-      reader.readAsDataURL(file)
-    })
-  }
-
-  private async fetchImageAsBase64(url: string): Promise<string> {
+  // v2.0: Helper to extract YouTube video ID from URL
+  private extractYouTubeId(url: string): string | null {
     try {
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`)
+      const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+      ]
+
+      for (const pattern of patterns) {
+        const match = url.match(pattern)
+        if (match && match[1]) {
+          return match[1]
+        }
       }
-      const blob = await response.blob()
-      return this.convertToBase64(blob)
+      return null
     } catch (error) {
-      throw new Error(`Failed to fetch and convert image: ${error}`)
-    }
-  }
-
-  private isDataUrl(str: string): boolean {
-    return str.startsWith('data:image/') && str.includes('base64,')
-  }
-
-  private isUrl(str: string): boolean {
-    try {
-      new URL(str)
-      return true
-    } catch {
-      return false
+      console.error('Error extracting YouTube ID:', error)
+      return null
     }
   }
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -92,38 +83,47 @@ class GuestbookAPI {
   async createEntry(entryData: CreateEntryPayload): Promise<GuestbookEntry> {
     const processedContent: ContentItem[] = []
 
-    // Process each content item
+    // v2.0: Process each content item (text or music, no images)
     for (const item of entryData.content) {
-      if (item.type === 'image') {
-        let processedImageContent = item.content
+      if (item.type === 'music') {
+        const musicContent = item.content as MusicRecommendation
 
-        if (item.content instanceof File || item.content instanceof Blob) {
-          // Convert File or Blob to data URL format
-          processedImageContent = await this.convertToBase64(item.content)
-        } else if (typeof item.content === 'string') {
-          if (this.isUrl(item.content)) {
-            // Fetch image from URL and convert to data URL format
-            processedImageContent = await this.fetchImageAsBase64(item.content)
-          } else if (!this.isDataUrl(item.content)) {
-            // If it's raw base64 data, wrap it in data URL format
-            // Assume JPEG if no format specified
-            if (!item.content.startsWith('data:')) {
-              processedImageContent = `data:image/jpeg;base64,${item.content}`
-            }
-          }
-          // If it's already a data URL, leave it as-is
+        // Validate YouTube URL
+        if (!musicContent.youtubeUrl) {
+          throw new Error('Music entry must have a YouTube URL')
+        }
+
+        // Extract video ID
+        const youtubeId = this.extractYouTubeId(musicContent.youtubeUrl)
+        if (!youtubeId) {
+          throw new Error('Invalid YouTube URL format')
         }
 
         processedContent.push({
-          type: 'image',
-          content: processedImageContent as string
+          type: 'music',
+          content: {
+            youtubeUrl: musicContent.youtubeUrl,
+            youtubeId,
+            songTitle: musicContent.songTitle || '',
+            artist: musicContent.artist || '',
+            albumArtUrl: musicContent.albumArtUrl || ''
+          }
         })
-      } else {
+      } else if (item.type === 'text') {
+        // Text content
+        if (typeof item.content !== 'string') {
+          throw new Error('Text content must be a string')
+        }
         processedContent.push({
           type: 'text',
           content: item.content as string
         })
       }
+    }
+
+    // Validate that entry has at least one content item
+    if (processedContent.length === 0) {
+      throw new Error('Entry must have at least one music or text item')
     }
 
     const payload = {

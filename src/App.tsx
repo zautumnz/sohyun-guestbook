@@ -7,6 +7,7 @@ import Index from "@/pages/Index"
 import NotFound from "@/pages/NotFound"
 import { GuestbookProvider } from "@/contexts/GuestbookContext"
 import { ThemeProvider } from "@/contexts/ThemeContext"
+import { MusicPlayerProvider } from "@/contexts/MusicPlayerContext"
 
 const queryClient = new QueryClient()
 
@@ -16,14 +17,16 @@ function App() {
       <ThemeProvider>
         <TooltipProvider>
           <GuestbookProvider>
-            <BrowserRouter>
-              <Toaster />
-              <Sonner />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
+            <MusicPlayerProvider>
+              <BrowserRouter>
+                <Toaster />
+                <Sonner />
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </MusicPlayerProvider>
           </GuestbookProvider>
         </TooltipProvider>
       </ThemeProvider>
