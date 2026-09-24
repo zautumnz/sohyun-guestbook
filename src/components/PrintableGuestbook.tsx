@@ -57,7 +57,34 @@ const PrintableGuestbook = () => {
                     </div>
                   </div>
                 </div>
-              ) : null /* v2.0: removed image support, music entries not printed */}
+              ) : item.type === 'music' ? (
+                <div className="print-entry print-music-entry">
+                  <div className="print-entry-number">#{index + 1} 🎵</div>
+                  <div className="print-entry-content">
+                    <div className="font-semibold">
+                      {(item.content as MusicRecommendation).songTitle || 'Unknown Song'}
+                    </div>
+                    <div className="text-sm">
+                      by {(item.content as MusicRecommendation).artist || 'Unknown Artist'}
+                    </div>
+                    {(item.content as MusicRecommendation).youtubeUrl && (
+                      <div className="text-xs mt-1">
+                        {(item.content as MusicRecommendation).youtubeUrl}
+                      </div>
+                    )}
+                  </div>
+                  <div className="print-entry-meta">
+                    <div className="print-author">
+                      <User size={12} />
+                      <span>{item.author}</span>
+                    </div>
+                    <div className="print-date">
+                      <Calendar size={12} />
+                      <span>{item.timestamp.toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </React.Fragment>
           )
         })}

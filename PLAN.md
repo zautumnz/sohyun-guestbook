@@ -621,7 +621,8 @@ npm install howler @types/howler  # Alternative audio library
 
 8. ✅ Updated `PrintableGuestbook.tsx`
    - Removed image rendering
-   - Music entries not included in print view (text only)
+   - Music entries now print with song/artist/YouTube link (text-only format)
+   - Text entries print as before
 
 9. ✅ Created `src/utils/youtube.ts`
    - YouTube ID extraction helper
