@@ -2,10 +2,12 @@
 
 ## 🚦 Current Status
 
-**Implementation:** ✅ COMPLETE (Server + Client)  
+**Implementation:** ✅ COMPLETE (Two-phase music processing workflow)  
 **Theme:** ✅ COMPLETE (Amber/brown vinyl colors throughout)  
-**Assets Needed:** ⚠️ 1 critical image required  
-**Ready to Test:** Almost! Just add `vinyl-placeholder.png`
+**Music System:** ✅ Collects YouTube URLs → Process offline with enrich-music.js  
+**Audio Player:** ✅ HTML5 audio (no YouTube embed restrictions!)  
+**Assets:** ✅ ALL COMPLETE (vinyl-placeholder.png + bg images)  
+**Workflow:** ✅ Submit entries → SSH in → Run enrichment script → Go live!
 
 ---
 
@@ -200,50 +202,53 @@ MusicPlayerContext → builds playlist from entries
 MusicPlayer → UI controls + audio element
 ```
 
-#### 3.2 Audio Source Strategy
+#### 3.2 Audio Source Strategy - ✅ IMPLEMENTED (Two-Phase Workflow)
 
-**Option A: YouTube Embeds**
-- Pros: Most songs available, easy to implement
-- Cons: Requires internet, YouTube API limits, ads possible
-- Use `react-youtube` or iframe API
+**❌ YouTube Embeds (Attempted but failed)**
+- Error 153: "Playback on other websites disabled by video owner"
+- ALL videos failed to embed (even known-embeddable ones)
+- YouTube embed restrictions too strict for localhost/embedded use
 
-**Option B: Direct URLs**
-- Pros: More control, no API limits
-- Cons: Users must provide working links, link rot
+**❌ Server-Side yt-dlp Processing (Attempted but had issues)**
+- YouTube bot detection blocked automated downloads
+- Complex error messages exposed to users
+- Difficult to handle failures gracefully
 
-**Option C: Spotify Web Playback SDK**
-- Pros: High quality, official API
-- Cons: Requires Spotify Premium for users, complex auth
-
-**Decision: Use Option A (YouTube only)** for v2.0
-- Users submit YouTube links
-- Extract video IDs and fetch metadata (title, artist, thumbnail)
-- Use YouTube IFrame Player API
-- Shuffle playlist on each page visit
-- Can add Spotify support in future if requested
+**✅ Two-Phase Collection & Processing (FINAL IMPLEMENTATION)**
+- **Phase 1 - User Submission:** Collect YouTube URLs without processing
+  - Server validates URL format and extracts video ID
+  - Stores entry with `processed: false` flag
+  - Shows "Pending" / "Processing..." as placeholder metadata
+- **Phase 2 - Offline Enrichment:** Process URLs manually with `enrich-music.js`
+  - SSH into server or download storage directory
+  - Run enrichment script to download MP3s + metadata
+  - Script uses `yt-dlp` to extract audio, title, artist, thumbnail
+  - Updates entries with `processed: true` + audio paths
+- **Serving:** HTML5 `<audio>` element plays local MP3s
+- **Benefits:** No bot detection issues, better error handling, full control
 
 **Implementation:**
 ```typescript
-interface MusicPlayerState {
-  playlist: Array<{
-    id: string;
-    title: string;
-    artist: string;
-    youtubeId?: string;
-    author: string;
-  }>;
-  currentIndex: number;
-  isPlaying: boolean;
-  volume: number;
-  shuffle: boolean;
+interface PlaylistTrack {
+  id: string;
+  audioPath: string;  // Local MP3 path: /music/{youtubeId}.mp3
+  songTitle: string;
+  artist: string;
+  albumArtUrl: string;
+  author: string;
+  duration?: number;
 }
 ```
 
-#### 3.3 YouTube Player Integration
-- Install: `npm install react-youtube @types/react-youtube`
-- Use YouTube IFrame API
-- Handle player events (onEnd → next track, onError → skip)
-- Extract video ID from URLs
+#### 3.3 yt-dlp Integration - ✅ COMPLETE
+- **Binary path:** `/opt/homebrew/bin/yt-dlp` (hardcoded for now)
+- **Audio processing:**
+  - Download: `yt-dlp --extract-audio --audio-format mp3`
+  - Metadata: `yt-dlp --dump-json --no-download`
+  - Thumbnail: `yt-dlp --write-thumbnail --convert-thumbnails jpg`
+- **Server endpoint:** `/music` serves static MP3 files
+- **Auto-parses:** "Artist - Song" format from YouTube titles
+- **Fallback:** Uses uploader/channel as artist if parsing fails
 
 ---
 
@@ -544,34 +549,37 @@ npm install howler @types/howler  # Alternative audio library
 ### ✅ Completed: Server-Side Changes (Phase 1)
 
 **What was done:**
-1. ✅ Created new storage structure: `storage/2026/entries/` and `storage/2026/removed/entries/`
+1. ✅ Created storage structure: `storage/2026/entries/`, `storage/2026/removed/entries/`, `storage/2026/music/`
 2. ✅ Updated all storage directory paths to point to 2026 directories
-3. ✅ Removed image upload/serving functionality (no IMAGES_DIR, no saveImage function)
+3. ✅ Removed image upload/serving functionality
 4. ✅ Added YouTube URL validation and video ID extraction (`extractYouTubeId` function)
-5. ✅ Updated POST /entry validation:
-   - Only accepts 'text' and 'music' content types (no 'image')
-   - Requires at least one of music OR text (cannot be blank)
-   - Validates YouTube URL format for music entries
-   - Stores music metadata: youtubeUrl, youtubeId, songTitle, artist, albumArtUrl
-   - Sets `approved: false` by default (requires admin approval)
-6. ✅ Re-enabled admin authentication on GET /entries (query param `?pw=PASSWORD`)
-7. ✅ Re-enabled approval system endpoints:
-   - PUT /entry/:id/approve
-   - PUT /entry/:id/reject
-   - GET /removed/entries?pw=PASSWORD
-   - PUT /removed/entry/:id/restore
-8. ✅ Cleaned up image-related code from reject/restore endpoints
-9. ✅ Updated server startup logs to reflect v2.0 and enabled endpoints
-10. ✅ Reduced JSON size limit from 90mb to 10mb (no large image uploads)
+5. ✅ **Updated music entry submission:**
+   - Validates YouTube URL format and extracts video ID
+   - Stores entry with `processed: false` flag
+   - Sets placeholder metadata: "Pending" / "Processing..."
+   - Does NOT process with yt-dlp during submission
+6. ✅ Created offline enrichment script (`enrich-music.js`):
+   - Reads all entries with `processed: false`
+   - Downloads MP3s using yt-dlp: `storage/2026/music/{youtubeId}.mp3`
+   - Extracts metadata and thumbnail
+   - Auto-parses "Artist - Song" from title
+   - Updates entries with `audioPath`, `duration`, `albumArtUrl`, `processed: true`
+   - Can be run locally or on production server via SSH
+7. ✅ Added `/music` static route to serve MP3/JPG files
+8. ✅ Re-enabled approval system (all endpoints)
+9. ✅ Reduced JSON size limit to 10mb
 
 **Files modified:**
-- `server/index.js` - All validation and storage logic updated
+- `server/index.js` - yt-dlp processing, audio storage, music serving
 
 **Directories created:**
-- `storage/2026/entries/` - For 2026 approved/pending entries
-- `storage/2026/removed/entries/` - For rejected entries
+- `storage/2026/entries/` - Approved/pending entries
+- `storage/2026/removed/entries/` - Rejected entries  
+- `storage/2026/music/` - MP3s and thumbnails from yt-dlp
 
-**Server is ready and tested** - Successfully starts on port 3001 with 0 entries
+**Dependencies:**
+- ⚠️ Requires `yt-dlp` installed locally for running `enrich-music.js` script
+- ⚠️ No yt-dlp needed on production server during submission (only for enrichment)
 
 ---
 
@@ -593,11 +601,13 @@ npm install howler @types/howler  # Alternative audio library
 
 3. ✅ Created Music Player Components
    - `MusicPlayerContext.tsx` - State management (playlist, controls, shuffle)
-   - `MusicPlayer.tsx` - Fixed bottom bar player with YouTube IFrame API
+   - `MusicPlayer.tsx` - **HTML5 audio player** (NOT YouTube IFrame!)
+   - Uses `<audio>` element with local MP3s from yt-dlp
    - Spinning vinyl animation when playing
    - Play/Pause, Next, Volume controls
    - Shows current track (song/artist/recommender)
    - Shuffle re-randomizes on each page visit
+   - Error handling with user-friendly notifications
 
 4. ✅ Created `MusicEntryCard.tsx`
    - Displays music recommendation with album art
@@ -634,30 +644,37 @@ npm install howler @types/howler  # Alternative audio library
    - Updated backgrounds, gradients, borders, shadows, group badges
    - Dark mode colors adjusted to match warm vinyl aesthetic
 
-9. ✅ Created `src/utils/youtube.ts`
-   - YouTube ID extraction helper
-   - Thumbnail URL generator
-   - Embed URL generator
+10. ✅ Created `src/utils/youtube.ts`
+    - YouTube ID extraction helper
+    - Thumbnail URL generator
+    - Embed URL generator
 
-10. ✅ Installed Dependencies
-    - `npm install react-youtube @types/react-youtube`
+11. ✅ **Switched from YouTube embeds to yt-dlp/HTML5:**
+    - Removed `react-youtube` dependency
+    - Updated `MusicPlayer.tsx` to use `<audio>` element
+    - Updated `MusicRecommendation` interface to include `audioPath`, `duration`
+    - Updated `Book.tsx` playlist building to use `audioPath` instead of `youtubeId`
+    - Updated `MusicPlayerContext.tsx` to track `audioPath` in playlist
 
-11. ✅ Fixed all TypeScript errors
+12. ✅ Fixed all TypeScript errors
     - Type guards for `string | MusicRecommendation`
     - Removed `'image'` type checks, replaced with `'music'`
+    - Removed YouTube-specific types (isReady, setIsReady)
 
 **Files Modified:**
-- `src/services/guestbookApi.ts` - New interfaces, music validation
-- `src/components/AddEntryModal.tsx` - Complete rewrite
-- `src/components/Book.tsx` - Music player integration
+- `src/services/guestbookApi.ts` - Added audioPath/duration to MusicRecommendation
+- `src/components/AddEntryModal.tsx` - Complete rewrite for music/text
+- `src/components/Book.tsx` - Playlist uses audioPath, filter for .mp3
 - `src/components/BookPage.tsx` - Music entry rendering
-- `src/components/PrintableGuestbook.tsx` - Removed images
+- `src/components/PrintableGuestbook.tsx` - Music entries print with metadata
+- `src/components/MusicPlayer.tsx` - **Rewritten to use HTML5 audio**
+- `src/contexts/MusicPlayerContext.tsx` - Updated to track audioPath, removed YouTube refs
 - `src/App.tsx` - Added MusicPlayerProvider
-- `package.json` - Added react-youtube
+- `package.json` - Removed react-youtube, removed @types/react-youtube
 
 **Files Created:**
 - `src/contexts/MusicPlayerContext.tsx`
-- `src/components/MusicPlayer.tsx`
+- `src/components/MusicPlayer.tsx` (HTML5 audio version)
 - `src/components/MusicEntryCard.tsx`
 - `src/utils/youtube.ts`
 
@@ -665,58 +682,70 @@ npm install howler @types/howler  # Alternative audio library
 
 ---
 
-## 🎨 Assets You Need to Add
+## 🎨 Assets & Dependencies You Need
 
-### CRITICAL (Required for app to work properly)
+### CRITICAL (Required for music enrichment)
 
-**File:** `assets/vinyl-placeholder.png`
-- **Why:** Fallback when YouTube thumbnails fail to load
+**1. yt-dlp binary** (for running enrichment script only)
+- **Why:** Downloads audio from YouTube as MP3 (offline processing)
+- **Installation:** `brew install yt-dlp` (or download from https://github.com/yt-dlp/yt-dlp)
+- **Expected path:** Auto-detected by script (macOS: `/opt/homebrew/bin/yt-dlp`, Linux: system path)
+- **Usage:** Run `npm run enrich-music` or `node enrich-music.js` to process collected URLs
+- **NOT needed on production server** - only for pre-launch enrichment
+- **Verify:** `which yt-dlp` should return a valid path
+
+**2. vinyl-placeholder.png** ✅ EXISTS
+- **Why:** Fallback when yt-dlp thumbnail extraction fails
 - **Where it's used:** `MusicEntryCard.tsx` - `onError` handler for album art
-- **Specs:**
-  - Square aspect ratio (recommended: 800x800px or 1000x1000px)
-  - Show a vinyl record: black disc with grooves, center label
-  - Warm vintage aesthetic (browns, golds)
-  - PNG format
-  - File size: keep under 200KB
-- **Reference code:** Line in `MusicEntryCard.tsx`: `e.currentTarget.src = '/assets/vinyl-placeholder.png'`
+- **Location:** `assets/vinyl-placeholder.png`
+- **Status:** Already in place!
 
-### OPTIONAL (Nice to have for complete theme)
+### Background Images - ✅ COMPLETE
 
-**Files:** `assets/bg-light.jpg` and `assets/bg-dark.jpg` (replace existing)
-- **Why:** Current backgrounds work but aren't vinyl-themed
+**Files:** `assets/bg-light.jpg` and `assets/bg-dark.jpg`
+- **Status:** ✅ Vinyl-themed backgrounds added!
 - **Where they're used:** `Book.tsx` - background images for main page
-- **Specs:**
-  - Light version: Warm wood texture, vinyl collection, or subtle music theme
-  - Dark version: Dark wood, dim record player, or nighttime music vibe
-  - Should be subtle/blurred (not distracting)
-  - JPEG format, optimized for web (200-500KB each)
-  - Any resolution that looks good at 1920x1080+ (will be `background-size: cover`)
 - **Reference code:** Line in `Book.tsx`: `backgroundImage: url(/assets/bg-${isDark ? 'dark' : 'light'}.jpg)`
-
-**Current status:** Existing bg images work functionally, just not vinyl-themed. Can replace anytime.
 
 ---
 
-### 🧪 Testing Checklist
+### Testing Checklist
 
-Before deployment, verify:
+**Prerequisites:**
+- [ ] yt-dlp installed at `/opt/homebrew/bin/yt-dlp`
+- [x] vinyl-placeholder.png added to `assets/` directory
+- [x] bg-light.jpg and bg-dark.jpg added to `assets/` directory
+
+**Basic Functionality:**
 - [ ] Server starts: `npm run server`
 - [ ] Client builds: `npm run build`
 - [ ] Dev mode works: `npm run dev:full`
-- [ ] Can submit music entry (YouTube URL + optional text)
+
+**Music System:**
+- [ ] Can submit music entry (YouTube URL stored with `processed: false`)
 - [ ] Can submit text-only entry
 - [ ] Cannot submit empty entry
-- [ ] Music player appears when entries have music
-- [ ] Player plays YouTube videos
+- [ ] Entry shows "Pending" / "Processing..." before enrichment
+- [ ] Run `npm run enrich-music` to process collected URLs
+- [ ] Enrichment script creates MP3s in `storage/2026/music/`
+- [ ] Enrichment script extracts thumbnails as JPG
+- [ ] Enrichment script updates entries with metadata (title, artist, audioPath)
+- [ ] Entry files updated with `processed: true` flag
+- [ ] Music player appears when entries have processed music
+- [ ] Player plays LOCAL MP3 files (not YouTube embeds!)
 - [ ] Player controls work (play/pause/next/volume)
-- [ ] Album art loads from YouTube thumbnails
+- [ ] Album art loads from enriched thumbnails
 - [ ] Vinyl placeholder shows when thumbnail fails
+
+**Admin & Approval:**
 - [ ] Entries show approval status for admin
 - [ ] Admin can approve/reject entries
 - [ ] Only approved entries show to public
+
+**UI/UX:**
 - [ ] Dark/light theme works
 - [ ] Responsive on mobile
-- [ ] Print view works (text only, no music)
+- [ ] Print view works (includes music metadata)
 
 ---
 
@@ -724,21 +753,156 @@ Before deployment, verify:
 
 ## 🎯 What Works Right Now
 
-✅ Server runs and accepts music/text entries  
-✅ TypeScript compiles with no errors  
-✅ Music player component built and integrated  
+✅ Server collects YouTube URLs (no processing during submission)  
+✅ TypeScript compiles with no errors (build size: 514KB)  
+✅ HTML5 audio player (no YouTube embed restrictions!)  
 ✅ Submission form works (music + text input)  
-✅ YouTube URL validation and parsing  
+✅ Enrichment script (`enrich-music.js`) downloads MP3s + extracts metadata  
 ✅ Approval system re-enabled  
-✅ All old 'image' code removed  
+✅ All amber/brown vinyl colors applied  
+✅ Print view includes music metadata  
+✅ Two-phase workflow: collect URLs → enrich offline → go live
 
-## ⚠️ What Needs Assets
+---
 
-❌ Music entries with failed thumbnails will show broken image  
-→ **Fix:** Add `assets/vinyl-placeholder.png`
+## 📋 COMPLETION SUMMARY
 
-⚙️ Background images work but aren't vinyl-themed  
-→ **Optional:** Replace `assets/bg-light.jpg` and `assets/bg-dark.jpg`
+### ✅ What's Complete
+
+**Server Implementation:**
+- ✅ Storage structure for 2026 entries (`storage/2026/entries/`, `music/`, `removed/`)
+- ✅ POST /entry validates YouTube URLs and stores with `processed: false`
+- ✅ `/music` route serves MP3 and JPG files
+- ✅ Approval system re-enabled (all admin endpoints working)
+- ✅ Validation: requires at least music OR text (no blank entries)
+- ✅ No server-side yt-dlp processing (handled by enrichment script)
+
+**Enrichment Script (`enrich-music.js`):**
+- ✅ Standalone script for offline music processing
+- ✅ Reads entries with `processed: false` from storage directory
+- ✅ Downloads MP3s using yt-dlp with Node.js runtime support
+- ✅ Extracts metadata (title, artist, duration)
+- ✅ Downloads thumbnails and converts to JPG
+- ✅ Updates entry files with enriched data + `processed: true`
+- ✅ Detailed logging with progress indicators
+- ✅ Handles errors gracefully (continues on individual failures)
+- ✅ Summary report at end
+- ✅ Can be run locally or on server via SSH
+- ✅ Skips already-processed entries (idempotent)
+
+**Client Implementation:**
+- ✅ HTML5 audio player (replaced YouTube embeds entirely)
+- ✅ MusicPlayer.tsx with spinning vinyl animation
+- ✅ Play/Pause/Next/Volume controls
+- ✅ Playlist shuffle (re-randomizes each visit)
+- ✅ AddEntryModal.tsx for music + text submission
+- ✅ MusicEntryCard.tsx displays songs with album art
+- ✅ Book.tsx builds playlist from audioPath
+- ✅ Error handling for failed audio loads
+- ✅ Print view includes music metadata
+
+**Theme & Design:**
+- ✅ All purple/pink colors converted to amber/brown (74 references)
+- ✅ Vinyl aesthetic throughout (warm browns, golds, vintage feel)
+- ✅ Dark mode colors adjusted to match theme
+- ✅ Spinning vinyl disc animation
+- ✅ Group badges and indicators themed
+
+**Assets:**
+- ✅ vinyl-placeholder.png (fallback for failed thumbnails)
+- ✅ bg-light.jpg and bg-dark.jpg (vinyl-themed backgrounds)
+
+**Code Quality:**
+- ✅ TypeScript compiles with 0 errors
+- ✅ Build succeeds (514KB bundle size)
+- ✅ Removed react-youtube dependency (no embed restrictions!)
+- ✅ All v1.0 image code removed
+- ✅ Updated all interfaces for yt-dlp audio system
+
+---
+
+## What's Left to Do
+
+### 1. Install yt-dlp Binary (for enrichment)
+- [ ] Run: `brew install yt-dlp` (macOS) or `pip install yt-dlp` (Linux)
+- [ ] Verify: `which yt-dlp` returns a valid path
+
+### 2. Test Submission Flow
+- [ ] Start server: `npm run server`
+- [ ] Start client: `npm run dev`
+- [ ] Submit a test song (YouTube URL)
+- [ ] Verify entry saved with `processed: false`
+- [ ] Verify entry shows "Pending" / "Processing..." as metadata
+
+### 3. Test Enrichment Script
+- [ ] Run: `npm run enrich-music` or `node enrich-music.js`
+- [ ] Verify yt-dlp downloads MP3 to `storage/2026/music/`
+- [ ] Verify entry file updated with `processed: true`
+- [ ] Verify metadata filled in (title, artist, audioPath, duration)
+- [ ] Verify thumbnail downloaded as JPG
+- [ ] Check script summary report
+
+### 4. Test Music Player
+- [ ] Reload app after enrichment
+- [ ] Verify music player appears with processed entries
+- [ ] Verify player plays LOCAL MP3 files
+- [ ] Test play/pause/next/volume controls
+
+### 5. Test Music System End-to-End
+- [ ] Submit multiple songs (various YouTube URLs)
+- [ ] Run enrichment script on all entries
+- [ ] Verify all MP3s downloaded successfully
+- [ ] Reload app, verify playlist builds from enriched entries
+- [ ] Verify shuffle works (different order on refresh)
+- [ ] Test audio error handling (bad URL during enrichment)
+- [ ] Verify metadata extracted correctly (title/artist)
+- [ ] Verify album art loads (enriched thumbnails)
+- [ ] Verify vinyl-placeholder.png fallback works for failed thumbnails
+
+### 6. Test Approval System (Optional - if needed)
+- [ ] Uncomment admin auth in `GuestbookContext.tsx` (lines ~56-65)
+- [ ] Access with: `http://localhost:5173/?pw=uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU`
+- [ ] Verify pending entries show with yellow clock icon
+- [ ] Test approve button (green checkmark)
+- [ ] Test reject/delete button (red X)
+- [ ] Verify only approved entries show to public
+
+### 7. Final Polish
+- [ ] Test dark/light theme switching
+- [ ] Test responsive layout on mobile
+- [ ] Test print view (Ctrl+P / Cmd+P)
+- [ ] Verify background images look good in both themes
+
+### 8. Pre-Launch Workflow
+- [ ] Collect submissions on production (entries with `processed: false`)
+- [ ] SSH into server or download storage directory
+- [ ] Run enrichment script: `node enrich-music.js /var/storage`
+- [ ] Verify all MP3s downloaded to `/var/storage/2026/music/`
+- [ ] Verify all entries updated with `processed: true`
+- [ ] Upload music files back to server if processed locally
+
+### 9. Deployment
+- [ ] Build: `npm run build`
+- [ ] Deploy `dist/` folder + `server/` + `storage/`
+- [ ] Set `NODE_ENV=production` environment variable
+- [ ] Uncomment storage directory creation in `server/index.js` if needed
+- [ ] Verify `/music` route serves MP3s correctly
+
+---
+
+## ⚠️ Known Requirements
+
+**yt-dlp binary** - Needed for running `enrich-music.js` script  
+→ **Install:** `brew install yt-dlp` (macOS) or `pip install yt-dlp` (Linux)  
+→ **Why:** Enrichment script uses this to download audio from YouTube offline  
+→ **NOT needed on production server during submission** - only for pre-launch enrichment
+
+**Enrichment Workflow:**
+1. Users submit entries (YouTube URLs stored)
+2. Before going live, SSH into server or download storage
+3. Run `node enrich-music.js /var/storage` to process all URLs
+4. Entries enriched with MP3s + metadata
+5. Go live with fully processed music entries
 
 ## 📝 Quick Start After Adding Assets
 

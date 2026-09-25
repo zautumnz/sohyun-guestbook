@@ -35,15 +35,19 @@ const BookContent = () => {
             const music = item.content as MusicRecommendation
             return {
               id: entry.id,
-              youtubeId: music.youtubeId || '',
+              audioPath: music.audioPath || '',
               songTitle: music.songTitle || 'Unknown Song',
               artist: music.artist || 'Unknown Artist',
               albumArtUrl: music.albumArtUrl || '',
-              author: entry.author
+              author: entry.author,
+              duration: music.duration
             }
           })
       )
-      .filter(track => track.youtubeId) // Only include tracks with valid YouTube IDs
+      .filter(track => {
+        // Only include tracks with valid audio paths
+        return track.audioPath && track.audioPath.includes('.mp3')
+      })
 
     if (musicTracks.length > 0) {
       setPlaylist(musicTracks)
@@ -114,10 +118,7 @@ const BookContent = () => {
 
   if (loading && totalPages === 1) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10 relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(/assets/bg-${isDark ? 'dark' : 'light'}.jpg)` }}>
-        <div className="kawaii-star absolute top-20 left-20">✨</div>
-        <div className="kawaii-star absolute top-32 right-32">⭐</div>
-        <div className="kawaii-star absolute bottom-40 left-40">💫</div>
+      <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10 relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(/assets/bg-${isDark ? 'dark' : 'light'}.png)` }}>
         <div className="text-center kawaii-modal rounded-xl p-8 shadow-2xl">
           <RefreshCw className="animate-spin h-12 w-12 text-amber-400 mx-auto mb-4" />
           <p className="text-amber-700 dark:text-amber-300 font-medium text-sm sm:text-base">Loading guestbook entries...</p>
@@ -128,10 +129,7 @@ const BookContent = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10 relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(/assets/bg-${isDark ? 'dark' : 'light'}.jpg)` }}>
-        <div className="kawaii-star absolute top-20 left-20">✨</div>
-        <div className="kawaii-star absolute top-32 right-32">⭐</div>
-        <div className="kawaii-star absolute bottom-40 left-40">💫</div>
+      <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10 relative bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(/assets/bg-${isDark ? 'dark' : 'light'}.png)` }}>
         <div className="text-center max-w-md kawaii-modal rounded-xl p-8 shadow-2xl">
           <AlertCircle className="h-12 w-12 text-amber-400 mx-auto mb-4" />
           <h2 className="text-lg sm:text-xl font-semibold text-amber-800 dark:text-amber-200 mb-2">Failed to load guestbook</h2>
@@ -140,7 +138,7 @@ const BookContent = () => {
             onClick={refreshEntries}
             className="kawaii-button px-4 py-2 sm:px-6 sm:py-3 text-white font-medium text-sm sm:text-base rounded-full hover:scale-105 transition-all"
           >
-            ✨ Try Again ✨
+            Try Again
           </button>
         </div>
       </div>
@@ -148,21 +146,14 @@ const BookContent = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-2 sm:py-3 lg:py-4 xl:py-3 2xl:py-5 relative overflow-hidden no-print bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(/assets/bg-${isDark ? 'dark' : 'light'}.jpg)` }}>
+    <div className="h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-2 sm:py-3 lg:py-4 xl:py-3 2xl:py-5 relative overflow-hidden no-print bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(/assets/bg-${isDark ? 'dark' : 'light'}.png)` }}>
 
-      {/* Floating stars */}
-      <div className="kawaii-star absolute top-10 left-10 text-2xl">✨</div>
-      <div className="kawaii-star absolute top-20 right-20 text-xl">⭐</div>
-      <div className="kawaii-star absolute top-40 left-1/4 text-lg">💫</div>
-      <div className="kawaii-star absolute bottom-20 right-10 text-2xl">🌟</div>
-      <div className="kawaii-star absolute bottom-40 left-20 text-lg">✨</div>
-
-      {/* Chibi image in upper right */}
+      {/* Vinyl placeholder in upper right */}
       <div className="absolute top-8 right-4 z-10 hidden sm:flex flex-col items-center gap-3">
         <img
           style={{ width: '100%' }}
-          src="/assets/chibi.jpg"
-          alt="Chibi Sohyun"
+          src="/assets/vinyl-placeholder.png"
+          alt="Vinyl Record"
           className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300 cursor-pointer"
           onClick={handleChibiClick}
           title="Click to view welcome message"
@@ -372,7 +363,7 @@ const BookContent = () => {
                       {contentItems.length === 0 && (
                         <div className="text-center text-amber-600 dark:text-amber-400 py-12">
                           <div className="kawaii-entry p-6 rounded-lg">
-                            <p className="text-lg mb-2">✨ No entries yet! ✨</p>
+                            <p className="text-lg mb-2">No entries yet!</p>
                             <p className="text-sm opacity-80">Be the first to leave a message for Sohyun!</p>
                           </div>
                         </div>
@@ -416,11 +407,6 @@ const BookContent = () => {
                 </div>
               )}
 
-              {/* Decorative corners with stars */}
-              <div className="absolute top-4 left-4 text-amber-400/50 dark:text-amber-300/70 text-lg">✨</div>
-              <div className="absolute top-4 right-4 text-amber-400/50 dark:text-amber-300/70 text-lg">⭐</div>
-              <div className="absolute bottom-4 left-4 text-amber-400/50 dark:text-amber-300/70 text-lg">💫</div>
-              <div className="absolute bottom-4 right-4 text-amber-400/50 dark:text-amber-300/70 text-lg">🌟</div>
             </div>
 
             {/* Navigation Controls - Hidden on Mobile */}
@@ -557,7 +543,7 @@ const BookContent = () => {
                   disabled={!jumpPageInput || parseInt(jumpPageInput) < 1 || parseInt(jumpPageInput) > (window.innerWidth >= 640 ? totalPages * 2 : Math.max(1, Math.ceil(contentItems.length / 3)))}
                   className="kawaii-button px-4 py-2 text-white font-medium text-sm rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  ✨ Jump ✨
+                  Jump
                 </button>
               </div>
             </motion.div>

@@ -3,6 +3,10 @@ import * as fs from 'fs'
 import path from 'path'
 import cors from 'cors'
 import { v4 as uuidv4 } from 'uuid'
+import { exec } from 'child_process'
+import { promisify } from 'util'
+
+const execAsync = promisify(exec)
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -19,6 +23,12 @@ const YEAR_DIR = path.join(STORAGE_DIR, '2026')
 const ENTRIES_DIR = path.join(YEAR_DIR, 'entries')
 const REMOVED_DIR = path.join(YEAR_DIR, 'removed')
 const REMOVED_ENTRIES_DIR = path.join(REMOVED_DIR, 'entries')
+const MUSIC_DIR = path.join(YEAR_DIR, 'music')
+
+// yt-dlp path - use Linux binary in production, local install in dev
+const YTDLP_PATH = isProd
+  ? path.join(process.cwd(), 'assets', 'yt-dlp_linux')
+  : '/opt/homebrew/bin/yt-dlp'
 
 // Ensure storage directories exist
 const ensureDirectories = () => {
@@ -36,6 +46,9 @@ const ensureDirectories = () => {
   }
   if (!fs.existsSync(REMOVED_ENTRIES_DIR)) {
     fs.mkdirSync(REMOVED_ENTRIES_DIR, { recursive: true })
+  }
+  if (!fs.existsSync(MUSIC_DIR)) {
+    fs.mkdirSync(MUSIC_DIR, { recursive: true })
   }
 }
 
@@ -97,6 +110,84 @@ const extractYouTubeId = (url) => {
   }
 }
 
+// Process YouTube URL with yt-dlp: download audio + extract metadata
+const processYouTubeAudio = async (youtubeUrl, youtubeId) => {
+  const outputPath = path.join(MUSIC_DIR, `${youtubeId}.mp3`)
+  const thumbnailPath = path.join(MUSIC_DIR, `${youtubeId}.jpg`)
+
+  let audioDownloaded = false
+  let title = 'Unknown Song'
+  let artist = 'Unknown Artist'
+  let duration = 0
+
+  // Step 1: Download audio (CRITICAL - must succeed)
+  try {
+    if (fs.existsSync(outputPath)) {
+      console.log(`Audio already exists for ${youtubeId}`)
+      audioDownloaded = true
+    } else {
+      console.log(`Downloading audio for ${youtubeId}...`)
+      const downloadCmd = `"${YTDLP_PATH}" --js-runtimes node:/usr/bin/node --extract-audio --audio-format mp3 --audio-quality 0 -o "${outputPath.replace('.mp3', '.%(ext)s')}" "${youtubeUrl}"`
+      await execAsync(downloadCmd, { timeout: 60000 })
+      console.log(`Audio downloaded: ${outputPath}`)
+      audioDownloaded = true
+    }
+  } catch (error) {
+    console.error(`Failed to download audio for ${youtubeId}:`, error.message)
+    return {
+      success: false,
+      error: 'Unable to download audio from YouTube. Please try a different video.'
+    }
+  }
+
+  // Step 2: Extract metadata (OPTIONAL - failure is okay)
+  try {
+    console.log(`Extracting metadata for ${youtubeId}...`)
+    const metadataCmd = `"${YTDLP_PATH}" --js-runtimes node:/usr/bin/node --dump-json --no-download "${youtubeUrl}"`
+    const { stdout } = await execAsync(metadataCmd, { timeout: 30000 })
+    const metadata = JSON.parse(stdout)
+
+    title = metadata.title || title
+    artist = metadata.uploader || metadata.channel || artist
+    duration = metadata.duration || duration
+
+    // Try to parse "Artist - Song" format
+    if (title.includes(' - ')) {
+      const parts = title.split(' - ')
+      artist = parts[0].trim()
+      title = parts.slice(1).join(' - ').trim()
+    }
+
+    console.log(`Metadata extracted: ${artist} - ${title}`)
+  } catch (error) {
+    console.warn(`Failed to extract metadata for ${youtubeId}:`, error.message)
+    console.warn('Continuing with default title/artist...')
+  }
+
+  // Step 3: Download thumbnail (OPTIONAL - failure is okay)
+  try {
+    if (!fs.existsSync(thumbnailPath)) {
+      console.log(`Downloading thumbnail for ${youtubeId}...`)
+      const thumbnailCmd = `"${YTDLP_PATH}" --js-runtimes node:/usr/bin/node --write-thumbnail --skip-download --convert-thumbnails jpg -o "${thumbnailPath.replace('.jpg', '')}" "${youtubeUrl}"`
+      await execAsync(thumbnailCmd, { timeout: 30000 })
+      console.log(`Thumbnail downloaded: ${thumbnailPath}`)
+    }
+  } catch (error) {
+    console.warn(`Failed to download thumbnail for ${youtubeId}:`, error.message)
+    console.warn('Continuing without thumbnail...')
+  }
+
+  // If we got the audio, consider it a success
+  return {
+    success: audioDownloaded,
+    audioPath: `/music/${youtubeId}.mp3`,
+    thumbnailPath: fs.existsSync(thumbnailPath) ? `/music/${youtubeId}.jpg` : null,
+    title,
+    artist,
+    duration
+  }
+}
+
 // Cache for entries (reload from disk on startup)
 let entries = loadEntries()
 
@@ -131,7 +222,7 @@ app.delete('/entry/:id', (req, res) => {
 })
 
 // POST /entry - Create a new entry (v2.0: music + text, no images)
-app.post('/entry', (req, res) => {
+app.post('/entry', async (req, res) => {
   try {
     const { content, author, position } = req.body
 
@@ -149,12 +240,25 @@ app.post('/entry', (req, res) => {
     }
 
     // v2.0: Validate that entry has at least music OR text (cannot be blank)
-    const hasMusic = content.some(item => item.type === 'music')
-    const hasText = content.some(item => item.type === 'text')
+    const musicItems = content.filter(item => item.type === 'music')
+    const textItems = content.filter(item => item.type === 'text')
 
-    if (!hasMusic && !hasText) {
+    if (musicItems.length === 0 && textItems.length === 0) {
       return res.status(400).json({
         error: 'Entry must have at least one music or text item'
+      })
+    }
+
+    // v2.0: Max 1 song and 1 message per entry
+    if (musicItems.length > 1) {
+      return res.status(400).json({
+        error: 'Entry can have a maximum of 1 song'
+      })
+    }
+
+    if (textItems.length > 1) {
+      return res.status(400).json({
+        error: 'Entry can have a maximum of 1 birthday message'
       })
     }
 
@@ -199,15 +303,21 @@ app.post('/entry', (req, res) => {
           })
         }
 
-        // Store music metadata
+        // v2.0: Store raw YouTube URL without processing
+        // Processing will be done manually using enrich-music.js script
+        console.log(`Storing music entry with YouTube URL: ${youtubeUrl}`)
+
         processedContent.push({
           type: 'music',
           content: {
             youtubeUrl,
             youtubeId,
-            songTitle: songTitle || '',
-            artist: artist || '',
-            albumArtUrl: albumArtUrl || ''
+            songTitle: songTitle || 'Pending',
+            artist: artist || 'Processing...',
+            albumArtUrl: albumArtUrl || null,
+            audioPath: null, // Will be filled in by enrich-music.js
+            duration: 0,
+            processed: false // Flag to indicate this needs processing
           }
         })
       } else {
@@ -495,6 +605,9 @@ app.use((error, req, res, next) => {
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(process.cwd(), 'dist')))
 }
+
+// Serve music files
+app.use('/music', express.static(MUSIC_DIR))
 
 // Start server
 app.listen(PORT, () => {

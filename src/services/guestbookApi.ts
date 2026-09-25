@@ -5,6 +5,8 @@ export interface MusicRecommendation {
   songTitle?: string;
   artist?: string;
   albumArtUrl?: string;
+  audioPath?: string; // NEW: local MP3 path from yt-dlp
+  duration?: number;
 }
 
 export interface ContentItem {

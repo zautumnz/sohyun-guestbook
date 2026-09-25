@@ -268,18 +268,20 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ isOpen, onClose }) => {
                   <button
                     type="button"
                     onClick={addMusicItem}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 border-amber-400 dark:border-amber-600 bg-white dark:bg-neutral-800 text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-neutral-700 transition-colors"
+                    disabled={contentItems.some(item => item.type === 'music')}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 border-amber-400 dark:border-amber-600 bg-white dark:bg-neutral-800 text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-neutral-800"
                   >
                     <Music className="w-4 h-4" />
-                    Add Song
+                    Add Song {contentItems.some(item => item.type === 'music') && '✓'}
                   </button>
                   <button
                     type="button"
                     onClick={addTextItem}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 border-amber-400 dark:border-amber-600 bg-white dark:bg-neutral-800 text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-neutral-700 transition-colors"
+                    disabled={contentItems.some(item => item.type === 'text')}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 border-amber-400 dark:border-amber-600 bg-white dark:bg-neutral-800 text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-neutral-800"
                   >
                     <Type className="w-4 h-4" />
-                    Add Message
+                    Add Message {contentItems.some(item => item.type === 'text') && '✓'}
                   </button>
                 </div>
               </div>

@@ -37,9 +37,8 @@ const MusicEntryCard: React.FC<MusicEntryCardProps> = ({
   onApprove,
   onDelete,
 }) => {
-  const thumbnailUrl = music.youtubeId
-    ? getYouTubeThumbnail(music.youtubeId)
-    : '/assets/vinyl-placeholder.png'
+  // Use enriched album art if available, otherwise fall back to vinyl placeholder
+  const thumbnailUrl = music.albumArtUrl || '/assets/vinyl-placeholder.png'
 
   return (
     <div className={`kawaii-entry kawaii-entry-${colorIndex} p-3 xl:p-3 2xl:p-4 relative group transition-all flex-1 ${

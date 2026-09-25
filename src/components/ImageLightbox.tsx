@@ -103,9 +103,7 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({ src, alt, author, avatarI
             {/* Footer with decorative elements */}
             <div className="p-3 bg-gradient-to-r from-amber-100/50 to-amber-100/50 dark:from-amber-800/50 dark:to-slate-700/50 border-t border-amber-200 dark:border-amber-600">
               <div className="flex justify-center gap-2 text-amber-400 dark:text-amber-300">
-                <span>✨</span>
                 <span>📷</span>
-                <span>✨</span>
               </div>
             </div>
           </motion.div>

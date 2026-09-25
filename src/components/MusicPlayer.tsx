@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
-import YouTube, { YouTubeProps, YouTubePlayer } from 'react-youtube'
-import { Play, Pause, SkipForward, Volume2, VolumeX, Disc3 } from 'lucide-react'
+import { Play, Pause, SkipForward, Volume2, VolumeX } from 'lucide-react'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -14,87 +13,113 @@ const MusicPlayer: React.FC = () => {
     pause,
     next,
     setVolume,
-    setIsReady,
   } = useMusicPlayer()
 
-  const playerRef = useRef<YouTubePlayer | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const [isVolumeOpen, setIsVolumeOpen] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const currentTrack = playlist[currentIndex]
 
-  // YouTube player options
-  const opts: YouTubeProps['opts'] = {
-    height: '0',
-    width: '0',
-    playerVars: {
-      autoplay: 0,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      modestbranding: 1,
-    },
-  }
-
-  // Handle player ready
-  const onReady: YouTubeProps['onReady'] = (event) => {
-    playerRef.current = event.target
-    setIsReady(true)
-    if (volume !== undefined) {
-      event.target.setVolume(volume)
-    }
-  }
-
-  // Handle video end - auto next
-  const onEnd: YouTubeProps['onEnd'] = () => {
-    next()
-  }
-
-  // Handle errors - skip to next
-  const onError: YouTubeProps['onError'] = (event) => {
-    console.error('YouTube player error:', event)
-    // Skip to next track if current one fails
-    setTimeout(() => {
-      next()
-    }, 1000)
-  }
-
   // Control playback when isPlaying changes
   useEffect(() => {
-    if (playerRef.current) {
+    if (audioRef.current) {
       if (isPlaying) {
-        playerRef.current.playVideo()
+        audioRef.current.play().catch(err => {
+          console.error('Error playing audio:', err)
+          setHasError(true)
+          pause()
+        })
       } else {
-        playerRef.current.pauseVideo()
+        audioRef.current.pause()
       }
     }
-  }, [isPlaying, currentIndex])
+  }, [isPlaying, pause])
 
   // Update volume when it changes
   useEffect(() => {
-    if (playerRef.current && volume !== undefined) {
-      playerRef.current.setVolume(volume)
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100
     }
   }, [volume])
 
-  // Don't render if no playlist
-  if (playlist.length === 0) {
+  // Handle audio end - auto next
+  const handleEnded = () => {
+    next()
+  }
+
+  // Handle audio error
+  const handleError = () => {
+    console.error('Audio loading error for:', currentTrack?.audioPath)
+    setHasError(true)
+
+    // Skip to next track if available
+    if (playlist.length > 1) {
+      setTimeout(() => {
+        setHasError(false)
+        next()
+      }, 2000)
+    } else {
+      pause()
+    }
+  }
+
+  // Load new track when currentIndex changes
+  useEffect(() => {
+    if (audioRef.current && currentTrack?.audioPath) {
+      setHasError(false)
+      audioRef.current.load()
+      if (isPlaying) {
+        audioRef.current.play().catch(err => {
+          console.error('Error playing new track:', err)
+          setHasError(true)
+        })
+      }
+    }
+  }, [currentIndex, currentTrack, isPlaying])
+
+  // Don't render if no playlist or invalid current track
+  if (playlist.length === 0 || !currentTrack) {
+    return null
+  }
+
+  const audioSrc = currentTrack.audioPath
+    ? `http://localhost:3001${currentTrack.audioPath}`
+    : null
+
+  if (!audioSrc) {
     return null
   }
 
   return (
     <>
-      {/* Hidden YouTube player */}
-      {currentTrack && (
-        <div className="hidden">
-          <YouTube
-            videoId={currentTrack.youtubeId}
-            opts={opts}
-            onReady={onReady}
-            onEnd={onEnd}
-            onError={onError}
-          />
-        </div>
-      )}
+      {/* HTML5 Audio Element */}
+      <audio
+        ref={audioRef}
+        onEnded={handleEnded}
+        onError={handleError}
+        preload="metadata"
+      >
+        <source src={audioSrc} type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+
+      {/* Error notification */}
+      <AnimatePresence>
+        {hasError && (
+          <motion.div
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-amber-900 dark:bg-amber-800 text-white px-6 py-3 rounded-lg shadow-2xl max-w-md text-center"
+          >
+            <p className="text-sm font-medium mb-1">⚠️ Can't play this track</p>
+            <p className="text-xs opacity-90">
+              {playlist.length > 1 ? 'Skipping to next...' : 'Audio failed to load'}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Fixed music player bar */}
       <motion.div

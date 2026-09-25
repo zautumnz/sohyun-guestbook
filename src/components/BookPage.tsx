@@ -127,14 +127,9 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
       {/* Content loading overlay */}
       {!isContentReady && (
         <div className="absolute inset-0 bg-background/50 dark:bg-background/70 flex items-center justify-center z-20">
-          <div className="text-amber-400 dark:text-amber-300 text-2xl">✨</div>
+          <div className="text-amber-400 dark:text-amber-300 text-2xl">Loading...</div>
         </div>
       )}
-      {/* Kawaii decorative stars */}
-      <div className="absolute top-4 left-8 text-amber-300/40 text-sm kawaii-star pointer-events-none">✨</div>
-      <div className="absolute top-12 right-12 text-amber-300/40 text-xs kawaii-star pointer-events-none">⭐</div>
-      <div className="absolute bottom-8 left-16 text-amber-300/40 text-xs kawaii-star pointer-events-none">💫</div>
-      <div className="absolute bottom-16 right-8 text-amber-300/40 text-sm kawaii-star pointer-events-none">🌟</div>
 
       {/* Paper texture overlay with kawaii pattern */}
       <div className="absolute inset-0 opacity-15 paper-texture pointer-events-none" />
@@ -161,7 +156,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
           <div className="mb-3">
             <div className="kawaii-border bg-gradient-to-r from-amber-100/80 to-amber-100/80 rounded-full px-3 py-1 mx-auto w-fit">
               <h2 className="text-sm sm:text-base font-serif text-amber-800 dark:text-amber-200 text-center flex items-center gap-2">
-                ✨ #소현과_사랑에빠지다 ✨
+                #소현과_사랑에빠지다
               </h2>
             </div>
           </div>
@@ -329,7 +324,7 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
       } z-20`}>
         <div className="kawaii-border bg-gradient-to-r from-amber-100 to-amber-100 rounded-full px-3 py-1">
           <span className="text-amber-600 dark:text-amber-300 font-serif text-xs sm:text-sm flex items-center gap-1">
-            ⭐ {side === 'single' ? (pageNumber + 1) :
+            {side === 'single' ? (pageNumber + 1) :
                 side === 'left' ? (pageNumber * 2 + 1) : (pageNumber * 2 + 2)}
           </span>
         </div>

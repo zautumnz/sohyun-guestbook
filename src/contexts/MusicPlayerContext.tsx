@@ -3,11 +3,12 @@ import { MusicRecommendation } from '@/services/guestbookApi'
 
 interface PlaylistTrack {
   id: string  // entry ID
-  youtubeId: string
+  audioPath: string  // local MP3 path from yt-dlp
   songTitle: string
   artist: string
   albumArtUrl: string
   author: string  // person who recommended it
+  duration?: number
 }
 
 interface MusicPlayerContextType {
@@ -15,14 +16,12 @@ interface MusicPlayerContextType {
   currentIndex: number
   isPlaying: boolean
   volume: number
-  isReady: boolean
   setPlaylist: (tracks: PlaylistTrack[]) => void
   play: () => void
   pause: () => void
   next: () => void
   setVolume: (volume: number) => void
   setCurrentIndex: (index: number) => void
-  setIsReady: (ready: boolean) => void
 }
 
 const MusicPlayerContext = createContext<MusicPlayerContextType | null>(null)
@@ -32,7 +31,6 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolumeState] = useState(50)
-  const [isReady, setIsReady] = useState(false)
 
   // Shuffle playlist on mount (re-shuffle on each visit)
   const setPlaylist = useCallback((tracks: PlaylistTrack[]) => {
@@ -86,14 +84,12 @@ export const MusicPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     currentIndex,
     isPlaying,
     volume,
-    isReady,
     setPlaylist,
     play,
     pause,
     next,
     setVolume,
     setCurrentIndex,
-    setIsReady,
   }
 
   return (
