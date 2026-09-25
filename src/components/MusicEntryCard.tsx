@@ -77,7 +77,7 @@ const MusicEntryCard: React.FC<MusicEntryCardProps> = ({
               e.stopPropagation()
               onDelete()
             }}
-            className="p-2 rounded-full bg-gradient-to-r from-pink-400 to-red-400 hover:from-pink-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl"
+            className="p-2 rounded-full bg-gradient-to-r from-amber-400 to-red-400 hover:from-amber-500 hover:to-red-500 text-white transition-all shadow-lg hover:shadow-xl"
             title="Delete entry"
           >
             <Trash2 size={12} />

@@ -94,36 +94,36 @@
     margin: 0;
     padding: 0;
     background-image:
-      radial-gradient(circle at 20% 80%, rgba(179, 136, 255, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(199, 125, 255, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, rgba(219, 158, 255, 0.05) 0%, transparent 50%);
+      radial-gradient(circle at 20% 80%, rgba(217, 119, 6, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(251, 191, 36, 0.05) 0%, transparent 50%);
     background-attachment: fixed;
     transition: background-color 0.5s ease, color 0.5s ease, background-image 0.5s ease;
   }
 
   .dark body {
     background-image:
-      radial-gradient(circle at 20% 80%, rgba(179, 136, 255, 0.2) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(199, 125, 255, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, rgba(219, 158, 255, 0.1) 0%, transparent 50%);
+      radial-gradient(circle at 20% 80%, rgba(217, 119, 6, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(251, 191, 36, 0.1) 0%, transparent 50%);
   }
 }
 
-/* Custom kawaii purple theme styles */
+/* Custom kawaii amber/vinyl theme styles */
 .book-page {
-  background: linear-gradient(135deg, #f8f4ff 0%, #f1e8ff 50%, #ede0ff 100%);
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
   box-shadow:
-    inset 0 0 30px rgba(179, 136, 255, 0.1),
-    0 4px 20px rgba(179, 136, 255, 0.15);
+    inset 0 0 30px rgba(217, 119, 6, 0.1),
+    0 4px 20px rgba(217, 119, 6, 0.15);
   position: relative;
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .dark .book-page {
-  background: linear-gradient(135deg, #1a1625 0%, #221a2e 50%, #2a1f38 100%);
+  background: linear-gradient(135deg, #1c1410 0%, #292115 50%, #362b1a 100%);
   box-shadow:
-    inset 0 0 30px rgba(179, 136, 255, 0.2),
-    0 4px 20px rgba(179, 136, 255, 0.25);
+    inset 0 0 30px rgba(217, 119, 6, 0.2),
+    0 4px 20px rgba(217, 119, 6, 0.25);
 }
 
 .book-page::before {
@@ -131,9 +131,9 @@
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 10% 20%, rgba(179, 136, 255, 0.03) 2px, transparent 2px),
-    radial-gradient(circle at 90% 80%, rgba(199, 125, 255, 0.03) 1px, transparent 1px),
-    radial-gradient(circle at 50% 50%, rgba(219, 158, 255, 0.02) 1px, transparent 1px);
+    radial-gradient(circle at 10% 20%, rgba(217, 119, 6, 0.03) 2px, transparent 2px),
+    radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.02) 1px, transparent 1px);
   background-size: 40px 40px, 60px 60px, 80px 80px;
   pointer-events: none;
   transition: background-image 0.3s ease;
@@ -141,43 +141,43 @@
 
 .dark .book-page::before {
   background-image:
-    radial-gradient(circle at 10% 20%, rgba(179, 136, 255, 0.08) 2px, transparent 2px),
-    radial-gradient(circle at 90% 80%, rgba(199, 125, 255, 0.06) 1px, transparent 1px),
-    radial-gradient(circle at 50% 50%, rgba(219, 158, 255, 0.04) 1px, transparent 1px);
+    radial-gradient(circle at 10% 20%, rgba(217, 119, 6, 0.08) 2px, transparent 2px),
+    radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.06) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.04) 1px, transparent 1px);
 }
 
 /* Enhanced book binding crease effects */
 .book-binding {
   background: linear-gradient(90deg,
-    rgba(179, 136, 255, 0.3) 0%,
-    rgba(199, 125, 255, 0.5) 30%,
-    rgba(219, 158, 255, 0.6) 50%,
-    rgba(199, 125, 255, 0.5) 70%,
-    rgba(179, 136, 255, 0.3) 100%
+    rgba(217, 119, 6, 0.3) 0%,
+    rgba(245, 158, 11, 0.5) 30%,
+    rgba(251, 191, 36, 0.6) 50%,
+    rgba(245, 158, 11, 0.5) 70%,
+    rgba(217, 119, 6, 0.3) 100%
   );
   box-shadow:
-    inset -2px 0 8px rgba(179, 136, 255, 0.4),
-    inset 2px 0 8px rgba(179, 136, 255, 0.4),
-    inset 0 0 12px rgba(199, 125, 255, 0.3);
-  border-left: 1px solid rgba(179, 136, 255, 0.2);
-  border-right: 1px solid rgba(179, 136, 255, 0.2);
+    inset -2px 0 8px rgba(217, 119, 6, 0.4),
+    inset 2px 0 8px rgba(217, 119, 6, 0.4),
+    inset 0 0 12px rgba(245, 158, 11, 0.3);
+  border-left: 1px solid rgba(217, 119, 6, 0.2);
+  border-right: 1px solid rgba(217, 119, 6, 0.2);
   transition: all 0.3s ease;
 }
 
 .dark .book-binding {
   background: linear-gradient(90deg,
-    rgba(179, 136, 255, 0.5) 0%,
-    rgba(199, 125, 255, 0.7) 30%,
-    rgba(219, 158, 255, 0.8) 50%,
-    rgba(199, 125, 255, 0.7) 70%,
-    rgba(179, 136, 255, 0.5) 100%
+    rgba(217, 119, 6, 0.5) 0%,
+    rgba(245, 158, 11, 0.7) 30%,
+    rgba(251, 191, 36, 0.8) 50%,
+    rgba(245, 158, 11, 0.7) 70%,
+    rgba(217, 119, 6, 0.5) 100%
   );
   box-shadow:
-    inset -2px 0 8px rgba(179, 136, 255, 0.6),
-    inset 2px 0 8px rgba(179, 136, 255, 0.6),
-    inset 0 0 12px rgba(199, 125, 255, 0.5);
-  border-left: 1px solid rgba(179, 136, 255, 0.4);
-  border-right: 1px solid rgba(179, 136, 255, 0.4);
+    inset -2px 0 8px rgba(217, 119, 6, 0.6),
+    inset 2px 0 8px rgba(217, 119, 6, 0.6),
+    inset 0 0 12px rgba(245, 158, 11, 0.5);
+  border-left: 1px solid rgba(217, 119, 6, 0.4);
+  border-right: 1px solid rgba(217, 119, 6, 0.4);
 }
 
 /* Book spread container for two-page layout */
@@ -197,30 +197,30 @@
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   box-shadow:
-    inset -10px 0 20px -10px rgba(179, 136, 255, 0.2),
-    0 4px 20px rgba(179, 136, 255, 0.15);
+    inset -10px 0 20px -10px rgba(217, 119, 6, 0.2),
+    0 4px 20px rgba(217, 119, 6, 0.15);
   transition: box-shadow 0.3s ease;
 }
 
 .dark .book-page-left {
   box-shadow:
-    inset -10px 0 20px -10px rgba(179, 136, 255, 0.3),
-    0 4px 20px rgba(179, 136, 255, 0.25);
+    inset -10px 0 20px -10px rgba(217, 119, 6, 0.3),
+    0 4px 20px rgba(217, 119, 6, 0.25);
 }
 
 .book-page-right {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   box-shadow:
-    inset 10px 0 20px -10px rgba(179, 136, 255, 0.2),
-    0 4px 20px rgba(179, 136, 255, 0.15);
+    inset 10px 0 20px -10px rgba(217, 119, 6, 0.2),
+    0 4px 20px rgba(217, 119, 6, 0.15);
   transition: box-shadow 0.3s ease;
 }
 
 .dark .book-page-right {
   box-shadow:
-    inset 10px 0 20px -10px rgba(179, 136, 255, 0.3),
-    0 4px 20px rgba(179, 136, 255, 0.25);
+    inset 10px 0 20px -10px rgba(217, 119, 6, 0.3),
+    0 4px 20px rgba(217, 119, 6, 0.25);
 }
 
 /* Page turning animation enhancements */
@@ -267,14 +267,14 @@
 /* Kawaii decorative elements */
 .kawaii-star {
   position: absolute;
-  color: #b388ff;
+  color: #d97706;
   opacity: 0.6;
   animation: twinkle 3s infinite;
   transition: color 0.3s ease, opacity 0.3s ease;
 }
 
 .dark .kawaii-star {
-  color: #db9eff;
+  color: #fbbf24;
   opacity: 0.8;
 }
 
@@ -295,7 +295,7 @@
 .kawaii-border {
   border: 2px solid transparent;
   background: linear-gradient(white, white) padding-box,
-              linear-gradient(45deg, #b388ff, #c77dff, #db9eff) border-box;
+              linear-gradient(45deg, #d97706, #f59e0b, #fbbf24) border-box;
   border-radius: 12px;
   transition: background 0.3s ease;
 }
@@ -303,7 +303,7 @@
 /* Custom scrollbar for text lightbox */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(179, 136, 255, 0.3) rgba(179, 136, 255, 0.1);
+  scrollbar-color: rgba(217, 119, 6, 0.3) rgba(217, 119, 6, 0.1);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -311,56 +311,56 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(179, 136, 255, 0.1);
+  background: rgba(217, 119, 6, 0.1);
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(179, 136, 255, 0.3);
+  background: rgba(217, 119, 6, 0.3);
   border-radius: 4px;
   transition: background 0.3s ease;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(179, 136, 255, 0.5);
+  background: rgba(217, 119, 6, 0.5);
 }
 
 .dark .custom-scrollbar {
-  scrollbar-color: rgba(219, 158, 255, 0.4) rgba(179, 136, 255, 0.2);
+  scrollbar-color: rgba(251, 191, 36, 0.4) rgba(217, 119, 6, 0.2);
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(179, 136, 255, 0.2);
+  background: rgba(217, 119, 6, 0.2);
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(219, 158, 255, 0.4);
+  background: rgba(251, 191, 36, 0.4);
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(219, 158, 255, 0.6);
+  background: rgba(251, 191, 36, 0.6);
 }
 
 .dark .kawaii-border {
   background: linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
-              linear-gradient(45deg, #b388ff, #c77dff, #db9eff) border-box;
+              linear-gradient(45deg, #d97706, #f59e0b, #fbbf24) border-box;
 }
 
 /* Paper texture with stars */
 .paper-texture {
   background-image:
-    radial-gradient(circle at 15% 25%, rgba(179, 136, 255, 0.04) 2px, transparent 2px),
-    radial-gradient(circle at 85% 75%, rgba(199, 125, 255, 0.04) 1px, transparent 1px);
+    radial-gradient(circle at 15% 25%, rgba(217, 119, 6, 0.04) 2px, transparent 2px),
+    radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.04) 1px, transparent 1px);
   background-size: 50px 50px, 30px 30px;
 }
 
 /* Cute button styles */
 .kawaii-button {
-  background: linear-gradient(135deg, #b388ff 0%, #c77dff 100%);
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
   border: none;
   border-radius: 20px;
   box-shadow:
-    0 4px 15px rgba(179, 136, 255, 0.3),
+    0 4px 15px rgba(217, 119, 6, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
   position: relative;
@@ -386,13 +386,13 @@
 .kawaii-button:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 6px 20px rgba(179, 136, 255, 0.4),
+    0 6px 20px rgba(217, 119, 6, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 /* Modal styles */
 .kawaii-modal {
-  background: linear-gradient(135deg, #faf8ff 0%, #f5f0ff 100%);
+  background: linear-gradient(135deg, #fffbebbeb 0%, #fef3c7 100%);
   border: 3px solid transparent;
   background-clip: padding-box;
   position: relative;
@@ -400,30 +400,30 @@
 }
 
 .dark .kawaii-modal {
-  background: linear-gradient(135deg, #1a1625 0%, #221a2e 100%);
+  background: linear-gradient(135deg, #1c1410 0%, #292115 100%);
 }
 
 .kawaii-modal::before {
   content: '';
   position: absolute;
   inset: -3px;
-  background: linear-gradient(45deg, #b388ff, #c77dff, #db9eff, #b388ff);
+  background: linear-gradient(45deg, #d97706, #f59e0b, #fbbf24, #d97706);
   border-radius: inherit;
   z-index: -1;
   transition: background 0.3s ease;
 }
 
 .dark .kawaii-modal::before {
-  background: linear-gradient(45deg, #db9eff, #c77dff, #b388ff, #db9eff);
+  background: linear-gradient(45deg, #fbbf24, #f59e0b, #d97706, #fbbf24);
 }
 
 /* Entry card styles */
 .kawaii-entry {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 244, 255, 0.9) 100%);
-  border: 2px solid rgba(179, 136, 255, 0.2);
+  border: 2px solid rgba(217, 119, 6, 0.2);
   border-radius: 16px;
   box-shadow:
-    0 4px 15px rgba(179, 136, 255, 0.1),
+    0 4px 15px rgba(217, 119, 6, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
@@ -431,10 +431,10 @@
 
 .dark .kawaii-entry {
   background: linear-gradient(135deg, rgba(26, 22, 37, 0.9) 0%, rgba(34, 26, 46, 0.9) 100%);
-  border: 2px solid rgba(179, 136, 255, 0.4);
+  border: 2px solid rgba(217, 119, 6, 0.4);
   box-shadow:
-    0 4px 15px rgba(179, 136, 255, 0.2),
-    inset 0 1px 0 rgba(219, 158, 255, 0.3);
+    0 4px 15px rgba(217, 119, 6, 0.2),
+    inset 0 1px 0 rgba(251, 191, 36, 0.3);
 }
 
 /* Group styling for multi-item entries */
@@ -446,7 +446,7 @@
 }
 
 .group-badge {
-  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  background: linear-gradient(135deg, #d97706 0%, #78350f 100%);
   color: white;
   font-size: 0.625rem;
   padding: 0.375rem 0.5rem;
@@ -476,7 +476,7 @@
 .group-connecting-line {
   width: 2px;
   height: 2rem;
-  background: linear-gradient(to bottom, rgba(168, 85, 247, 0.6) 0%, rgba(236, 72, 153, 0.6) 100%);
+  background: linear-gradient(to bottom, rgba(168, 85, 247, 0.6) 0%, rgba(120, 53, 15, 0.6) 100%);
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   border-radius: 9999px;
@@ -520,15 +520,15 @@
 }
 
 .group-border-first {
-  border-color: rgb(196 181 253) rgb(196 181 253) rgb(221 214 254) rgb(196 181 253);
+  border-color: rgb(251 191 36) rgb(251 191 36) rgb(252 211 77) rgb(251 191 36);
 }
 
 .group-border-middle {
-  border-color: rgb(221 214 254) rgb(196 181 253) rgb(221 214 254) rgb(196 181 253);
+  border-color: rgb(252 211 77) rgb(251 191 36) rgb(252 211 77) rgb(251 191 36);
 }
 
 .group-border-last {
-  border-color: rgb(221 214 254) rgb(196 181 253) rgb(196 181 253) rgb(196 181 253);
+  border-color: rgb(252 211 77) rgb(251 191 36) rgb(251 191 36) rgb(251 191 36);
 }
 
 .kawaii-entry.grouped-item {
@@ -538,7 +538,7 @@
 .kawaii-entry.grouped-item:hover {
   transform: scale(1.01);
   box-shadow:
-    0 4px 15px rgba(179, 136, 255, 0.2),
+    0 4px 15px rgba(217, 119, 6, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     0 0 20px rgba(168, 85, 247, 0.3);
 }
@@ -548,7 +548,7 @@
   position: absolute;
   inset: -2px;
   border-radius: 18px;
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(120, 53, 15, 0.1) 100%);
   z-index: -1;
   animation: groupGlow 0.5s ease-out;
 }
@@ -585,31 +585,31 @@
 }
 
 .dark .group-border-first {
-  border-color: rgb(139 92 246) rgb(139 92 246) rgb(124 58 237) rgb(139 92 246);
+  border-color: rgb(217 119 6) rgb(217 119 6) rgb(180 83 9) rgb(217 119 6);
 }
 
 .dark .group-border-middle {
-  border-color: rgb(124 58 237) rgb(139 92 246) rgb(124 58 237) rgb(139 92 246);
+  border-color: rgb(180 83 9) rgb(217 119 6) rgb(180 83 9) rgb(217 119 6);
 }
 
 .dark .group-border-last {
-  border-color: rgb(124 58 237) rgb(139 92 246) rgb(139 92 246) rgb(139 92 246);
+  border-color: rgb(180 83 9) rgb(217 119 6) rgb(217 119 6) rgb(217 119 6);
 }
 
 .dark .kawaii-entry.grouped-item:hover {
   box-shadow:
-    0 4px 15px rgba(179, 136, 255, 0.3),
-    inset 0 1px 0 rgba(219, 158, 255, 0.3),
+    0 4px 15px rgba(217, 119, 6, 0.3),
+    inset 0 1px 0 rgba(251, 191, 36, 0.3),
     0 0 25px rgba(168, 85, 247, 0.4);
 }
 
 .dark .kawaii-entry.grouped-item:hover::after {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(120, 53, 15, 0.15) 100%);
 }
 
 /* Alternating colors for entry groups */
 .kawaii-entry-0 {
-  /* Default purple theme - already defined above */
+  /* Default amber/vinyl theme - already defined above */
 }
 
 .kawaii-entry-1 {
@@ -622,9 +622,9 @@
 
 .kawaii-entry-2 {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 244, 248, 0.9) 100%);
-  border: 2px solid rgba(244, 114, 182, 0.2);
+  border: 2px solid rgba(146, 64, 14, 0.2);
   box-shadow:
-    0 4px 15px rgba(244, 114, 182, 0.1),
+    0 4px 15px rgba(146, 64, 14, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -639,15 +639,15 @@
 
 .dark .kawaii-entry-2 {
   background: linear-gradient(135deg, rgba(24, 24, 27, 0.9) 0%, rgba(39, 39, 42, 0.9) 100%);
-  border: 2px solid rgba(244, 114, 182, 0.4);
+  border: 2px solid rgba(146, 64, 14, 0.4);
   box-shadow:
-    0 4px 15px rgba(244, 114, 182, 0.2),
-    inset 0 1px 0 rgba(251, 207, 232, 0.3);
+    0 4px 15px rgba(146, 64, 14, 0.2),
+    inset 0 1px 0 rgba(194, 120, 3, 0.3);
 }
 
 /* Alternating colors for group badges */
 .group-badge-0 {
-  /* Default purple-pink gradient - already defined above */
+  /* Default amber-brown gradient - already defined above */
 }
 
 .group-badge-1 {
@@ -656,21 +656,21 @@
 }
 
 .group-badge-2 {
-  background: linear-gradient(135deg, #f472b6 0%, #be185d 100%);
-  box-shadow: 0 2px 8px rgba(244, 114, 182, 0.3);
+  background: linear-gradient(135deg, #92400e 0%, #c27803 100%);
+  box-shadow: 0 2px 8px rgba(146, 64, 14, 0.3);
 }
 
 /* Alternating colors for group borders */
 .group-border-1.group-border-first {
-  border-color: rgb(147 197 253) rgb(147 197 253) rgb(191 219 254) rgb(147 197 253);
+  border-color: rgb(251 191 36) rgb(251 191 36) rgb(252 211 77) rgb(251 191 36);
 }
 
 .group-border-1.group-border-middle {
-  border-color: rgb(191 219 254) rgb(147 197 253) rgb(191 219 254) rgb(147 197 253);
+  border-color: rgb(252 211 77) rgb(251 191 36) rgb(252 211 77) rgb(251 191 36);
 }
 
 .group-border-1.group-border-last {
-  border-color: rgb(191 219 254) rgb(147 197 253) rgb(147 197 253) rgb(147 197 253);
+  border-color: rgb(252 211 77) rgb(251 191 36) rgb(251 191 36) rgb(251 191 36);
 }
 
 .group-border-2.group-border-first {
@@ -687,15 +687,15 @@
 
 /* Dark mode alternating group borders */
 .dark .group-border-1.group-border-first {
-  border-color: rgb(59 130 246) rgb(59 130 246) rgb(37 99 235) rgb(59 130 246);
+  border-color: rgb(217 119 6) rgb(217 119 6) rgb(180 83 9) rgb(217 119 6);
 }
 
 .dark .group-border-1.group-border-middle {
-  border-color: rgb(37 99 235) rgb(59 130 246) rgb(37 99 235) rgb(59 130 246);
+  border-color: rgb(180 83 9) rgb(217 119 6) rgb(180 83 9) rgb(217 119 6);
 }
 
 .dark .group-border-1.group-border-last {
-  border-color: rgb(37 99 235) rgb(59 130 246) rgb(59 130 246) rgb(59 130 246);
+  border-color: rgb(180 83 9) rgb(217 119 6) rgb(217 119 6) rgb(217 119 6);
 }
 
 .dark .group-border-2.group-border-first {
@@ -712,7 +712,7 @@
 
 /* Alternating group connecting lines */
 .group-connecting-line-0 {
-  background: linear-gradient(to bottom, rgba(168, 85, 247, 0.6) 0%, rgba(236, 72, 153, 0.6) 100%);
+  background: linear-gradient(to bottom, rgba(168, 85, 247, 0.6) 0%, rgba(120, 53, 15, 0.6) 100%);
 }
 
 .group-connecting-line-1 {
@@ -720,7 +720,7 @@
 }
 
 .group-connecting-line-2 {
-  background: linear-gradient(to bottom, rgba(244, 114, 182, 0.6) 0%, rgba(190, 24, 93, 0.6) 100%);
+  background: linear-gradient(to bottom, rgba(146, 64, 14, 0.6) 0%, rgba(190, 24, 93, 0.6) 100%);
 }
 
 /* Lace border effect */
@@ -730,8 +730,8 @@
       0deg,
       transparent,
       transparent 2px,
-      rgba(179, 136, 255, 0.1) 2px,
-      rgba(179, 136, 255, 0.1) 4px
+      rgba(217, 119, 6, 0.1) 2px,
+      rgba(217, 119, 6, 0.1) 4px
     );
   border-radius: 8px;
 }

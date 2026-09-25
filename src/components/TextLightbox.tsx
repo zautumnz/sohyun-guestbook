@@ -68,17 +68,17 @@ const TextLightbox: React.FC<TextLightboxProps> = ({ content, author, avatarImag
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="p-6 border-b border-purple-200 dark:border-purple-600 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-700 dark:to-purple-800">
+            <div className="p-6 border-b border-amber-200 dark:border-amber-600 bg-gradient-to-r from-amber-50 to-amber-50 dark:from-slate-700 dark:to-amber-800">
               <div className="flex items-center gap-3">
-                <div style={{ borderRadius: '9999px' }} className="rounded-full kawaii-border bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-700 dark:to-indigo-700 p-2">
+                <div style={{ borderRadius: '9999px' }} className="rounded-full kawaii-border bg-gradient-to-r from-amber-100 to-amber-100 dark:from-amber-700 dark:to-indigo-700 p-2">
                   <img
                     src={`/assets/drawings/${avatarImage}`}
                     alt="Author avatar"
-                    className="w-14 h-14 rounded-full object-cover border border-purple-300/50"
+                    className="w-14 h-14 rounded-full object-cover border border-amber-300/50"
                   />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-200">
+                  <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-200">
                     {author}'s Message
                   </h3>
                 </div>
@@ -87,7 +87,7 @@ const TextLightbox: React.FC<TextLightboxProps> = ({ content, author, avatarImag
 
             {/* Scrollable content */}
             <div className="p-6 overflow-y-auto max-h-[60vh] custom-scrollbar">
-              <div className="text-purple-800 dark:text-purple-200 font-serif leading-relaxed text-base">
+              <div className="text-amber-800 dark:text-amber-200 font-serif leading-relaxed text-base">
                 "{content.split('\n').map((line, index) => (
                   <React.Fragment key={index}>
                     {line}
@@ -98,8 +98,8 @@ const TextLightbox: React.FC<TextLightboxProps> = ({ content, author, avatarImag
             </div>
 
             {/* Footer with decorative elements */}
-            <div className="p-4 bg-gradient-to-r from-purple-100/50 to-pink-100/50 dark:from-purple-800/50 dark:to-slate-700/50 border-t border-purple-200 dark:border-purple-600">
-              <div className="flex justify-center gap-2 text-purple-400 dark:text-purple-300">
+            <div className="p-4 bg-gradient-to-r from-amber-100/50 to-amber-100/50 dark:from-amber-800/50 dark:to-slate-700/50 border-t border-amber-200 dark:border-amber-600">
+              <div className="flex justify-center gap-2 text-amber-400 dark:text-amber-300">
                 <span>✨</span>
                 <span>💜</span>
                 <span>✨</span>

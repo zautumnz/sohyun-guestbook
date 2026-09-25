@@ -119,8 +119,8 @@ const BookContent = () => {
         <div className="kawaii-star absolute top-32 right-32">⭐</div>
         <div className="kawaii-star absolute bottom-40 left-40">💫</div>
         <div className="text-center kawaii-modal rounded-xl p-8 shadow-2xl">
-          <RefreshCw className="animate-spin h-12 w-12 text-purple-400 mx-auto mb-4" />
-          <p className="text-purple-700 dark:text-purple-300 font-medium text-sm sm:text-base">Loading guestbook entries...</p>
+          <RefreshCw className="animate-spin h-12 w-12 text-amber-400 mx-auto mb-4" />
+          <p className="text-amber-700 dark:text-amber-300 font-medium text-sm sm:text-base">Loading guestbook entries...</p>
         </div>
       </div>
     )
@@ -133,9 +133,9 @@ const BookContent = () => {
         <div className="kawaii-star absolute top-32 right-32">⭐</div>
         <div className="kawaii-star absolute bottom-40 left-40">💫</div>
         <div className="text-center max-w-md kawaii-modal rounded-xl p-8 shadow-2xl">
-          <AlertCircle className="h-12 w-12 text-purple-400 mx-auto mb-4" />
-          <h2 className="text-lg sm:text-xl font-semibold text-purple-800 dark:text-purple-200 mb-2">Failed to load guestbook</h2>
-          <p className="text-purple-600 dark:text-purple-300 mb-4 text-sm sm:text-base">{error}</p>
+          <AlertCircle className="h-12 w-12 text-amber-400 mx-auto mb-4" />
+          <h2 className="text-lg sm:text-xl font-semibold text-amber-800 dark:text-amber-200 mb-2">Failed to load guestbook</h2>
+          <p className="text-amber-600 dark:text-amber-300 mb-4 text-sm sm:text-base">{error}</p>
           <button
             onClick={refreshEntries}
             className="kawaii-button px-4 py-2 sm:px-6 sm:py-3 text-white font-medium text-sm sm:text-base rounded-full hover:scale-105 transition-all"
@@ -185,7 +185,7 @@ const BookContent = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={toggleTheme}
-          className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
+          className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-amber-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
           title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
         >
           {isDark ? <Sun size={12} /> : <Moon size={12} />}
@@ -199,7 +199,7 @@ const BookContent = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={toggleTheme}
-          className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
+          className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-amber-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
           title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
         >
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
@@ -228,7 +228,7 @@ const BookContent = () => {
               </div>
             )}
             {entries.filter(e => !e.approved).length > 0 && (
-              <div className="kawaii-button flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-red-400 to-pink-400 text-white text-xs font-medium rounded-full shadow-sm">
+              <div className="kawaii-button flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-red-400 to-amber-400 text-white text-xs font-medium rounded-full shadow-sm">
                 <AlertCircle size={10} />
                 <span>{entries.filter(e => !e.approved).length} unapproved</span>
               </div>
@@ -239,11 +239,11 @@ const BookContent = () => {
 
       <div className="relative flex-1 flex items-center justify-center w-full">
         {/* Book Shadow */}
-        <div className="absolute inset-0 bg-purple-300/30 dark:bg-purple-600/40 blur-2xl transform translate-y-8 scale-95 rounded-3xl" />
+        <div className="absolute inset-0 bg-amber-300/30 dark:bg-amber-600/40 blur-2xl transform translate-y-8 scale-95 rounded-3xl" />
 
         {/* Book Container */}
-        <div className="relative kawaii-border bg-gradient-to-br from-purple-200 to-pink-200 dark:from-purple-800 dark:to-indigo-800 p-4 sm:p-6 lg:p-8 xl:p-8 2xl:p-12 rounded-2xl shadow-2xl w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl min-w-0">
-          <div className="kawaii-border bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-purple-900 rounded-xl shadow-inner lace-border">
+        <div className="relative kawaii-border bg-gradient-to-br from-amber-200 to-amber-200 dark:from-amber-800 dark:to-indigo-800 p-4 sm:p-6 lg:p-8 xl:p-8 2xl:p-12 rounded-2xl shadow-2xl w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl min-w-0">
+          <div className="kawaii-border bg-gradient-to-r from-amber-50 to-amber-50 dark:from-slate-800 dark:to-amber-900 rounded-xl shadow-inner lace-border">
 
             {/* Book Pages - Responsive Layout */}
             <div className="relative w-full h-[60vh] min-h-[500px] sm:h-[65vh] lg:h-[70vh] xl:h-[68vh] 2xl:h-[75vh] max-h-[800px] overflow-hidden rounded-xl flex">
@@ -328,15 +328,15 @@ const BookContent = () => {
                                   <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words leading-relaxed">
                                     {item.content as string}
                                   </p>
-                                  <div className="flex items-center gap-2 text-xs text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-full px-3 py-2">
+                                  <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-300 bg-amber-50/50 dark:bg-amber-900/40 rounded-full px-3 py-2">
                                     <img
                                       src={`/assets/drawings/${drawingIndex}.png`}
                                       alt="Author avatar"
-                                      className="w-6 h-6 rounded-full object-cover border border-purple-300/50"
+                                      className="w-6 h-6 rounded-full object-cover border border-amber-300/50"
                                     />
                                     <span className="font-medium truncate">{item.author}</span>
                                     <div className="flex items-center gap-1 ml-auto">
-                                      <Calendar size={10} className="text-purple-400" />
+                                      <Calendar size={10} className="text-amber-400" />
                                       <span>{new Date(item.timestamp).toLocaleDateString()}</span>
                                     </div>
                                   </div>
@@ -351,15 +351,15 @@ const BookContent = () => {
                                     alt={`Entry by ${item.author}`}
                                     className="w-full rounded-lg hover:opacity-90 transition-opacity"
                                   />
-                                  <div className="flex items-center gap-2 text-xs text-purple-600 dark:text-purple-300 bg-purple-50/50 dark:bg-purple-900/40 rounded-full px-3 py-2">
+                                  <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-300 bg-amber-50/50 dark:bg-amber-900/40 rounded-full px-3 py-2">
                                     <img
                                       src={`/assets/drawings/${drawingIndex}.png`}
                                       alt="Author avatar"
-                                      className="w-6 h-6 rounded-full object-cover border border-purple-300/50"
+                                      className="w-6 h-6 rounded-full object-cover border border-amber-300/50"
                                     />
                                     <span className="font-medium truncate">{item.author}</span>
                                     <div className="flex items-center gap-1 ml-auto">
-                                      <Calendar size={10} className="text-purple-400" />
+                                      <Calendar size={10} className="text-amber-400" />
                                       <span>{new Date(item.timestamp).toLocaleDateString()}</span>
                                     </div>
                                   </div>
@@ -370,7 +370,7 @@ const BookContent = () => {
                         )
                       })}
                       {contentItems.length === 0 && (
-                        <div className="text-center text-purple-600 dark:text-purple-400 py-12">
+                        <div className="text-center text-amber-600 dark:text-amber-400 py-12">
                           <div className="kawaii-entry p-6 rounded-lg">
                             <p className="text-lg mb-2">✨ No entries yet! ✨</p>
                             <p className="text-sm opacity-80">Be the first to leave a message for Sohyun!</p>
@@ -388,14 +388,14 @@ const BookContent = () => {
                     </div>
 
                     {/* Book Binding/Crease */}
-                    <div className="w-6 h-full relative bg-gradient-to-r from-purple-300/30 via-purple-400/50 to-purple-300/30 dark:from-purple-600/50 dark:via-purple-500/70 dark:to-purple-600/50 shadow-inner">
-                      <div className="absolute inset-y-0 left-1/2 w-px bg-purple-500/30 dark:bg-purple-400/50 transform -translate-x-1/2" />
-                      <div className="absolute inset-y-0 left-1 w-px bg-purple-200/40 dark:bg-purple-300/50" />
-                      <div className="absolute inset-y-0 right-1 w-px bg-purple-200/40 dark:bg-purple-300/50" />
+                    <div className="w-6 h-full relative bg-gradient-to-r from-amber-300/30 via-amber-400/50 to-amber-300/30 dark:from-amber-600/50 dark:via-amber-500/70 dark:to-amber-600/50 shadow-inner">
+                      <div className="absolute inset-y-0 left-1/2 w-px bg-amber-500/30 dark:bg-amber-400/50 transform -translate-x-1/2" />
+                      <div className="absolute inset-y-0 left-1 w-px bg-amber-200/40 dark:bg-amber-300/50" />
+                      <div className="absolute inset-y-0 right-1 w-px bg-amber-200/40 dark:bg-amber-300/50" />
                       {/* Binding holes/stitching */}
-                      <div className="absolute top-12 left-1/2 w-1 h-1 bg-purple-400/40 dark:bg-purple-300/60 rounded-full transform -translate-x-1/2" />
-                      <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-purple-400/40 dark:bg-purple-300/60 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
-                      <div className="absolute bottom-12 left-1/2 w-1 h-1 bg-purple-400/40 dark:bg-purple-300/60 rounded-full transform -translate-x-1/2" />
+                      <div className="absolute top-12 left-1/2 w-1 h-1 bg-amber-400/40 dark:bg-amber-300/60 rounded-full transform -translate-x-1/2" />
+                      <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-amber-400/40 dark:bg-amber-300/60 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+                      <div className="absolute bottom-12 left-1/2 w-1 h-1 bg-amber-400/40 dark:bg-amber-300/60 rounded-full transform -translate-x-1/2" />
                     </div>
 
                     {/* Right Page */}
@@ -410,17 +410,17 @@ const BookContent = () => {
               {isPageTransitioning && (
                 <div className="absolute inset-0 bg-background/80 dark:bg-background/90 flex items-center justify-center rounded-xl z-10">
                   <div className="text-center">
-                    <RefreshCw className="animate-spin h-8 w-8 text-purple-400 mx-auto mb-2" />
-                    <p className="text-purple-600 dark:text-purple-300 text-sm">Turning page...</p>
+                    <RefreshCw className="animate-spin h-8 w-8 text-amber-400 mx-auto mb-2" />
+                    <p className="text-amber-600 dark:text-amber-300 text-sm">Turning page...</p>
                   </div>
                 </div>
               )}
 
               {/* Decorative corners with stars */}
-              <div className="absolute top-4 left-4 text-purple-400/50 dark:text-purple-300/70 text-lg">✨</div>
-              <div className="absolute top-4 right-4 text-purple-400/50 dark:text-purple-300/70 text-lg">⭐</div>
-              <div className="absolute bottom-4 left-4 text-purple-400/50 dark:text-purple-300/70 text-lg">💫</div>
-              <div className="absolute bottom-4 right-4 text-purple-400/50 dark:text-purple-300/70 text-lg">🌟</div>
+              <div className="absolute top-4 left-4 text-amber-400/50 dark:text-amber-300/70 text-lg">✨</div>
+              <div className="absolute top-4 right-4 text-amber-400/50 dark:text-amber-300/70 text-lg">⭐</div>
+              <div className="absolute bottom-4 left-4 text-amber-400/50 dark:text-amber-300/70 text-lg">💫</div>
+              <div className="absolute bottom-4 right-4 text-amber-400/50 dark:text-amber-300/70 text-lg">🌟</div>
             </div>
 
             {/* Navigation Controls - Hidden on Mobile */}
@@ -441,7 +441,7 @@ const BookContent = () => {
 
               <div className="flex items-center gap-6">
                 {(loading || isPageTransitioning) && (
-                  <RefreshCw className="animate-spin h-5 w-5 text-purple-400" />
+                  <RefreshCw className="animate-spin h-5 w-5 text-amber-400" />
                 )}
 
                 <motion.button
@@ -460,7 +460,7 @@ const BookContent = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowAddModal(true)}
-                  className="kawaii-button flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-400 to-purple-400 text-white font-medium text-base rounded-full transition-all"
+                  className="kawaii-button flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-400 text-white font-medium text-base rounded-full transition-all"
                 >
                   <Plus size={16} />
                   💝 Add Entry
@@ -490,7 +490,7 @@ const BookContent = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowAddModal(true)}
-                className="kawaii-button flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-400 to-purple-400 text-white font-medium text-base rounded-full transition-all"
+                className="kawaii-button flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-400 text-white font-medium text-base rounded-full transition-all"
               >
                 <Plus size={16} />
                 💝 Add Entry
@@ -522,14 +522,14 @@ const BookContent = () => {
               className="kawaii-modal bg-white dark:bg-slate-800 rounded-xl p-6 shadow-2xl max-w-sm w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-700 dark:to-purple-800 -m-6 mb-4 p-6 rounded-t-xl">
-                <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-200 text-center">
+              <div className="bg-gradient-to-r from-amber-50 to-amber-50 dark:from-slate-700 dark:to-amber-800 -m-6 mb-4 p-6 rounded-t-xl">
+                <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-200 text-center">
                   🔍 Jump to Page
                 </h3>
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">
+                <label className="block text-sm font-medium text-amber-700 dark:text-amber-300 mb-2">
                   Page Number (1-{window.innerWidth >= 640 ? totalPages * 2 : Math.max(1, Math.ceil(contentItems.length / 3))})
                 </label>
                 <input
@@ -539,7 +539,7 @@ const BookContent = () => {
                   value={jumpPageInput}
                   onChange={(e) => setJumpPageInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleJumpToPage()}
-                  className="w-full px-3 py-2 border border-purple-200 dark:border-purple-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-background text-foreground transition-colors"
+                  className="w-full px-3 py-2 border border-amber-200 dark:border-amber-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent bg-background text-foreground transition-colors"
                   placeholder="Enter page number"
                   autoFocus
                 />
@@ -548,7 +548,7 @@ const BookContent = () => {
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={handleJumpModalClose}
-                  className="px-4 py-2 text-purple-600 dark:text-purple-300 hover:text-purple-800 dark:hover:text-purple-200 font-medium text-sm rounded-lg transition-colors"
+                  className="px-4 py-2 text-amber-600 dark:text-amber-300 hover:text-amber-800 dark:hover:text-amber-200 font-medium text-sm rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
