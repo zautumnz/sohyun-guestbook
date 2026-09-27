@@ -97,45 +97,47 @@ const MusicEntryCard: React.FC<MusicEntryCardProps> = ({
         </div>
       )}
 
-      {/* Album art / vinyl */}
-      <div className="relative mb-3 rounded-lg overflow-hidden aspect-square bg-gradient-to-br from-amber-900 to-amber-700 dark:from-neutral-800 dark:to-neutral-900">
-        <img
-          src={thumbnailUrl}
-          alt={music.songTitle || 'Album art'}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            // Fallback to vinyl icon if thumbnail fails
-            e.currentTarget.src = '/assets/vinyl-placeholder.png'
-          }}
-        />
-        <div className="absolute top-2 right-2 bg-amber-900/80 backdrop-blur-sm rounded-full p-1.5">
-          <Music size={14} className="text-amber-100" />
+      {/* Horizontal layout: thumbnail on left, info on right */}
+      <div className="flex gap-3 mb-3">
+        {/* Small album art thumbnail */}
+        <div className="relative rounded-lg overflow-hidden w-16 h-16 flex-shrink-0 bg-gradient-to-br from-amber-900 to-amber-700 dark:from-neutral-800 dark:to-neutral-900">
+          <img
+            src={thumbnailUrl}
+            alt={music.songTitle || 'Album art'}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback to vinyl icon if thumbnail fails
+              e.currentTarget.src = '/assets/vinyl-placeholder.png'
+            }}
+          />
+          <div className="absolute top-1 right-1 bg-amber-900/80 backdrop-blur-sm rounded-full p-1">
+            <Music size={10} className="text-amber-100" />
+          </div>
+        </div>
+
+        {/* Song info */}
+        <div className="flex-1 min-w-0">
+          <div className="text-amber-900 dark:text-amber-100 font-semibold text-sm truncate">
+            {music.songTitle || 'Unknown Song'}
+          </div>
+          <div className="text-amber-700 dark:text-amber-300 text-xs truncate mb-1">
+            {music.artist || 'Unknown Artist'}
+          </div>
+          {/* YouTube link */}
+          {music.youtubeUrl && (
+            <a
+              href={music.youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ExternalLink size={10} />
+              Listen on YouTube
+            </a>
+          )}
         </div>
       </div>
-
-      {/* Song info */}
-      <div className="mb-2">
-        <div className="text-amber-900 dark:text-amber-100 font-semibold text-sm truncate">
-          {music.songTitle || 'Unknown Song'}
-        </div>
-        <div className="text-amber-700 dark:text-amber-300 text-xs truncate">
-          {music.artist || 'Unknown Artist'}
-        </div>
-      </div>
-
-      {/* YouTube link */}
-      {music.youtubeUrl && (
-        <a
-          href={music.youtubeUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 transition-colors mb-3"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <ExternalLink size={10} />
-          Listen on YouTube
-        </a>
-      )}
 
       {/* Author info */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-amber-700 dark:text-amber-300 bg-amber-50/50 dark:bg-amber-900/40 rounded-lg sm:rounded-full px-3 py-2 mt-auto">

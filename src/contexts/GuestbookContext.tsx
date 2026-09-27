@@ -51,8 +51,16 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [currentPage, setCurrentPageState] = useState(0)
 
-  // Convert entries to content items for pagination (include pending entries for immediate preview)
+  // Paginate by entries, not individual content items
+  // Each entry shows all its content (song + message) together as one unit
   const allVisibleEntries = [...entries, ...pendingEntries]
+
+  const entriesPerSpread = 6 // 3 entries per side, 2 sides per spread
+  const entriesPerMobilePage = 3 // 3 entries per mobile page
+  // Calculate total pages based on whether we're using mobile or desktop layout
+  const totalPages = Math.max(1, Math.ceil(allVisibleEntries.length / entriesPerSpread))
+
+  // For backwards compatibility, create contentItems (but we'll use entries for rendering)
   const contentItems: ContentItemWithMeta[] = allVisibleEntries.flatMap(entry =>
     entry.content.map(item => ({
       ...item,
@@ -62,11 +70,6 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       entryId: entry.id
     }))
   )
-
-  const itemsPerSpread = 6 // 3 items per side, 2 sides per spread
-  const itemsPerMobilePage = 3 // 3 items per mobile page
-  // Calculate total pages based on whether we're using mobile or desktop layout
-  const totalPages = Math.max(1, Math.ceil(contentItems.length / itemsPerSpread))
 
   // Convert API timestamp string to Date object
   const transformApiEntry = (apiEntry: GuestbookEntry & { timestamp: string }): GuestbookEntry => ({
@@ -80,9 +83,18 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       setError(null)
       const apiEntries = await guestbookApi.getEntries(isAdmin ? adminPassword : undefined)
       const transformedEntries = apiEntries.map(transformApiEntry)
-      setEntries(transformedEntries)
-      // Clear pending entries after refresh since we now have fresh data
-      setPendingEntries([])
+
+      if (isAdmin) {
+        // Admin view: separate approved and unapproved entries
+        const approved = transformedEntries.filter(entry => entry.approved === true)
+        const unapproved = transformedEntries.filter(entry => entry.approved !== true)
+        setEntries(approved)
+        setPendingEntries(unapproved)
+      } else {
+        // Public view: only approved entries (server already filtered)
+        setEntries(transformedEntries)
+        setPendingEntries([])
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch entries'
       setError(errorMessage)
@@ -146,7 +158,10 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const deleteEntry = async (id: string) => {
     try {
       setError(null)
-      await guestbookApi.deleteEntry(id)
+      if (!adminPassword) {
+        throw new Error('Admin password required to delete entry')
+      }
+      await guestbookApi.deleteEntry(id, adminPassword)
       setEntries(prev => prev.filter(entry => entry.id !== id))
       console.log('Deleted entry:', id)
     } catch (err) {
@@ -163,15 +178,13 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [refreshEntries])
 
   const setCurrentPage = (page: number) => {
-    const maxPages = Math.max(1, Math.ceil(contentItems.length / itemsPerSpread) + 1)
-    if (page >= 0 && page < maxPages) {
+    if (page >= 0 && page < totalPages) {
       setCurrentPageState(page)
     }
   }
 
   const nextPage = () => {
-    const maxPages = Math.max(1, Math.ceil(contentItems.length / itemsPerSpread) + 1)
-    if (currentPage < maxPages - 1) {
+    if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1)
     }
   }

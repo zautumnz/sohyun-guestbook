@@ -148,13 +148,12 @@ const BookContent = () => {
   return (
     <div className="h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-4 xl:px-6 2xl:px-8 py-2 sm:py-3 lg:py-4 xl:py-3 2xl:py-5 relative overflow-hidden no-print bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(/assets/bg-${isDark ? 'dark' : 'light'}.png)` }}>
 
-      {/* Vinyl placeholder in upper right */}
+      {/* Control buttons in upper right - desktop */}
       <div className="absolute top-8 right-4 z-10 hidden sm:flex flex-col items-center gap-3">
         <img
-          style={{ width: '100%' }}
           src="/assets/vinyl-placeholder.png"
           alt="Vinyl Record"
-          className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300 cursor-pointer"
+          className="w-24 h-24 rounded-full shadow-lg border-4 border-white/80 hover:scale-105 transition-transform duration-300 cursor-pointer object-cover"
           onClick={handleChibiClick}
           title="Click to view welcome message"
         />
@@ -168,24 +167,8 @@ const BookContent = () => {
           <Printer size={12} />
           PDF
         </motion.button>
-      </div>
 
-      {/* Theme toggle in upper right - always visible */}
-      <div className="absolute top-8 right-4 z-10 flex sm:hidden flex-col items-center gap-3">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={toggleTheme}
-          className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-amber-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
-          title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-        >
-          {isDark ? <Sun size={12} /> : <Moon size={12} />}
-          <span className="hidden sm:inline">{isDark ? '#lightmode' : '#darkmode'}</span>
-        </motion.button>
-      </div>
-
-      {/* Theme toggle for desktop - positioned under PDF */}
-      <div className="absolute top-44 right-4 z-10 hidden sm:flex flex-col items-center gap-3">
+        {/* Theme toggle */}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -194,7 +177,7 @@ const BookContent = () => {
           title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
         >
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
-          <span className="hidden sm:inline">{isDark ? '#lightmode' : '#darkmode'}</span>
+          <span>{isDark ? '#lightmode' : '#darkmode'}</span>
         </motion.button>
 
         {/* Admin status indicator */}
@@ -228,7 +211,21 @@ const BookContent = () => {
         )}
       </div>
 
-      <div className="relative flex-1 flex items-center justify-center w-full">
+      {/* Theme toggle for mobile - always visible */}
+      <div className="absolute top-8 right-4 z-10 flex sm:hidden flex-col items-center gap-3">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={toggleTheme}
+          className="kawaii-button flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-amber-400 to-indigo-400 text-white text-sm font-medium rounded-full transition-all shadow-lg"
+          title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+        >
+          {isDark ? <Sun size={12} /> : <Moon size={12} />}
+          <span className="hidden sm:inline">{isDark ? '#lightmode' : '#darkmode'}</span>
+        </motion.button>
+      </div>
+
+      <div className="relative flex-1 flex items-center justify-center w-full pr-0 sm:pr-32">
         {/* Book Shadow */}
         <div className="absolute inset-0 bg-amber-300/30 dark:bg-amber-600/40 blur-2xl transform translate-y-8 scale-95 rounded-3xl" />
 
@@ -572,16 +569,20 @@ const BookContent = () => {
 
       {/* Welcome Modal */}
       <TextLightbox
-        content="#Fall_In_Love_With_Sohyun 💙
-For Sohyun's birthday, we invite you to share your thoughts and memories with her.
-You can leave a message or image (or both!) for Sohyun here. Click the 'Add Entry' button to get started.
+        content="#SohyunOnRepeat 💙
+For Sohyun’s birthday, we invite you to share your thoughts and memories with her.
+You can leave a message or song recommendation (or both!) for Sohyun here. Click the ‘Add Entry’ button to get started.
 
-#소현과_사랑에빠지다
+Note: Song entries will show as ‘Pending’ until they are processed before the site goes live.
+
+#소현반복재생중
 소현이의 생일을 축하하며, 소현이와의 추억이나 전하고 싶은 마음을 함께 나눠주세요.
-여기에서 소현이에게 메시지나 (text) 사진 (image) [또는 둘 다!] 을 남길 수 있어요.
-시작하려면 ‘Add entry’ 버튼을 눌러주세요!"
+여기에서 소현이에게 메시지나 노래 추천 [또는 둘 다!] 을 남길 수 있어요.
+시작하려면 ‘Add entry’ 버튼을 눌러주세요!
+
+참고: 노래 추천은 사이트가 공개되기 전에 처리될 때까지 ‘대기 중’으로 표시됩니다."
         author="Creator"
-        avatarImage="1.png"
+        avatarImage="creator.png"
         isOpen={showWelcomeModal}
         onClose={handleCloseWelcomeModal}
       />

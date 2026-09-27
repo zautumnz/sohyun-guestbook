@@ -139,9 +139,10 @@ class GuestbookAPI {
     })
   }
 
-  async deleteEntry(id: string): Promise<{ success: boolean; message: string }> {
-    return this.request(`/entry/${id}`, {
-      method: 'DELETE',
+  async deleteEntry(id: string, password: string): Promise<{ success: boolean; message: string }> {
+    return this.request(`/entry/${id}/reject`, {
+      method: 'PUT',
+      body: JSON.stringify({ password }),
     })
   }
 

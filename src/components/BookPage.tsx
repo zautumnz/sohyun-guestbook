@@ -16,18 +16,10 @@ interface BookPageProps {
 const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
   const { contentItems, entries, pendingEntries, deleteEntry, approveEntry, isAdmin } = useGuestbook()
   const { openLightbox, openTextLightbox } = useLightbox()
-  const [showDeleteButtons, _setShowDeleteButtons] = useState(false)
   const [isContentReady, setIsContentReady] = useState(false)
 
-  /*
-  // Check for password query parameter
-  // This is the worst possible way to do auth, but it only had to last two weeks
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const password = urlParams.get('pw')
-    setShowDeleteButtons(password === 'uVSM3L4LZ29vLlRMsM5u1jxPTPX1FYU')
-  }, [])
-  */
+  // Use isAdmin from context for showing admin controls
+  const showDeleteButtons = isAdmin
 
   // Helper function to get entry approval status
   const getEntryApprovalStatus = (entryId: string) => {
@@ -156,14 +148,14 @@ const BookPage: React.FC<BookPageProps> = ({ pageNumber, side }) => {
           <div className="mb-3">
             <div className="kawaii-border bg-gradient-to-r from-amber-100/80 to-amber-100/80 rounded-full px-3 py-1 mx-auto w-fit">
               <h2 className="text-sm sm:text-base font-serif text-amber-800 dark:text-amber-200 text-center flex items-center gap-2">
-                #소현과_사랑에빠지다
+                #소현반복재생중
               </h2>
             </div>
           </div>
         )}
 
         {/* Content Items */}
-        <div className="space-y-1 lg:space-y-2 xl:space-y-3 2xl:space-y-6 pb-6">
+        <div className="space-y-2 lg:space-y-3 xl:space-y-4 pb-6">
         {pageItems.map((item, index) => {
           const groupInfo = getGroupInfo(item)
           const colorIndex = getEntryColorIndex(item.entryId)
