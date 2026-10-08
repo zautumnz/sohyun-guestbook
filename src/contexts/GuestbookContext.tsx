@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { guestbookApi, CreateEntryPayload, ContentItem, CreateContentItem } from '../services/guestbookApi'
 
 export interface GuestbookEntry {
@@ -51,24 +51,31 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [currentPage, setCurrentPageState] = useState(0)
 
-  // Paginate by entries, not individual content items
-  // Each entry shows all its content (song + message) together as one unit
-  const allVisibleEntries = [...entries, ...pendingEntries]
+  // Create contentItems for pagination and rendering
+  // Each content item (song or message) is displayed separately
+  const allVisibleEntries = useMemo(() => [...entries, ...pendingEntries], [entries, pendingEntries])
 
-  const entriesPerSpread = 6 // 3 entries per side, 2 sides per spread
-  const entriesPerMobilePage = 3 // 3 entries per mobile page
-  // Calculate total pages based on whether we're using mobile or desktop layout
-  const totalPages = Math.max(1, Math.ceil(allVisibleEntries.length / entriesPerSpread))
+  const contentItems: ContentItemWithMeta[] = useMemo(
+    () => allVisibleEntries.flatMap(entry =>
+      entry.content.map(item => ({
+        ...item,
+        id: `${entry.id}_${entry.content.indexOf(item)}`,
+        author: entry.author,
+        timestamp: entry.timestamp,
+        entryId: entry.id
+      }))
+    ),
+    [allVisibleEntries]
+  )
 
-  // For backwards compatibility, create contentItems (but we'll use entries for rendering)
-  const contentItems: ContentItemWithMeta[] = allVisibleEntries.flatMap(entry =>
-    entry.content.map(item => ({
-      ...item,
-      id: `${entry.id}_${entry.content.indexOf(item)}`,
-      author: entry.author,
-      timestamp: entry.timestamp,
-      entryId: entry.id
-    }))
+  const itemsPerSpread = 6 // 3 items per side, 2 sides per spread
+  const itemsPerMobilePage = 3 // 3 items per mobile page
+
+  // Calculate total pages based on content items (not entries)
+  // Use useMemo so it recalculates when contentItems changes
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(contentItems.length / itemsPerSpread)),
+    [contentItems.length, itemsPerSpread]
   )
 
   // Convert API timestamp string to Date object
@@ -176,6 +183,13 @@ export const GuestbookProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     refreshEntries()
   }, [refreshEntries])
+
+  // Clamp current page when totalPages changes (e.g., entries deleted)
+  useEffect(() => {
+    if (currentPage >= totalPages && totalPages > 0) {
+      setCurrentPageState(totalPages - 1)
+    }
+  }, [currentPage, totalPages])
 
   const setCurrentPage = (page: number) => {
     if (page >= 0 && page < totalPages) {
