@@ -83,9 +83,7 @@ const MusicPlayer: React.FC = () => {
     return null
   }
 
-  const audioSrc = currentTrack.audioPath
-    ? `http://localhost:3001${currentTrack.audioPath}`
-    : null
+  const audioSrc = currentTrack.audioPath || null
 
   if (!audioSrc) {
     return null
