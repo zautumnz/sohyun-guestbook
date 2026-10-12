@@ -1,0 +1,30 @@
+{
+  "id": "c2267ed2-69ed-4476-8794-0806132874a8",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/JD1AH8H2HlY?si=k58PpdLTQsKVsdze",
+        "youtubeId": "JD1AH8H2HlY",
+        "songTitle": "미워하지마 [가사]",
+        "artist": "ALEPH (알레프)",
+        "albumArtUrl": "/music/JD1AH8H2HlY.jpg",
+        "audioPath": "/music/JD1AH8H2HlY.mp3",
+        "duration": 203,
+        "processed": true
+      }
+    },
+    {
+      "type": "text",
+      "content": "언니 안녕하세요!\n생일 아주그냥막 축하드립니다❤️😻\n언니가 좋아할 거 같은 노래보다 제가 좋아하는 노래를 추천하고 싶어서 저 노래를 선택했는데 어떤가요? 언니가 좋아했으면 좋겠어요. (사실 이미 알고계실거 같긴해요..) 잠도 잘 주무시고.. 밥도 잘 챙겨드시고 계시는거죠? 빨리 보고싶어요. 건강하고 행복하게 지내다 어느날 자연스럽게 만나요. 사랑해요! 다시 한번 생일 축하드립니다❤️🐺"
+    }
+  ],
+  "author": "솧끼주의보",
+  "timestamp": "2026-10-06T07:10:07.163Z",
+  "pageNumber": 2,
+  "position": {
+    "x": 78.29940755810446,
+    "y": 44.670340984375756
+  },
+  "approved": true
+}

@@ -1,0 +1,30 @@
+{
+  "id": "d84c3ab2-5107-4ca5-9d31-a8d296cb2b48",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/USkEnd9gADA",
+        "youtubeId": "USkEnd9gADA",
+        "songTitle": "Goodbye Summer (AMBER, LUNA & KRYSTAL)",
+        "artist": "fx",
+        "albumArtUrl": "/music/USkEnd9gADA.jpg",
+        "audioPath": "/music/USkEnd9gADA.mp3",
+        "duration": 191,
+        "processed": true
+      }
+    },
+    {
+      "type": "text",
+      "content": "끝나지 않을것 같았던 여름을 떠나보내며, 추워지는 초입에 새로운 활동을 앞둔 소현님의 생일 축하합니다. \n추천 노래 Goodbye Summer는 풋풋한 사랑 노래에 가깝지만 가사중 쌍둥이 별자리처럼 넌 나 나는 너였어라는 가사처럼 소현님과 웨이브가 정리할 수 없는 사진처럼 오래오래 함께 했으면 해서 추천 곡으로 넣었습니다. "
+    }
+  ],
+  "author": "z0ne",
+  "timestamp": "2026-10-06T05:02:03.580Z",
+  "pageNumber": 2,
+  "position": {
+    "x": 20.74279844496256,
+    "y": 29.990638797794308
+  },
+  "approved": true
+}

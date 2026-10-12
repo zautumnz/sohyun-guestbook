@@ -1,0 +1,30 @@
+{
+  "id": "7dec04c1-07f6-43dd-a309-b8052309fcb3",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/36wVOzmsywo?si=-Emfcr5IuSiIbQQP",
+        "youtubeId": "36wVOzmsywo",
+        "songTitle": "오래오래(FRR) Official Music Video",
+        "artist": "죠지(george)",
+        "albumArtUrl": "/music/36wVOzmsywo.jpg",
+        "audioPath": "/music/36wVOzmsywo.mp3",
+        "duration": 230,
+        "processed": true
+      }
+    },
+    {
+      "type": "text",
+      "content": "소현아, 죠지의 ‘오래오래’ 추천해 주고 싶어.\n너를 오래오래 보고 싶은 마음을 이 노래로 전하고 싶었어.\n\n앞으로 네가 들려줄 음악도, 나눠 줄 이야기들도 오래 곁에서 듣고 싶어. 시간이 지나 계절이 여러 번 바뀌어도 이렇게 노래를 추천하고 안부를 물을 수 있으면 좋겠다.\n\n네가 좋아하는 것들을 즐기면서 행복하게 지냈으면 좋겠어. 나도 내 일상을 잘 보내면서 오래 응원할게.\n우리 오래오래 보자 ~"
+    }
+  ],
+  "author": "YUSOO PARK",
+  "timestamp": "2026-10-06T14:23:11.544Z",
+  "pageNumber": 4,
+  "position": {
+    "x": 57.5436354628982,
+    "y": 31.991264799417937
+  },
+  "approved": true
+}

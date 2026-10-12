@@ -1,0 +1,30 @@
+{
+  "id": "cc59f8e6-c9cf-464d-b323-29e7044d6c1c",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/OHXKK-18qRE?is=xGvvAHMTPaXjfW4Y",
+        "youtubeId": "OHXKK-18qRE",
+        "songTitle": "That's my girl (Lyric Video)",
+        "artist": "The Volunteers",
+        "albumArtUrl": "/music/OHXKK-18qRE.jpg",
+        "audioPath": "/music/OHXKK-18qRE.mp3",
+        "duration": 192,
+        "processed": true
+      }
+    },
+    {
+      "type": "text",
+      "content": "it’s been such a joy being your fan and getting to learn so much from you…i feel lucky that i’m a WAV and that i know about tripleS’s park sohyun. i hope this next year in your life is one full of new books, songs, writings, memories, and happinesses 🫶🫶🫶"
+    }
+  ],
+  "author": "아리",
+  "timestamp": "2026-10-06T17:24:17.565Z",
+  "pageNumber": 4,
+  "position": {
+    "x": 44.09414486866637,
+    "y": 48.29814539530577
+  },
+  "approved": true
+}

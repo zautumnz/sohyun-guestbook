@@ -1,0 +1,30 @@
+{
+  "id": "586d5028-e6c9-4f41-9ca1-9de09db54a9a",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/agL1_O8VwR0",
+        "youtubeId": "agL1_O8VwR0",
+        "songTitle": "2003 (Remix)",
+        "artist": "Emmavie",
+        "albumArtUrl": "/music/agL1_O8VwR0.jpg",
+        "audioPath": "/music/agL1_O8VwR0.mp3",
+        "duration": 173,
+        "processed": true
+      }
+    },
+    {
+      "type": "text",
+      "content": "소혀니 생일 축하해 🎂"
+    }
+  ],
+  "author": "딥삐",
+  "timestamp": "2026-10-06T02:19:08.747Z",
+  "pageNumber": 1,
+  "position": {
+    "x": 24.876788532315235,
+    "y": 22.45924254180285
+  },
+  "approved": true
+}

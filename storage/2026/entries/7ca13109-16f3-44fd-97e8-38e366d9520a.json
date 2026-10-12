@@ -1,0 +1,30 @@
+{
+  "id": "7ca13109-16f3-44fd-97e8-38e366d9520a",
+  "content": [
+    {
+      "type": "text",
+      "content": "우리 완벽하고, 재능 있고, 멋지고, 대단하고, 특별하고, 아름다운 소현이 생일 축하해! ❤️ 우리 오래오래 함께하자~ 사랑해! 💗"
+    },
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/l6OPTnsVvWc?si=LQkSFH51DoAbVFLJ",
+        "youtubeId": "l6OPTnsVvWc",
+        "songTitle": "Beginning",
+        "artist": "GIRLS' GENERATION",
+        "albumArtUrl": "/music/l6OPTnsVvWc.jpg",
+        "audioPath": "/music/l6OPTnsVvWc.mp3",
+        "duration": 185,
+        "processed": true
+      }
+    }
+  ],
+  "author": "무기력한 언니",
+  "timestamp": "2026-10-12T07:53:49.084Z",
+  "pageNumber": 6,
+  "position": {
+    "x": 89.03219519769101,
+    "y": 20.918653888132905
+  },
+  "approved": true
+}

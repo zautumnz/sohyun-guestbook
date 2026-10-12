@@ -1,0 +1,30 @@
+{
+  "id": "76691429-5799-4fbb-b672-5eb9616a9003",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/BifFOkmrVCo?si=_LaYwgj7Kw-Mfd1t",
+        "youtubeId": "BifFOkmrVCo",
+        "songTitle": "Oh Honey! (I Love You) (Official Visualizer)",
+        "artist": "Peach Tree Rascals",
+        "albumArtUrl": "/music/BifFOkmrVCo.jpg",
+        "audioPath": "/music/BifFOkmrVCo.mp3",
+        "duration": 188,
+        "processed": true
+      }
+    },
+    {
+      "type": "text",
+      "content": "박소현 사랑해"
+    }
+  ],
+  "author": "감자",
+  "timestamp": "2026-10-06T13:42:46.108Z",
+  "pageNumber": 3,
+  "position": {
+    "x": 36.80980261427398,
+    "y": 77.52619022849076
+  },
+  "approved": true
+}

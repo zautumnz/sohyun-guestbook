@@ -1,0 +1,26 @@
+{
+  "id": "282238b6-e8c9-474d-9ff7-77ce11125bbb",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://www.youtube.com/watch?v=uqHkQu0AjpE",
+        "youtubeId": "uqHkQu0AjpE",
+        "songTitle": "2 Many Days (Official Lyric Video)",
+        "artist": "Syd",
+        "albumArtUrl": "/music/uqHkQu0AjpE.jpg",
+        "audioPath": "/music/uqHkQu0AjpE.mp3",
+        "duration": 193,
+        "processed": true
+      }
+    }
+  ],
+  "author": "zautumn",
+  "timestamp": "2026-10-08T03:27:19.850Z",
+  "pageNumber": 5,
+  "position": {
+    "x": 87.68463368597254,
+    "y": 59.676500009391965
+  },
+  "approved": true
+}

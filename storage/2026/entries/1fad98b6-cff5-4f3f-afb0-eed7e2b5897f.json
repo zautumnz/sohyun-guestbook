@@ -1,0 +1,30 @@
+{
+  "id": "1fad98b6-cff5-4f3f-afb0-eed7e2b5897f",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/tGv7CUutzqU?si=gQcrQpLmX7hx2lXI",
+        "youtubeId": "tGv7CUutzqU",
+        "songTitle": "About You (Official)",
+        "artist": "The 1975",
+        "albumArtUrl": "/music/tGv7CUutzqU.jpg",
+        "audioPath": "/music/tGv7CUutzqU.mp3",
+        "duration": 327,
+        "processed": true
+      }
+    },
+    {
+      "type": "text",
+      "content": "박소현의 생일을 진심으로 축하합니다!!!🎉🎉🎉"
+    }
+  ],
+  "author": "나는야임영웅",
+  "timestamp": "2026-10-06T13:30:38.578Z",
+  "pageNumber": 3,
+  "position": {
+    "x": 33.776687708447,
+    "y": 73.12792289180773
+  },
+  "approved": true
+}
