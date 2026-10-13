@@ -1,0 +1,30 @@
+{
+  "id": "c6a09089-7e79-4650-916c-1556fd05c170",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/DfcWOPpmw14",
+        "youtubeId": "DfcWOPpmw14",
+        "songTitle": "Image (Official Video)",
+        "artist": "Magdalena Bay",
+        "albumArtUrl": "/music/DfcWOPpmw14.jpg",
+        "audioPath": "/music/DfcWOPpmw14.mp3",
+        "duration": 220,
+        "processed": true
+      }
+    },
+    {
+      "type": "text",
+      "content": "소혀니 생일축하해♡"
+    }
+  ],
+  "author": "미온",
+  "timestamp": "2026-10-13T04:38:00.664Z",
+  "pageNumber": 8,
+  "position": {
+    "x": 68.64261851395133,
+    "y": 70.97399800973916
+  },
+  "approved": true
+}

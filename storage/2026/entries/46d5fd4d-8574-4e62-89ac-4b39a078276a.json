@@ -1,0 +1,30 @@
+{
+  "id": "46d5fd4d-8574-4e62-89ac-4b39a078276a",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/9TSPbfbJUkQ?si=9fkcVFcSTJXlUUyv",
+        "youtubeId": "9TSPbfbJUkQ",
+        "songTitle": "lovememore. MV",
+        "artist": "dosii",
+        "albumArtUrl": "/music/9TSPbfbJUkQ.jpg",
+        "audioPath": "/music/9TSPbfbJUkQ.mp3",
+        "duration": 237,
+        "processed": true
+      }
+    },
+    {
+      "type": "text",
+      "content": "천재 프로듀서 백구 생일 축하해요!! \n오늘 하루 맛난 거 많이 먹고 푹 쉬어요 ㅎㅎ 앞으로 행복한 일들만 가득하길 바라요 "
+    }
+  ],
+  "author": "데구르르햄",
+  "timestamp": "2026-10-13T09:34:57.595Z",
+  "pageNumber": 9,
+  "position": {
+    "x": 18.01515771792669,
+    "y": 63.78750208833602
+  },
+  "approved": true
+}

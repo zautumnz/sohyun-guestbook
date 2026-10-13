@@ -1,0 +1,26 @@
+{
+  "id": "3ab54f3c-4bb6-4c47-8c89-0c876f102244",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/UrvGKN-gKr8?si=CiqGGw3eKNeN6B8B",
+        "youtubeId": "UrvGKN-gKr8",
+        "songTitle": "everything comes and goes",
+        "artist": "wave to earth",
+        "albumArtUrl": "/music/UrvGKN-gKr8.jpg",
+        "audioPath": "/music/UrvGKN-gKr8.mp3",
+        "duration": 259,
+        "processed": true
+      }
+    }
+  ],
+  "author": "jean",
+  "timestamp": "2026-10-13T02:24:11.443Z",
+  "pageNumber": 7,
+  "position": {
+    "x": 83.86711299085077,
+    "y": 36.3312041272474
+  },
+  "approved": false
+}
