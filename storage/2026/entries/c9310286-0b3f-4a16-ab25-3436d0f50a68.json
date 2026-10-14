@@ -1,0 +1,30 @@
+{
+  "id": "c9310286-0b3f-4a16-ab25-3436d0f50a68",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/Q-Dex2KKXjI",
+        "youtubeId": "Q-Dex2KKXjI",
+        "songTitle": "Only U (Original ver. ) Official Lyric Video",
+        "artist": "Moon Sujin & Jiselle(지젤)",
+        "albumArtUrl": "/music/Q-Dex2KKXjI.jpg",
+        "audioPath": "/music/Q-Dex2KKXjI.mp3",
+        "duration": 224,
+        "processed": true
+      }
+    },
+    {
+      "type": "text",
+      "content": "Happy Birthday Sohyun!! 🥳🎂🥳\n\n언제나 멋진 영감을 주고, 자신의 분야에서 끊임없이 노력하는 모습 보여줘서 고마워요.\n\nWAV를 향한 소현이의 사랑만큼이나 우리도 소현이를 많이 사랑해요. 소현이가 열심히 노력하는 모든 순간에 WAV는 언제나 소현이 곁에서 함께하며 응원할게요.\n\n생일 정말 많이 축하해요!! 🎂💗"
+    }
+  ],
+  "author": "OwlBear",
+  "timestamp": "2026-10-14T06:25:18.994Z",
+  "pageNumber": 9,
+  "position": {
+    "x": 45.636877613012636,
+    "y": 61.008407644772895
+  },
+  "approved": true
+}
