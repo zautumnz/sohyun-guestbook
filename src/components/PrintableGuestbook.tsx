@@ -23,10 +23,7 @@ const PrintableGuestbook = () => {
           <div className="print-date">
             {contentItems.length} messages printed on {new Date().toLocaleDateString()}
           </div>
-          Made with 💙 by <span className="font-semibold">zautumn</span>{' '}
-          and <span className="font-semibold">joeywerepyre</span>.
-          Thanks to <span className="font-semibold">Nites</span>{' '}
-          and <span className="font-semibold">YL2002</span> for testing.
+          Made with 💙 by <span className="font-semibold">zautumn</span>.
         </div>
       </div>
 

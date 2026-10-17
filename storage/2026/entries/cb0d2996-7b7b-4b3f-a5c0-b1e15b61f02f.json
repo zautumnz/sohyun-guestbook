@@ -1,0 +1,26 @@
+{
+  "id": "cb0d2996-7b7b-4b3f-a5c0-b1e15b61f02f",
+  "content": [
+    {
+      "type": "music",
+      "content": {
+        "youtubeUrl": "https://youtu.be/-K94m2Z1Dbo?si=P91SBjIJzEggg5p5",
+        "youtubeId": "-K94m2Z1Dbo",
+        "songTitle": "I'd Rather Be Alone (Official Audio)",
+        "artist": "Tinashe",
+        "albumArtUrl": "/music/-K94m2Z1Dbo.jpg",
+        "audioPath": "/music/-K94m2Z1Dbo.mp3",
+        "duration": 194,
+        "processed": true
+      }
+    }
+  ],
+  "author": "star",
+  "timestamp": "2026-10-15T05:45:52.841Z",
+  "pageNumber": 10,
+  "position": {
+    "x": 19.371741728969507,
+    "y": 71.90920659551375
+  },
+  "approved": true
+}
